@@ -2,6 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FormData } from './BirthDateForm';
 import { Calendar, Clock, Star, Moon, Flame, Droplets, Compass, Sparkles, Sun, Heart, Briefcase, Leaf, Cloud, Mountain, Gem, Waves, ArrowRight } from 'lucide-react';
+import AIAnalysisDisplay from './AIAnalysisDisplay';
+import { BaziData } from '../services/aiService';
 
 interface DetailedResultsDisplayProps {
   formData: FormData;
@@ -605,8 +607,26 @@ ${getLifePhases().map(phase => `
     return healthChecks[yearElement as Element];
   };
 
+  // 准备AI分析需要的数据
+  const aiAnalysisData: BaziData = {
+    birthDate: formData.birthDate,
+    birthTime: formData.birthTime,
+    yearElement,
+    monthElement,
+    dayElement,
+    hourElement,
+    zodiac,
+    heavenlyStem,
+    earthlyBranch,
+    elementalBalance
+  };
+
   return (
     <div className="space-y-8">
+      {/* AI分析组件 */}
+      <AIAnalysisDisplay baziData={aiAnalysisData} />
+
+      {/* 传统分析 */}
       {Object.entries(detailedAnalysis).map(([key, section], index) => (
         <motion.div
           key={key}
