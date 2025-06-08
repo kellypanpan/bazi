@@ -5,6 +5,7 @@ export interface BaziData {
   birthTime: string;
   gender: string;
   location: string;
+  name: string;
 }
 
 export interface AnalysisResult {
@@ -38,40 +39,46 @@ const api = axios.create({
 });
 
 export const analyzeBaziWithAI = async (baziData: BaziData): Promise<AIAnalysisResponse> => {
-  const prompt = `请基于以下八字信息进行详细分析：
-生日: ${baziData.birthDate}
-出生时间: ${baziData.birthTime}
-性别: ${baziData.gender}
-出生地: ${baziData.location}
+  const prompt = `You are an expert in Chinese astrology and fortune telling. Please provide a detailed analysis based on the following birth information:
 
-请同时提供八字命理和紫微斗数两种分析方法的结果，格式如下：
+Name: ${baziData.name}
+Birth Date: ${baziData.birthDate}
+Birth Time: ${baziData.birthTime}
+Gender: ${baziData.gender}
+Birth Location: ${baziData.location}
 
-【八字命理分析】
-性格分析：[详细分析内容]
-运势分析：[详细分析内容]
-事业分析：[详细分析内容]
-感情分析：[详细分析内容]
-健康分析：[详细分析内容]
-财运分析：[详细分析内容]
-幸运元素：[详细分析内容]
-总结建议：[详细分析内容]
+Please provide detailed analysis using both BaZi (Four Pillars) and Zi Wei Dou Shu (Purple Star Astrology) methods.
 
-【紫微斗数分析】
-性格分析：[详细分析内容]
-运势分析：[详细分析内容]
-事业分析：[详细分析内容]
-感情分析：[详细分析内容]
-健康分析：[详细分析内容]
-财运分析：[详细分析内容]
-幸运元素：[详细分析内容]
-总结建议：[详细分析内容]
+Format your response EXACTLY as follows:
 
-【两种方法对比】
-[对比分析内容]
+=== BAZI ANALYSIS ===
+PERSONALITY: [Detailed personality analysis based on BaZi Four Pillars]
+FORTUNE: [Overall life fortune and luck patterns]
+CAREER: [Career prospects and suitable professions]
+RELATIONSHIPS: [Love, marriage, and relationship insights]
+HEALTH: [Health tendencies and recommendations]
+WEALTH: [Financial fortune and money management]
+LUCKY_ELEMENTS: [Lucky colors, numbers, directions, elements]
+SUMMARY: [Overall BaZi analysis summary and advice]
 
-请用中文回答，内容要专业且详细。`;
+=== ZIWEI ANALYSIS ===
+PERSONALITY: [Detailed personality analysis based on Zi Wei Dou Shu]
+FORTUNE: [Overall life fortune from Purple Star perspective]
+CAREER: [Career analysis using Zi Wei Dou Shu]
+RELATIONSHIPS: [Relationship insights from Purple Star astrology]
+HEALTH: [Health analysis using Zi Wei system]
+WEALTH: [Wealth and financial insights]
+LUCKY_ELEMENTS: [Lucky elements from Zi Wei perspective]
+SUMMARY: [Overall Zi Wei Dou Shu summary and recommendations]
+
+=== COMPARISON ===
+[Compare and contrast the insights from both BaZi and Zi Wei Dou Shu methods, highlighting similarities and differences]
+
+Please provide comprehensive, detailed, and professional analysis in English. Each section should be at least 3-4 sentences long with specific insights and practical advice.`;
 
   try {
+    console.log('Sending AI request with data:', baziData);
+    
     const response = await api.post('/chat/completions', {
       model: 'deepseek/deepseek-r1-0528-qwen3-8b:free',
       messages: [
@@ -85,65 +92,125 @@ export const analyzeBaziWithAI = async (baziData: BaziData): Promise<AIAnalysisR
     });
 
     const content = response.data.choices[0]?.message?.content;
-    console.log('AI Response:', content);
+    console.log('Raw AI Response:', content);
 
     if (!content) {
-      throw new Error('Empty response from AI');
+      throw new Error('Empty response from AI service');
     }
 
     return parseAIResponse(content);
   } catch (error: unknown) {
     console.error('AI Analysis Error:', error);
-    throw new Error(`AI分析失败: ${(error as Error).message}`);
+    if (axios.isAxiosError(error)) {
+      console.error('API Error Details:', error.response?.data);
+      throw new Error(`AI Analysis failed: ${error.response?.data?.error?.message || error.message}`);
+    }
+    throw new Error(`AI Analysis failed: ${(error as Error).message}`);
   }
 };
 
 const parseAIResponse = (content: string): AIAnalysisResponse => {
-  console.log('Parsing AI response:', content);
+  console.log('Starting to parse AI response...');
 
-  // 提取八字命理分析部分
-  const baziMatch = content.match(/【八字命理分析】([\s\S]*?)(?=【紫微斗数分析】|$)/);
-  const baziContent = baziMatch ? baziMatch[1] : '';
+  // Extract BaZi analysis section
+  const baziMatch = content.match(/=== BAZI ANALYSIS ===([\s\S]*?)(?:=== ZIWEI ANALYSIS ===|$)/i);
+  const baziContent = baziMatch ? baziMatch[1].trim() : '';
+  console.log('Extracted BaZi content:', baziContent);
 
-  // 提取紫微斗数分析部分
-  const ziweiMatch = content.match(/【紫微斗数分析】([\s\S]*?)(?=【两种方法对比】|$)/);
-  const ziweiContent = ziweiMatch ? ziweiMatch[1] : '';
+  // Extract Zi Wei analysis section
+  const ziweiMatch = content.match(/=== ZIWEI ANALYSIS ===([\s\S]*?)(?:=== COMPARISON ===|$)/i);
+  const ziweiContent = ziweiMatch ? ziweiMatch[1].trim() : '';
+  console.log('Extracted Zi Wei content:', ziweiContent);
 
-  // 提取对比分析部分
-  const comparisonMatch = content.match(/【两种方法对比】([\s\S]*?)$/);
+  // Extract comparison section
+  const comparisonMatch = content.match(/=== COMPARISON ===([\s\S]*?)$/i);
   const comparisonContent = comparisonMatch ? comparisonMatch[1].trim() : '';
+  console.log('Extracted comparison content:', comparisonContent);
 
   const parseSection = (text: string, sectionName: string): string => {
-    const regex = new RegExp(`${sectionName}[：:](.*?)(?=\\n[\\u4e00-\\u9fa5]+[：:]|$)`, 's');
-    const match = text.match(regex);
-    const result = match ? match[1].trim() : '';
-    console.log(`Parsed ${sectionName}:`, result);
-    return result;
+    // More flexible regex to capture content after section names
+    const patterns = [
+      new RegExp(`${sectionName}:\\s*(.*?)(?=\\n[A-Z_]+:|$)`, 'is'),
+      new RegExp(`${sectionName}\\s*-\\s*(.*?)(?=\\n[A-Z_]+:|$)`, 'is'),
+      new RegExp(`${sectionName}\\s+(.*?)(?=\\n[A-Z_]+:|$)`, 'is')
+    ];
+    
+    for (const pattern of patterns) {
+      const match = text.match(pattern);
+      if (match && match[1]) {
+        const result = match[1].trim();
+        console.log(`Successfully parsed ${sectionName}:`, result.substring(0, 100) + '...');
+        return result;
+      }
+    }
+    
+    console.log(`Could not parse ${sectionName} from:`, text.substring(0, 200));
+    return '';
   };
 
   const bazi: AnalysisResult = {
-    personality: parseSection(baziContent, '性格分析'),
-    fortune: parseSection(baziContent, '运势分析'),
-    career: parseSection(baziContent, '事业分析'),
-    relationships: parseSection(baziContent, '感情分析'),
-    health: parseSection(baziContent, '健康分析'),
-    wealth: parseSection(baziContent, '财运分析'),
-    luckyElements: parseSection(baziContent, '幸运元素'),
-    summary: parseSection(baziContent, '总结建议'),
+    personality: parseSection(baziContent, 'PERSONALITY'),
+    fortune: parseSection(baziContent, 'FORTUNE'),
+    career: parseSection(baziContent, 'CAREER'),
+    relationships: parseSection(baziContent, 'RELATIONSHIPS'),
+    health: parseSection(baziContent, 'HEALTH'),
+    wealth: parseSection(baziContent, 'WEALTH'),
+    luckyElements: parseSection(baziContent, 'LUCKY_ELEMENTS'),
+    summary: parseSection(baziContent, 'SUMMARY'),
   };
 
   const ziwei: AnalysisResult = {
-    personality: parseSection(ziweiContent, '性格分析'),
-    fortune: parseSection(ziweiContent, '运势分析'),
-    career: parseSection(ziweiContent, '事业分析'),
-    relationships: parseSection(ziweiContent, '感情分析'),
-    health: parseSection(ziweiContent, '健康分析'),
-    wealth: parseSection(ziweiContent, '财运分析'),
-    luckyElements: parseSection(ziweiContent, '幸运元素'),
-    summary: parseSection(ziweiContent, '总结建议'),
+    personality: parseSection(ziweiContent, 'PERSONALITY'),
+    fortune: parseSection(ziweiContent, 'FORTUNE'),
+    career: parseSection(ziweiContent, 'CAREER'),
+    relationships: parseSection(ziweiContent, 'RELATIONSHIPS'),
+    health: parseSection(ziweiContent, 'HEALTH'),
+    wealth: parseSection(ziweiContent, 'WEALTH'),
+    luckyElements: parseSection(ziweiContent, 'LUCKY_ELEMENTS'),
+    summary: parseSection(ziweiContent, 'SUMMARY'),
   };
 
-  console.log('Parsed results:', { bazi, ziwei, comparison: comparisonContent });
+  console.log('Final parsed results:', { 
+    bazi: Object.keys(bazi).filter(k => bazi[k as keyof AnalysisResult]), 
+    ziwei: Object.keys(ziwei).filter(k => ziwei[k as keyof AnalysisResult]),
+    hasComparison: !!comparisonContent 
+  });
+
+  // If parsing failed, try to extract content more generically
+  if (!bazi.personality && !ziwei.personality) {
+    console.log('Structured parsing failed, trying generic extraction...');
+    
+    // Fall back to extracting paragraphs and distributing them
+    const paragraphs = content.split('\n\n').filter(p => p.trim().length > 50);
+    
+    if (paragraphs.length >= 8) {
+      const midPoint = Math.floor(paragraphs.length / 2);
+      
+      return {
+        bazi: {
+          personality: paragraphs[0] || 'BaZi personality analysis available in full response.',
+          fortune: paragraphs[1] || 'BaZi fortune analysis available in full response.',
+          career: paragraphs[2] || 'BaZi career analysis available in full response.',
+          relationships: paragraphs[3] || 'BaZi relationship analysis available in full response.',
+          health: 'Health analysis available in full AI response.',
+          wealth: 'Wealth analysis available in full AI response.',
+          luckyElements: 'Lucky elements analysis available in full AI response.',
+          summary: paragraphs[midPoint - 1] || 'BaZi summary available in full response.',
+        },
+        ziwei: {
+          personality: paragraphs[midPoint] || 'Zi Wei personality analysis available in full response.',
+          fortune: paragraphs[midPoint + 1] || 'Zi Wei fortune analysis available in full response.',
+          career: paragraphs[midPoint + 2] || 'Zi Wei career analysis available in full response.',
+          relationships: paragraphs[midPoint + 3] || 'Zi Wei relationship analysis available in full response.',
+          health: 'Health analysis available in full AI response.',
+          wealth: 'Wealth analysis available in full AI response.',
+          luckyElements: 'Lucky elements analysis available in full AI response.',
+          summary: paragraphs[paragraphs.length - 1] || 'Zi Wei summary available in full response.',
+        },
+        comparison: comparisonContent || content.substring(content.length - 500) || 'Full AI analysis and comparison available above.'
+      };
+    }
+  }
 
   return {
     bazi,

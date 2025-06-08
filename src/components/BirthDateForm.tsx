@@ -30,16 +30,16 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
     const newErrors: Partial<FormData> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = '请输入您的姓名';
+      newErrors.name = 'Please enter your name';
     }
     if (!formData.birthDate) {
-      newErrors.birthDate = '请选择您的出生日期';
+      newErrors.birthDate = 'Please select your birth date';
     }
     if (!formData.birthTime) {
-      newErrors.birthTime = '请选择您的出生时间';
+      newErrors.birthTime = 'Please select your birth time';
     }
     if (!formData.location.trim()) {
-      newErrors.location = '请输入您的出生地点';
+      newErrors.location = 'Please enter your birth location';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -71,9 +71,9 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
     }));
   };
 
-  // 获取当前日期作为最大日期（不能选择未来日期）
+  // Get current date as maximum date (cannot select future dates)
   const today = new Date().toISOString().split('T')[0];
-  // 设置最小年份为1900年
+  // Set minimum year to 1900
   const minDate = '1900-01-01';
 
   return (
@@ -85,16 +85,16 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
       className="space-y-6 bg-indigo-900 bg-opacity-30 backdrop-blur-sm rounded-2xl border border-indigo-800 p-6 md:p-8"
     >
       <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold text-white mb-2">填写您的生辰信息</h3>
-        <p className="text-indigo-300">准确的出生信息有助于更精准的分析</p>
+        <h3 className="text-2xl font-bold text-white mb-2">Enter Your Birth Information</h3>
+        <p className="text-indigo-300">Accurate birth details help provide more precise analysis</p>
       </div>
 
       <div className="space-y-6">
-        {/* 姓名输入 */}
+        {/* Name Input */}
         <div>
           <label className="block text-sm font-medium text-white mb-3">
             <User className="inline-block w-4 h-4 mr-2" />
-            姓名
+            Full Name
           </label>
           <input
             type="text"
@@ -104,7 +104,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             className={`w-full px-4 py-3 rounded-lg bg-indigo-800 bg-opacity-50 border ${
               errors.name ? 'border-red-500' : 'border-indigo-600'
             } text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
-            placeholder="请输入您的姓名"
+            placeholder="Enter your full name"
           />
           {errors.name && (
             <motion.p 
@@ -117,10 +117,10 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
           )}
         </div>
 
-        {/* 性别选择 */}
+        {/* Gender Selection */}
         <div>
           <label className="block text-sm font-medium text-white mb-3">
-            性别
+            Gender
           </label>
           <div className="grid grid-cols-2 gap-3">
             <button
@@ -132,7 +132,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
                   : 'bg-indigo-800 bg-opacity-50 text-indigo-300 hover:bg-indigo-700 hover:bg-opacity-50'
               }`}
             >
-              男
+              Male
             </button>
             <button
               type="button"
@@ -143,16 +143,16 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
                   : 'bg-indigo-800 bg-opacity-50 text-indigo-300 hover:bg-indigo-700 hover:bg-opacity-50'
               }`}
             >
-              女
+              Female
             </button>
           </div>
         </div>
 
-        {/* 出生日期 */}
+        {/* Birth Date */}
         <div>
           <label className="block text-sm font-medium text-white mb-3">
             <Calendar className="inline-block w-4 h-4 mr-2" />
-            出生日期
+            Birth Date
           </label>
           <input
             type="date"
@@ -178,15 +178,15 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             </motion.p>
           )}
           <p className="mt-2 text-xs text-indigo-300">
-            请选择农历或阳历出生日期，系统会自动处理转换
+            Select your birth date (lunar or solar calendar - system will handle conversion)
           </p>
         </div>
 
-        {/* 出生时间 */}
+        {/* Birth Time */}
         <div>
           <label className="block text-sm font-medium text-white mb-3">
             <Clock className="inline-block w-4 h-4 mr-2" />
-            出生时间
+            Birth Time
           </label>
           <input
             type="time"
@@ -210,15 +210,15 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             </motion.p>
           )}
           <p className="mt-2 text-xs text-indigo-300">
-            精确的出生时间对命盘分析非常重要，如不确定可选择大概时间
+            Precise birth time is crucial for accurate chart analysis. If unsure, select approximate time.
           </p>
         </div>
 
-        {/* 出生地点 */}
+        {/* Birth Location */}
         <div>
           <label className="block text-sm font-medium text-white mb-3">
             <MapPin className="inline-block w-4 h-4 mr-2" />
-            出生地点
+            Birth Location
           </label>
           <input
             type="text"
@@ -228,7 +228,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             className={`w-full px-4 py-3 rounded-lg bg-indigo-800 bg-opacity-50 border ${
               errors.location ? 'border-red-500' : 'border-indigo-600'
             } text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
-            placeholder="例如：北京市、上海市、广州市"
+            placeholder="e.g., New York, London, Tokyo"
           />
           {errors.location && (
             <motion.p 
@@ -240,7 +240,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             </motion.p>
           )}
           <p className="mt-2 text-xs text-indigo-300">
-            出生地点用于计算地理经纬度，影响时辰的准确性
+            Birth location is used to calculate geographical coordinates, affecting time accuracy
           </p>
         </div>
       </div>
@@ -251,12 +251,12 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
         type="submit"
         className="w-full px-6 py-4 text-lg font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-indigo-900 transition-all shadow-lg"
       >
-        开始分析我的命盘
+        Get My Fortune Reading
       </motion.button>
 
       <div className="text-center">
         <p className="text-xs text-indigo-400">
-          您的个人信息将被安全保护，仅用于命理分析
+          Your personal information is securely protected and used only for fortune analysis
         </p>
       </div>
     </motion.form>

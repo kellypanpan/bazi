@@ -609,16 +609,11 @@ ${getLifePhases().map(phase => `
 
   // 准备AI分析需要的数据
   const aiAnalysisData: BaziData = {
+    name: formData.name,
     birthDate: formData.birthDate,
     birthTime: formData.birthTime,
-    yearElement,
-    monthElement,
-    dayElement,
-    hourElement,
-    zodiac,
-    heavenlyStem,
-    earthlyBranch,
-    elementalBalance
+    gender: formData.gender,
+    location: formData.location
   };
 
   return (
