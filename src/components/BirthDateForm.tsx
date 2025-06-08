@@ -25,6 +25,73 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
 
   const [errors, setErrors] = useState<Partial<FormData>>({});
 
+  // Helper function to convert MM/DD/YY to YYYY-MM-DD
+  const convertToISODate = (mmddyy: string): string => {
+    if (!mmddyy || mmddyy.length < 8) return '';
+    
+    const parts = mmddyy.split('/');
+    if (parts.length !== 3) return '';
+    
+    const [month, day, year] = parts;
+    
+    // Convert YY to YYYY (assume years 00-30 are 20xx, 31-99 are 19xx)
+    let fullYear = parseInt(year);
+    if (fullYear <= 30) {
+      fullYear += 2000;
+    } else if (fullYear <= 99) {
+      fullYear += 1900;
+    } else if (fullYear < 1900) {
+      fullYear += 2000;
+    }
+    
+    return `${fullYear}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  };
+
+  // Helper function to validate MM/DD/YY format
+  const validateDateFormat = (dateStr: string): boolean => {
+    const mmddyyRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/(\d{2}|\d{4})$/;
+    if (!mmddyyRegex.test(dateStr)) return false;
+    
+    const [month, day, year] = dateStr.split('/').map(num => parseInt(num));
+    
+    // Basic date validation
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+    
+    // Convert YY to full year for validation
+    let fullYear = year;
+    if (year <= 30) {
+      fullYear += 2000;
+    } else if (year <= 99) {
+      fullYear += 1900;
+    }
+    
+    // Check if date is not in the future
+    const inputDate = new Date(fullYear, month - 1, day);
+    const today = new Date();
+    if (inputDate > today) return false;
+    
+    // Check if date is reasonable (not before 1900)
+    if (fullYear < 1900) return false;
+    
+    return true;
+  };
+
+  // Format input as user types MM/DD/YY
+  const formatDateInput = (value: string): string => {
+    // Remove all non-numeric characters
+    const numbers = value.replace(/\D/g, '');
+    
+    // Format as MM/DD/YY
+    if (numbers.length <= 2) {
+      return numbers;
+    } else if (numbers.length <= 4) {
+      return `${numbers.slice(0, 2)}/${numbers.slice(2)}`;
+    } else {
+      return `${numbers.slice(0, 2)}/${numbers.slice(2, 4)}/${numbers.slice(4, 8)}`;
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Partial<FormData> = {};
@@ -33,7 +100,9 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
       newErrors.name = 'Please enter your name';
     }
     if (!formData.birthDate) {
-      newErrors.birthDate = 'Please select your birth date';
+      newErrors.birthDate = 'Please enter your birth date';
+    } else if (!validateDateFormat(formData.birthDate)) {
+      newErrors.birthDate = 'Please enter a valid date in MM/DD/YY format';
     }
     if (!formData.birthTime) {
       newErrors.birthTime = 'Please select your birth time';
@@ -47,15 +116,34 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
       return;
     }
 
-    onSubmit(formData);
+    // Convert MM/DD/YY to YYYY-MM-DD before submitting
+    const isoDate = convertToISODate(formData.birthDate);
+    
+    onSubmit({
+      ...formData,
+      birthDate: isoDate
+    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
+    let processedValue = value;
+    
+    // Special handling for birth date formatting
+    if (name === 'birthDate') {
+      processedValue = formatDateInput(value);
+      // Limit to MM/DD/YYYY format (10 characters)
+      if (processedValue.length > 10) {
+        processedValue = processedValue.slice(0, 10);
+      }
+    }
+    
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: processedValue
     }));
+    
     if (errors[name as keyof FormData]) {
       setErrors(prev => ({
         ...prev,
@@ -70,11 +158,6 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
       gender
     }));
   };
-
-  // Get current date as maximum date (cannot select future dates)
-  const today = new Date().toISOString().split('T')[0];
-  // Set minimum year to 1900
-  const minDate = '1900-01-01';
 
   return (
     <motion.form
@@ -155,18 +238,15 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             Birth Date
           </label>
           <input
-            type="date"
+            type="text"
             name="birthDate"
             value={formData.birthDate}
             onChange={handleInputChange}
-            min={minDate}
-            max={today}
             className={`w-full px-4 py-3 rounded-lg bg-indigo-800 bg-opacity-50 border ${
               errors.birthDate ? 'border-red-500' : 'border-indigo-600'
-            } text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
-            style={{
-              colorScheme: 'dark'
-            }}
+            } text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
+            placeholder="MM/DD/YY (e.g., 12/25/95)"
+            maxLength={10}
           />
           {errors.birthDate && (
             <motion.p 
@@ -178,7 +258,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             </motion.p>
           )}
           <p className="mt-2 text-xs text-indigo-300">
-            Select your birth date (lunar or solar calendar - system will handle conversion)
+            Enter your birth date in MM/DD/YY format (e.g., 12/25/95)
           </p>
         </div>
 
