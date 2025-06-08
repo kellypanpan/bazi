@@ -20,7 +20,8 @@ export interface BaziData {
   elementalBalance: Record<string, number>;
 }
 
-export interface AIAnalysisResult {
+// 单种分析方法的结果
+export interface AnalysisMethod {
   personalityAnalysis: string;
   fortuneAnalysis: string;
   careerAdvice: string;
@@ -29,6 +30,13 @@ export interface AIAnalysisResult {
   wealthAdvice: string;
   luckyElements: string;
   summary: string;
+}
+
+// 完整的AI分析结果，包含两种方法
+export interface AIAnalysisResult {
+  bazi: AnalysisMethod;
+  ziwei: AnalysisMethod;
+  comparison: string;
 }
 
 class AIService {
@@ -48,10 +56,10 @@ class AIService {
     return !!this.apiKey;
   }
 
-  // 生成八字分析提示词
-  private generateBaziPrompt(baziData: BaziData): string {
+  // 生成综合分析提示词
+  private generateComprehensivePrompt(baziData: BaziData): string {
     return `
-作为一位专业的中华传统八字命理师，请根据以下出生信息进行详细的八字分析：
+作为一位精通中华传统命理学的专业大师，请根据以下出生信息进行详细的命理分析。请分别使用八字命理和紫微斗数两种方法进行分析，并提供对比总结。
 
 出生信息：
 - 出生日期：${baziData.birthDate}
@@ -69,18 +77,64 @@ class AIService {
 五行平衡：
 ${Object.entries(baziData.elementalBalance).map(([element, count]) => `- ${element}: ${count}`).join('\n')}
 
-请从以下几个方面进行深入分析，并提供具体的建议：
+请按照以下格式进行分析：
 
-1. 性格特征分析：根据八字组合分析性格特点、优势和需要注意的地方
-2. 运势分析：分析整体运势趋势，包括不同人生阶段的特点
-3. 事业发展：根据五行特点推荐适合的职业方向和发展策略
-4. 感情关系：分析在感情方面的特点和建议
-5. 健康养生：根据五行平衡情况提供健康建议
-6. 财运建议：分析财运特点和理财建议
-7. 开运元素：推荐有利的颜色、方位、数字等开运元素
-8. 综合总结：对整个命盘的综合评价和人生建议
+## 八字命理分析
 
-请用中文回答，语言要专业但易懂，提供实用的建议。每个部分都要有具体的内容，不要泛泛而谈。
+### 性格特征分析
+[基于八字的性格分析内容]
+
+### 运势分析
+[基于八字的运势分析内容]
+
+### 事业发展
+[基于八字的事业建议内容]
+
+### 感情关系
+[基于八字的感情建议内容]
+
+### 健康养生
+[基于八字的健康建议内容]
+
+### 财运建议
+[基于八字的财运建议内容]
+
+### 开运元素
+[基于八字的开运元素内容]
+
+### 八字总结
+[基于八字的综合总结内容]
+
+## 紫微斗数分析
+
+### 性格特征分析
+[基于紫微斗数的性格分析内容]
+
+### 运势分析
+[基于紫微斗数的运势分析内容]
+
+### 事业发展
+[基于紫微斗数的事业建议内容]
+
+### 感情关系
+[基于紫微斗数的感情建议内容]
+
+### 健康养生
+[基于紫微斗数的健康建议内容]
+
+### 财运建议
+[基于紫微斗数的财运建议内容]
+
+### 开运元素
+[基于紫微斗数的开运元素内容]
+
+### 紫微总结
+[基于紫微斗数的综合总结内容]
+
+## 两种方法对比总结
+[对比八字和紫微斗数两种分析方法的异同，提供综合建议]
+
+请用中文回答，语言要专业但易懂，提供实用的建议。每个部分都要有具体的内容，不要泛泛而谈。两种分析方法要体现出各自的特色和侧重点。
     `;
   }
 
@@ -91,7 +145,7 @@ ${Object.entries(baziData.elementalBalance).map(([element, count]) => `- ${eleme
     }
 
     try {
-      const prompt = this.generateBaziPrompt(baziData);
+      const prompt = this.generateComprehensivePrompt(baziData);
       
       const response = await axios.post(
         OPENROUTER_API_URL,
@@ -103,7 +157,7 @@ ${Object.entries(baziData.elementalBalance).map(([element, count]) => `- ${eleme
               content: prompt
             }
           ],
-          max_tokens: 4000,
+          max_tokens: 6000,
           temperature: 0.7,
           top_p: 0.9,
         },
@@ -120,7 +174,7 @@ ${Object.entries(baziData.elementalBalance).map(([element, count]) => `- ${eleme
       const aiResponse = response.data.choices[0].message.content;
       
       // 解析AI响应，提取各部分内容
-      return this.parseAIResponse(aiResponse);
+      return this.parseComprehensiveResponse(aiResponse);
       
     } catch (error) {
       console.error('AI分析错误:', error);
@@ -128,25 +182,94 @@ ${Object.entries(baziData.elementalBalance).map(([element, count]) => `- ${eleme
     }
   }
 
-  // 解析AI响应内容
-  private parseAIResponse(response: string): AIAnalysisResult {
-    // 这里简化处理，实际可以根据响应格式进行更精确的解析
-    const sections = response.split(/\d+\.\s*/);
+  // 解析综合AI响应内容
+  private parseComprehensiveResponse(response: string): AIAnalysisResult {
+    console.log('AI原始响应:', response); // 调试用
+    
+    // 八字分析部分
+    const baziAnalysis = this.extractAnalysisMethod(response, '八字命理分析', '紫微斗数分析');
+    
+    // 紫微斗数分析部分
+    const ziweiAnalysis = this.extractAnalysisMethod(response, '紫微斗数分析', '两种方法对比总结');
+    
+    // 对比总结
+    const comparison = this.extractSection(response, '两种方法对比总结', null) || response;
+
+    return {
+      bazi: baziAnalysis,
+      ziwei: ziweiAnalysis,
+      comparison
+    };
+  }
+
+  // 提取单种分析方法的内容
+  private extractAnalysisMethod(text: string, startKeyword: string, endKeyword: string): AnalysisMethod {
+    const sectionText = this.extractSection(text, startKeyword, endKeyword);
     
     return {
-      personalityAnalysis: this.extractSection(response, '性格特征分析', '运势分析') || '性格分析内容',
-      fortuneAnalysis: this.extractSection(response, '运势分析', '事业发展') || '运势分析内容',
-      careerAdvice: this.extractSection(response, '事业发展', '感情关系') || '事业建议内容',
-      relationshipAdvice: this.extractSection(response, '感情关系', '健康养生') || '感情建议内容',
-      healthAdvice: this.extractSection(response, '健康养生', '财运建议') || '健康建议内容',
-      wealthAdvice: this.extractSection(response, '财运建议', '开运元素') || '财运建议内容',
-      luckyElements: this.extractSection(response, '开运元素', '综合总结') || '开运元素内容',
-      summary: this.extractSection(response, '综合总结', null) || '综合总结内容'
+      personalityAnalysis: this.extractSubSection(sectionText, '性格特征分析'),
+      fortuneAnalysis: this.extractSubSection(sectionText, '运势分析'),
+      careerAdvice: this.extractSubSection(sectionText, '事业发展'),
+      relationshipAdvice: this.extractSubSection(sectionText, '感情关系'),
+      healthAdvice: this.extractSubSection(sectionText, '健康养生'),
+      wealthAdvice: this.extractSubSection(sectionText, '财运建议'),
+      luckyElements: this.extractSubSection(sectionText, '开运元素'),
+      summary: this.extractSubSection(sectionText, '总结')
     };
+  }
+
+  // 提取子部分内容
+  private extractSubSection(text: string, keyword: string): string {
+    if (!text) return '';
+    
+    const lines = text.split('\n');
+    let startIndex = -1;
+    let endIndex = lines.length;
+    
+    // 找到包含关键词的行
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].includes(keyword)) {
+        startIndex = i;
+        break;
+      }
+    }
+    
+    if (startIndex === -1) {
+      // 如果没找到标题，尝试直接搜索内容
+      const keywordIndex = text.indexOf(keyword);
+      if (keywordIndex !== -1) {
+        const afterKeyword = text.substring(keywordIndex + keyword.length);
+        const nextSectionIndex = afterKeyword.search(/###|##|\n\n.*[:：]/);
+        if (nextSectionIndex !== -1) {
+          return afterKeyword.substring(0, nextSectionIndex).trim().replace(/^\[/, '').replace(/\]$/, '');
+        } else {
+          return afterKeyword.trim().replace(/^\[/, '').replace(/\]$/, '');
+        }
+      }
+      return '';
+    }
+    
+    // 找到下一个###标题行作为结束
+    for (let i = startIndex + 1; i < lines.length; i++) {
+      if (lines[i].startsWith('###') || lines[i].startsWith('##')) {
+        endIndex = i;
+        break;
+      }
+    }
+    
+    const content = lines.slice(startIndex + 1, endIndex)
+      .join('\n')
+      .trim()
+      .replace(/^\[/, '')
+      .replace(/\]$/, '');
+    
+    return content || '';
   }
 
   // 提取特定部分的内容
   private extractSection(text: string, startKeyword: string, endKeyword: string | null): string {
+    if (!text) return '';
+    
     const startIndex = text.indexOf(startKeyword);
     if (startIndex === -1) return '';
     
@@ -171,12 +294,12 @@ ${Object.entries(baziData.elementalBalance).map(([element, count]) => `- ${eleme
 
     try {
       const prompt = `
-作为八字命理师，请简要分析以下信息：
+作为命理师，请简要分析以下信息：
 生肖：${baziData.zodiac}
 主要五行：${baziData.yearElement}
 五行平衡：${Object.entries(baziData.elementalBalance).map(([element, count]) => `${element}:${count}`).join(', ')}
 
-请用100字以内简要概括此人的性格特点和运势特征。
+请用150字以内简要概括此人从八字和紫微斗数角度的主要特征。
       `;
       
       const response = await axios.post(
@@ -184,7 +307,7 @@ ${Object.entries(baziData.elementalBalance).map(([element, count]) => `- ${eleme
         {
           model: MODEL_NAME,
           messages: [{ role: 'user', content: prompt }],
-          max_tokens: 200,
+          max_tokens: 300,
           temperature: 0.7,
         },
         {
