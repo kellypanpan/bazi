@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import BirthDateForm from '../components/BirthDateForm';
 import BasicResultsDisplay from '../components/BasicResultsDisplay';
 import PremiumFeatures from '../components/PremiumFeatures';
+import ChatInterface from '../components/ChatInterface';
 
 const Readings: React.FC = () => {
   const [formData, setFormData] = useState<FormData | null>(null);
@@ -34,8 +35,16 @@ const Readings: React.FC = () => {
         {!showResults ? (
           <BirthDateForm onSubmit={handleFormSubmit} />
         ) : (
-          <div>
+          <div className="space-y-8">
             <BasicResultsDisplay formData={formData!} />
+            <div className="mt-8">
+              <h2 className="text-2xl font-serif text-white mb-6 text-center">
+                Ask Questions About Your Reading
+              </h2>
+              <ChatInterface 
+                initialContext={`You are a knowledgeable Chinese astrology expert. The user has provided their birth information for a BaZi reading. Please help them understand their chart and answer any questions they may have about their destiny, personality traits, and life path based on their birth data.`}
+              />
+            </div>
             <PremiumFeatures />
           </div>
         )}
