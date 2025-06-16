@@ -5,11 +5,19 @@ import BasicResultsDisplay from '../components/BasicResultsDisplay';
 import PremiumFeatures from '../components/PremiumFeatures';
 import ChatInterface from '../components/ChatInterface';
 
+type BirthData = {
+  name: string;
+  gender: 'male' | 'female';
+  birthDate: string;
+  birthTime: string;
+  location: string;
+};
+
 const Readings: React.FC = () => {
-  const [formData, setFormData] = useState<FormData | null>(null);
+  const [formData, setFormData] = useState<BirthData | null>(null);
   const [showResults, setShowResults] = useState(false);
 
-  const handleFormSubmit = (data: FormData) => {
+  const handleFormSubmit = (data: BirthData) => {
     setFormData(data);
     setShowResults(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });

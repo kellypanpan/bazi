@@ -1,13 +1,59 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FormData } from './BirthDateForm';
+import { BirthData } from './BirthDateForm';
+import { BaziAnalysis, analyzeBazi } from '../services/baziAnalysisService';
 import { Calendar, Clock, Star, Moon, Flame, Droplets, Compass, Sparkles, Sun, Heart, Briefcase, Leaf, Cloud, Mountain, Gem, Waves } from 'lucide-react';
 
 interface BasicResultsDisplayProps {
-  formData: FormData;
+  formData: BirthData;
 }
 
 const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) => {
+  const [analysis, setAnalysis] = useState<BaziAnalysis | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAnalysis = async () => {
+      try {
+        setLoading(true);
+        const result = await analyzeBazi(formData);
+        setAnalysis(result);
+        setError(null);
+      } catch (err) {
+        setError('分析过程中出现错误，请稍后重试。');
+        console.error('Error fetching analysis:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalysis();
+  }, [formData]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+          <p className="text-indigo-300">正在生成您的八字分析...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center p-8 bg-red-900 bg-opacity-30 rounded-xl">
+        <p className="text-red-400">{error}</p>
+      </div>
+    );
+  }
+
+  if (!analysis) {
+    return null;
+  }
+
   const birthYear = new Date(formData.birthDate).getFullYear();
   const birthMonth = new Date(formData.birthDate).getMonth() + 1;
   const birthDay = new Date(formData.birthDate).getDate();

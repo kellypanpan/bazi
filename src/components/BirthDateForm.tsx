@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, User, MapPin } from 'lucide-react';
 
-export interface FormData {
+export type BirthData = {
   name: string;
   gender: 'male' | 'female';
   birthDate: string;
   birthTime: string;
   location: string;
-}
+};
 
 interface BirthDateFormProps {
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: BirthData) => void;
 }
 
 const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<BirthData>({
     name: '',
     gender: 'male',
     birthDate: '',
@@ -23,7 +23,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
     location: ''
   });
 
-  const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [errors, setErrors] = useState<Partial<BirthData>>({});
 
   // Helper function to convert MM/DD/YY to YYYY-MM-DD
   const convertToISODate = (mmddyy: string): string => {
@@ -94,7 +94,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newErrors: Partial<FormData> = {};
+    const newErrors: Partial<BirthData> = {};
 
     if (!formData.name.trim()) {
       newErrors.name = 'Please enter your name';
@@ -144,7 +144,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
       [name]: processedValue
     }));
     
-    if (errors[name as keyof FormData]) {
+    if (errors[name as keyof BirthData]) {
       setErrors(prev => ({
         ...prev,
         [name]: undefined
