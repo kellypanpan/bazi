@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { sendMessage } from '../services/openRouterService';
 import { motion } from 'framer-motion';
 
 interface Message {
@@ -46,15 +45,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialContext }) => {
     setIsLoading(true);
 
     try {
-      const response = await sendMessage([...messages, userMessage]);
+      // Mock response since API is not available
+      await new Promise(resolve => setTimeout(resolve, 1000));
       const assistantMessage: Message = {
         role: 'assistant',
-        content: response.choices[0].message.content
+        content: "I'm here to help you understand your fortune reading! While the live chat feature is currently unavailable, I'd be happy to provide general guidance about astrology and fortune telling. Please feel free to explore your detailed analysis above for comprehensive insights about your personality, career, relationships, and life path."
       };
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error in chat:', error);
-      // You might want to show an error message to the user here
+      const errorMessage: Message = {
+        role: 'assistant',
+        content: "I apologize, but the chat service is currently unavailable. Please refer to your detailed analysis above for insights about your reading."
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }

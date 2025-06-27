@@ -36,7 +36,7 @@ const Readings: React.FC = () => {
             Discover Your Celestial Blueprint
           </h1>
           <p className="text-slate-300 max-w-2xl mx-auto">
-            Enter your birth information below to receive insights based on ancient Chinese astrology systems.
+            Enter your birth information below to receive insights based on ancient astrology systems.
           </p>
         </motion.div>
         
@@ -50,7 +50,7 @@ const Readings: React.FC = () => {
                 Ask Questions About Your Reading
               </h2>
               <ChatInterface 
-                initialContext={`You are a knowledgeable Chinese astrology expert. The user has provided their birth information for a BaZi reading. Please help them understand their chart and answer any questions they may have about their destiny, personality traits, and life path based on their birth data.`}
+                initialContext={`You are a knowledgeable astrology expert. The user has provided their birth information for a fortune reading. Please help them understand their chart and answer any questions they may have about their destiny, personality traits, and life path based on their birth data.`}
               />
             </div>
             <PremiumFeatures />
@@ -83,7 +83,7 @@ const Readings: React.FC = () => {
                 <div className="bg-indigo-950 bg-opacity-70 p-6 rounded-xl">
                   <h3 className="text-xl text-amber-400 mb-4">Zi Wei Dou Shu (Purple Star Astrology)</h3>
                   <p className="text-slate-300 mb-4">
-                    Zi Wei Dou Shu is considered one of the most accurate and comprehensive Chinese astrology systems.
+                    Zi Wei Dou Shu is considered one of the most accurate and comprehensive astrology systems.
                     It creates a detailed chart of 12 palaces representing different life aspects, with various stars 
                     influencing each palace.
                   </p>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Moon, Star } from 'lucide-react';
+import { Menu, X, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Header: React.FC = () => {

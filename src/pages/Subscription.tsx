@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, Star, Calendar, Clock, Laptop, Phone, MessageCircle, FileText, Shield } from 'lucide-react';
+import { Star, Calendar, MessageCircle, FileText, Shield } from 'lucide-react';
 import PremiumFeatures from '../components/PremiumFeatures';
 
 const Subscription: React.FC = () => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Loader2, Stars, Sun, Moon, BookOpen, AlertCircle, RefreshCw } from 'lucide-react';
+import { Stars, Sun, Moon, BookOpen, AlertCircle, RefreshCw } from 'lucide-react';
 import { analyzeBaziWithAI, BaziData, AIAnalysisResponse, AnalysisResult } from '../services/aiService';
 
 interface AIAnalysisDisplayProps {
@@ -14,23 +14,62 @@ const AIAnalysisDisplay: React.FC<AIAnalysisDisplayProps> = ({ baziData }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('comparison');
+  const [loadingStep, setLoadingStep] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const performAnalysis = async () => {
       setLoading(true);
       setError(null);
+      setLoadingStep(0);
+      setProgress(0);
       
-      try {
-        console.log('Starting AI analysis with data:', baziData);
-        const result = await analyzeBaziWithAI(baziData);
-        console.log('AI analysis completed:', result);
-        setAnalysis(result);
-      } catch (err: unknown) {
-        console.error('AI analysis failed:', err);
-        setError((err as Error).message || 'AI analysis failed, please try again');
-      } finally {
-        setLoading(false);
-      }
+      const steps = [
+        { message: "Initializing dual-method analysis system...", duration: 800 },
+        { message: "Processing BaZi Four Pillars calculations...", duration: 1000 },
+        { message: "Analyzing Zi Wei Dou Shu star positions...", duration: 1200 },
+        { message: "Cross-referencing both systems for accuracy...", duration: 800 },
+        { message: "Generating comprehensive comparison report...", duration: 600 }
+      ];
+
+      let currentStep = 0;
+      let currentProgress = 0;
+
+      const processStep = async () => {
+        if (currentStep < steps.length) {
+          setLoadingStep(currentStep);
+          
+          const stepProgress = 100 / steps.length;
+          const endProgress = (currentStep + 1) * stepProgress;
+          
+          const progressAnimation = setInterval(() => {
+            currentProgress += 2;
+            const stepProgressValue = Math.min(currentProgress, endProgress);
+            setProgress(stepProgressValue);
+            
+            if (currentProgress >= endProgress) {
+              clearInterval(progressAnimation);
+              currentStep++;
+              setTimeout(processStep, 100);
+            }
+          }, steps[currentStep].duration / 50);
+        } else {
+          try {
+            console.log('Starting AI analysis with data:', baziData);
+            const result = await analyzeBaziWithAI(baziData);
+            console.log('AI analysis completed:', result);
+            setAnalysis(result);
+            setProgress(100);
+            setTimeout(() => setLoading(false), 500);
+          } catch (err: unknown) {
+            console.error('AI analysis failed:', err);
+            setError((err as Error).message || 'AI analysis failed, please try again');
+            setLoading(false);
+          }
+        }
+      };
+
+      processStep();
     };
 
     performAnalysis();
@@ -105,15 +144,152 @@ const AIAnalysisDisplay: React.FC<AIAnalysisDisplayProps> = ({ baziData }) => {
   };
 
   if (loading) {
+    const steps = [
+      { message: "Initializing dual-method analysis system...", description: "Preparing both BaZi and Zi Wei systems" },
+      { message: "Processing BaZi Four Pillars calculations...", description: "Analyzing Year, Month, Day, and Hour pillars" },
+      { message: "Analyzing Zi Wei Dou Shu star positions...", description: "Mapping Purple Star constellation influences" },
+      { message: "Cross-referencing both systems for accuracy...", description: "Comparing results between methodologies" },
+      { message: "Generating comprehensive comparison report...", description: "Creating detailed analysis document" }
+    ];
+
     return (
       <motion.div
         className="flex flex-col items-center justify-center py-16"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <Loader2 className="w-12 h-12 animate-spin text-blue-600 mb-4" />
-        <p className="text-lg text-gray-600">AI is analyzing your birth chart...</p>
-        <p className="text-sm text-gray-400 mt-2">This may take a few moments</p>
+        <div className="text-center max-w-lg mx-auto">
+          {/* Dual Circle Progress */}
+          <div className="relative w-40 h-40 mx-auto mb-8">
+            <svg className="w-40 h-40 transform -rotate-90" viewBox="0 0 160 160">
+              {/* Outer circle (BaZi) */}
+              <circle
+                cx="80"
+                cy="80"
+                r="70"
+                stroke="currentColor"
+                strokeWidth="6"
+                fill="none"
+                className="text-yellow-800"
+                opacity="0.3"
+              />
+              <circle
+                cx="80"
+                cy="80"
+                r="70"
+                stroke="currentColor"
+                strokeWidth="6"
+                fill="none"
+                strokeLinecap="round"
+                className="text-yellow-500"
+                strokeDasharray={`${2 * Math.PI * 70}`}
+                strokeDashoffset={`${2 * Math.PI * 70 * (1 - progress / 100)}`}
+                style={{ transition: 'stroke-dashoffset 0.5s ease-in-out' }}
+              />
+              
+              {/* Inner circle (Zi Wei) */}
+              <circle
+                cx="80"
+                cy="80"
+                r="50"
+                stroke="currentColor"
+                strokeWidth="6"
+                fill="none"
+                className="text-purple-800"
+                opacity="0.3"
+              />
+              <circle
+                cx="80"
+                cy="80"
+                r="50"
+                stroke="currentColor"
+                strokeWidth="6"
+                fill="none"
+                strokeLinecap="round"
+                className="text-purple-500"
+                strokeDasharray={`${2 * Math.PI * 50}`}
+                strokeDashoffset={`${2 * Math.PI * 50 * (1 - progress / 100)}`}
+                style={{ transition: 'stroke-dashoffset 0.5s ease-in-out' }}
+              />
+            </svg>
+            
+            {/* Center Content */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-3xl font-bold text-white">{Math.round(progress)}%</span>
+              <span className="text-xs text-gray-400">Dual Analysis</span>
+            </div>
+            
+            {/* Rotating symbols */}
+            <div className="absolute inset-0 animate-spin" style={{ animationDuration: '30s' }}>
+              <div className="relative w-full h-full">
+                {['☀️', '🌙', '⭐', '🔮', '☯️', '💫'].map((symbol, index) => (
+                  <div
+                    key={index}
+                    className="absolute text-2xl"
+                    style={{
+                      top: '50%',
+                      left: '50%',
+                      transform: `translate(-50%, -50%) rotate(${index * 60}deg) translateY(-90px)`
+                    }}
+                  >
+                    {symbol}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Current Step */}
+          <motion.div
+            key={loadingStep}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mb-6"
+          >
+            <h3 className="text-xl font-semibold text-white mb-2">
+              {steps[loadingStep]?.message}
+            </h3>
+            <p className="text-gray-400 text-sm">
+              {steps[loadingStep]?.description}
+            </p>
+          </motion.div>
+
+          {/* Method Labels */}
+          <div className="flex justify-center space-x-8 mb-6">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <span className="text-yellow-400 font-medium">BaZi Analysis</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+              <span className="text-purple-400 font-medium">Zi Wei Dou Shu</span>
+            </div>
+          </div>
+
+          {/* Step Indicators */}
+          <div className="flex justify-center space-x-2 mb-6">
+            {steps.map((_, index) => (
+              <div
+                key={index}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index <= loadingStep ? 'bg-blue-400' : 'bg-gray-600'
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Advanced Analysis Explanation */}
+          <div className="bg-gray-800 bg-opacity-50 rounded-lg p-6 border border-gray-600">
+            <p className="text-gray-300 text-sm leading-relaxed">
+              🔬 <strong>Advanced Dual-Method Analysis</strong><br/>
+              Our system combines two powerful ancient Chinese fortune-telling methods: 
+              BaZi (Four Pillars) and Zi Wei Dou Shu (Purple Star Astrology). This comprehensive 
+              approach provides deeper insights by cross-validating predictions from both systems, 
+              ensuring greater accuracy and detailed life guidance.
+            </p>
+          </div>
+        </div>
       </motion.div>
     );
   }

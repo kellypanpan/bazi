@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Clock, Calendar, Compass, Map, Star, Clock3 } from 'lucide-react';
+import { Calendar, Star } from 'lucide-react';
 
 const About: React.FC = () => {
   return (

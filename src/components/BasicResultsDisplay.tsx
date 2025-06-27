@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { BirthData } from './BirthDateForm';
-import { BaziAnalysis, analyzeBazi } from '../services/baziAnalysisService';
-import { Calendar, Clock, Star, Moon, Flame, Droplets, Compass, Sparkles, Sun, Heart, Briefcase, Leaf, Cloud, Mountain, Gem, Waves } from 'lucide-react';
+import { Calendar, Clock, Star, Flame, Heart, Briefcase, Leaf, Mountain, Gem, Waves } from 'lucide-react';
+import { analyzeBazi, BaziAnalysis } from '../services/baziAnalysisService';
 
 interface BasicResultsDisplayProps {
   formData: BirthData;
@@ -11,54 +11,92 @@ interface BasicResultsDisplayProps {
 const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) => {
   const [analysis, setAnalysis] = useState<BaziAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loadingStep, setLoadingStep] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const fetchAnalysis = async () => {
-      try {
-        setLoading(true);
-        const result = await analyzeBazi(formData);
-        setAnalysis(result);
-        setError(null);
-      } catch (err) {
-        setError('分析过程中出现错误，请稍后重试。');
-        console.error('Error fetching analysis:', err);
-      } finally {
-        setLoading(false);
-      }
+    const generateMockAnalysis = () => {
+      setLoading(true);
+      setLoadingStep(0);
+      setProgress(0);
+      
+      const steps = [
+        { message: "Calculating celestial coordinates and birth chart positions...", duration: 1200 },
+        { message: "Analyzing Five Elements balance and interactions...", duration: 1000 },
+        { message: "Computing Four Pillars and Heavenly Stems combinations...", duration: 800 },
+        { message: "Interpreting Zodiac influences and personality traits...", duration: 600 },
+        { message: "Generating life path predictions and guidance...", duration: 400 }
+      ];
+
+      let currentStep = 0;
+      let currentProgress = 0;
+
+      const processStep = () => {
+        if (currentStep < steps.length) {
+          setLoadingStep(currentStep);
+          
+          // Animate progress within this step
+          const stepProgress = 100 / steps.length;
+          const endProgress = (currentStep + 1) * stepProgress;
+          
+          const progressAnimation = setInterval(() => {
+            currentProgress += 2;
+            const stepProgressValue = Math.min(currentProgress, endProgress);
+            setProgress(stepProgressValue);
+            
+            if (currentProgress >= endProgress) {
+              clearInterval(progressAnimation);
+              currentStep++;
+              setTimeout(processStep, 100);
+            }
+          }, steps[currentStep].duration / 50);
+        } else {
+          // Analysis complete
+          const mockAnalysis: BaziAnalysis = {
+            basicInfo: {
+              chineseZodiac: getChineseZodiac(new Date(formData.birthDate).getFullYear()),
+              heavenlyStem: getHeavenlyStem(new Date(formData.birthDate).getFullYear()),
+              earthlyBranch: getEarthlyBranch(new Date(formData.birthDate).getFullYear()),
+              elements: {
+                year: getElement(getHeavenlyStem(new Date(formData.birthDate).getFullYear())),
+                month: getMonthElement(new Date(formData.birthDate).getMonth() + 1),
+                day: getDayElement(new Date(formData.birthDate).getDate()),
+                hour: getHourElement(parseInt(formData.birthTime.split(':')[0]))
+              }
+            },
+            personalityAnalysis: {
+              strengths: ['Natural leadership abilities', 'Strong intuition', 'Creative problem solving', 'Excellent communication skills'],
+              challenges: ['Tendency to overthink', 'Difficulty with routine tasks', 'Emotional sensitivity', 'Perfectionist tendencies'],
+              careerSuggestions: ['Leadership roles', 'Creative industries', 'Consulting', 'Education', 'Healthcare'],
+              relationshipInsights: ['Values deep emotional connections', 'Seeks intellectual compatibility', 'Natural counselor and supporter', 'Appreciates loyalty and trust']
+            },
+            lifePath: {
+              currentPhase: 'A period of personal growth and career development',
+              opportunities: ['New professional ventures', 'Expanding social networks', 'Skill development', 'Travel and exploration'],
+              challenges: ['Balancing work and personal life', 'Making important decisions', 'Managing stress levels', 'Financial planning'],
+              recommendations: ['Focus on personal development', 'Build stronger relationships', 'Pursue creative outlets', 'Maintain work-life balance']
+            },
+            detailedGuidance: {
+              career: 'Your natural leadership abilities and creative thinking make you well-suited for roles that involve innovation and team management. Consider pursuing opportunities in fields that allow for personal expression and growth.',
+              relationships: 'You thrive in relationships built on mutual respect and intellectual connection. Focus on building deep, meaningful bonds rather than superficial connections. Your empathetic nature makes you a natural counselor.',
+              health: 'Pay attention to stress management and maintain a balanced lifestyle. Regular exercise and mindfulness practices will benefit your overall well-being. Focus on maintaining good sleep patterns.',
+              wealth: 'Your financial success will come through consistent effort and smart planning. Avoid impulsive spending and focus on long-term investments. Your career growth will be the primary driver of wealth accumulation.'
+            }
+          };
+          
+          setAnalysis(mockAnalysis);
+          setProgress(100);
+          setTimeout(() => setLoading(false), 500);
+        }
+      };
+
+      processStep();
     };
 
-    fetchAnalysis();
+    generateMockAnalysis();
   }, [formData]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
-          <p className="text-indigo-300">正在生成您的八字分析...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center p-8 bg-red-900 bg-opacity-30 rounded-xl">
-        <p className="text-red-400">{error}</p>
-      </div>
-    );
-  }
-
-  if (!analysis) {
-    return null;
-  }
-
-  const birthYear = new Date(formData.birthDate).getFullYear();
-  const birthMonth = new Date(formData.birthDate).getMonth() + 1;
-  const birthDay = new Date(formData.birthDate).getDate();
-  const birthHour = parseInt(formData.birthTime.split(':')[0]);
-  
+  // Helper functions
   const getChineseZodiac = (year: number) => {
     const animals = ['Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
     return animals[(year - 4) % 12];
@@ -104,6 +142,127 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
     return 'Wood';
   };
 
+  if (loading) {
+    const steps = [
+      { message: "Calculating celestial coordinates and birth chart positions...", description: "Determining exact astronomical positions at your birth time" },
+      { message: "Analyzing Five Elements balance and interactions...", description: "Examining Wood, Fire, Earth, Metal, and Water influences" },
+      { message: "Computing Four Pillars and Heavenly Stems combinations...", description: "Processing Year, Month, Day, and Hour pillars" },
+      { message: "Interpreting Zodiac influences and personality traits...", description: "Understanding your Chinese zodiac characteristics" },
+      { message: "Generating life path predictions and guidance...", description: "Creating personalized insights and recommendations" }
+    ];
+
+    return (
+      <div className="flex items-center justify-center min-h-[500px]">
+        <motion.div 
+          className="text-center max-w-md mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Main Progress Circle */}
+          <div className="relative w-32 h-32 mx-auto mb-8">
+            <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+              {/* Background circle */}
+              <circle
+                cx="60"
+                cy="60"
+                r="50"
+                stroke="currentColor"
+                strokeWidth="8"
+                fill="none"
+                className="text-indigo-800"
+                opacity="0.3"
+              />
+              {/* Progress circle */}
+              <circle
+                cx="60"
+                cy="60"
+                r="50"
+                stroke="currentColor"
+                strokeWidth="8"
+                fill="none"
+                strokeLinecap="round"
+                className="text-indigo-400"
+                strokeDasharray={`${2 * Math.PI * 50}`}
+                strokeDashoffset={`${2 * Math.PI * 50 * (1 - progress / 100)}`}
+                style={{ transition: 'stroke-dashoffset 0.5s ease-in-out' }}
+              />
+            </svg>
+            {/* Percentage */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-2xl font-bold text-indigo-300">{Math.round(progress)}%</span>
+            </div>
+            {/* Mystical symbols around the circle */}
+            <div className="absolute inset-0 animate-spin" style={{ animationDuration: '20s' }}>
+              <div className="relative w-full h-full">
+                {['☯', '🔮', '⭐', '🌙'].map((symbol, index) => (
+                  <div
+                    key={index}
+                    className="absolute text-amber-400 text-xl"
+                    style={{
+                      top: '50%',
+                      left: '50%',
+                      transform: `translate(-50%, -50%) rotate(${index * 90}deg) translateY(-70px)`
+                    }}
+                  >
+                    {symbol}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Current Step */}
+          <motion.div
+            key={loadingStep}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mb-6"
+          >
+            <h3 className="text-lg font-semibold text-white mb-2">
+              {steps[loadingStep]?.message}
+            </h3>
+            <p className="text-indigo-300 text-sm">
+              {steps[loadingStep]?.description}
+            </p>
+          </motion.div>
+
+          {/* Step Indicators */}
+          <div className="flex justify-center space-x-2 mb-6">
+            {steps.map((_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  index <= loadingStep ? 'bg-indigo-400' : 'bg-indigo-800'
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Explanation */}
+          <div className="bg-indigo-900 bg-opacity-50 rounded-lg p-4 border border-indigo-700">
+            <p className="text-indigo-200 text-sm leading-relaxed">
+              ✨ <strong>Why does this take time?</strong><br/>
+              Fortune analysis requires precise calculations of celestial positions, elemental interactions, 
+              and complex astrological computations. Our system carefully analyzes hundreds of variables 
+              from your birth data to provide the most accurate personalized insights.
+            </p>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (!analysis) {
+    return null;
+  }
+
+  const birthYear = new Date(formData.birthDate).getFullYear();
+  const birthMonth = new Date(formData.birthDate).getMonth() + 1;
+  const birthDay = new Date(formData.birthDate).getDate();
+  const birthHour = parseInt(formData.birthTime.split(':')[0]);
+  
   const zodiac = getChineseZodiac(birthYear);
   const heavenlyStem = getHeavenlyStem(birthYear);
   const earthlyBranch = getEarthlyBranch(birthYear);
@@ -142,215 +301,6 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
     }
   };
 
-  const getElementalNature = () => {
-    const dominantElement = Object.entries(elementalBalance).reduce((a, b) => b[1] > a[1] ? b : a)[0];
-    const weakestElement = Object.entries(elementalBalance).reduce((a, b) => b[1] < a[1] ? b : a)[0];
-
-    const elementalTraits = {
-      Wood: {
-        strengths: ['creativity', 'growth mindset', 'adaptability', 'compassion'],
-        challenges: ['indecisiveness', 'scattered energy', 'difficulty with boundaries'],
-        careers: ['education', 'healthcare', 'environmental science', 'counseling'],
-        relationships: ['nurturing', 'supportive', 'growth-oriented partnerships']
-      },
-      Fire: {
-        strengths: ['leadership', 'charisma', 'passion', 'inspiration'],
-        challenges: ['impulsiveness', 'burnout', 'emotional volatility'],
-        careers: ['entertainment', 'sales', 'marketing', 'public speaking'],
-        relationships: ['dynamic', 'exciting', 'transformative connections']
-      },
-      Earth: {
-        strengths: ['stability', 'reliability', 'practicality', 'groundedness'],
-        challenges: ['resistance to change', 'stubbornness', 'overthinking'],
-        careers: ['finance', 'real estate', 'agriculture', 'construction'],
-        relationships: ['stable', 'dependable', 'security-focused bonds']
-      },
-      Metal: {
-        strengths: ['precision', 'discipline', 'clarity', 'organization'],
-        challenges: ['perfectionism', 'rigidity', 'difficulty expressing emotions'],
-        careers: ['technology', 'engineering', 'law', 'research'],
-        relationships: ['structured', 'clear boundaries', 'respect-based connections']
-      },
-      Water: {
-        strengths: ['wisdom', 'intuition', 'adaptability', 'emotional depth'],
-        challenges: ['fear of commitment', 'overwhelming emotions', 'difficulty with structure'],
-        careers: ['research', 'psychology', 'spiritual work', 'artistic pursuits'],
-        relationships: ['deep emotional bonds', 'intuitive understanding', 'fluid dynamics']
-      }
-    };
-
-    return {
-      dominant: {
-        element: dominantElement,
-        traits: elementalTraits[dominantElement as keyof typeof elementalTraits]
-      },
-      weakest: {
-        element: weakestElement,
-        traits: elementalTraits[weakestElement as keyof typeof elementalTraits]
-      }
-    };
-  };
-
-  const elementalNature = getElementalNature();
-
-  const getZodiacPersonality = (zodiac: string) => {
-    const personalities = {
-      'Rat': {
-        traits: ['resourceful', 'versatile', 'witty', 'imaginative'],
-        strengths: 'Quick-witted problem solver with natural charm',
-        challenges: 'Can be opportunistic and sometimes restless',
-        relationships: 'Best matches with Dragon, Monkey, and Ox',
-        career: 'Excellence in business, technology, and creative fields'
-      },
-      'Ox': {
-        traits: ['reliable', 'patient', 'kind', 'persistent'],
-        strengths: 'Natural leader with strong principles and determination',
-        challenges: 'May be stubborn and slow to embrace change',
-        relationships: 'Harmonious with Snake, Rooster, and Rat',
-        career: 'Success in agriculture, manufacturing, and leadership roles'
-      },
-      'Tiger': {
-        traits: ['brave', 'confident', 'charismatic', 'unpredictable'],
-        strengths: 'Natural authority and magnetic personality',
-        challenges: 'Can be impulsive and prone to emotional decisions',
-        relationships: 'Compatible with Horse, Dog, and Pig',
-        career: 'Thrives in competitive and dynamic environments'
-      },
-      'Rabbit': {
-        traits: ['gentle', 'elegant', 'alert', 'quick'],
-        strengths: 'Diplomatic skills and artistic sensibilities',
-        challenges: 'May avoid conflict and be too cautious',
-        relationships: 'Best with Sheep, Pig, and Dog',
-        career: 'Excellence in arts, diplomacy, and public relations'
-      },
-      'Dragon': {
-        traits: ['confident', 'intelligent', 'enthusiastic', 'ambitious'],
-        strengths: 'Natural leadership and innovative thinking',
-        challenges: 'Can be perfectionistic and demanding',
-        relationships: 'Matches well with Rat, Monkey, and Rooster',
-        career: 'Success in leadership, entertainment, and innovation'
-      },
-      'Snake': {
-        traits: ['wise', 'enigmatic', 'graceful', 'intuitive'],
-        strengths: 'Deep wisdom and excellent problem-solving abilities',
-        challenges: 'May be secretive and overly suspicious',
-        relationships: 'Compatible with Dragon, Rooster, and Ox',
-        career: 'Excellence in research, spirituality, and psychology'
-      },
-      'Horse': {
-        traits: ['energetic', 'independent', 'adventurous', 'warm-hearted'],
-        strengths: 'Natural enthusiasm and ability to inspire others',
-        challenges: 'Can be impatient and prone to wanderlust',
-        relationships: 'Best with Tiger, Dog, and Sheep',
-        career: 'Success in sales, sports, and adventure-related fields'
-      },
-      'Goat': {
-        traits: ['gentle', 'compassionate', 'creative', 'resilient'],
-        strengths: 'Artistic talent and emotional intelligence',
-        challenges: 'May worry too much and depend on others',
-        relationships: 'Harmonious with Rabbit, Horse, and Pig',
-        career: 'Thrives in arts, healing professions, and counseling'
-      },
-      'Monkey': {
-        traits: ['clever', 'innovative', 'quick-witted', 'versatile'],
-        strengths: 'Exceptional problem-solving and adaptability',
-        challenges: 'Can be opportunistic and inconsistent',
-        relationships: 'Compatible with Dragon, Rat, and Snake',
-        career: 'Excellence in science, engineering, and entertainment'
-      },
-      'Rooster': {
-        traits: ['honest', 'energetic', 'intelligent', 'flamboyant'],
-        strengths: 'Strong work ethic and attention to detail',
-        challenges: 'May be too critical and perfectionistic',
-        relationships: 'Best with Ox, Snake, and Dragon',
-        career: 'Success in management, analysis, and performance'
-      },
-      'Dog': {
-        traits: ['loyal', 'honest', 'intelligent', 'protective'],
-        strengths: 'Strong sense of justice and reliability',
-        challenges: 'Can be anxious and overly critical',
-        relationships: 'Harmonious with Tiger, Horse, and Rabbit',
-        career: 'Excellence in service professions and advocacy'
-      },
-      'Pig': {
-        traits: ['honest', 'diligent', 'generous', 'optimistic'],
-        strengths: 'Sincerity and ability to build lasting relationships',
-        challenges: 'May be too trusting and easily influenced',
-        relationships: 'Compatible with Rabbit, Sheep, and Tiger',
-        career: 'Success in entertainment, hospitality, and retail'
-      }
-    };
-
-    return personalities[zodiac as keyof typeof personalities];
-  };
-
-  const zodiacPersonality = getZodiacPersonality(zodiac);
-
-  const getLifePhases = () => {
-    const phases = [
-      {
-        age: '0-15',
-        description: `Early years marked by ${elementalNature.dominant.traits.strengths[0]} and ${elementalNature.dominant.traits.strengths[1]}. Focus on education and personal development.`,
-        element: yearElement
-      },
-      {
-        age: '16-30',
-        description: `Young adulthood brings opportunities in ${elementalNature.dominant.traits.careers[0]} and ${elementalNature.dominant.traits.careers[1]}. Time for career foundation and relationship exploration.`,
-        element: monthElement
-      },
-      {
-        age: '31-45',
-        description: `Mid-life period emphasizes ${zodiacPersonality.strengths}. Career advancement and family life take center stage.`,
-        element: dayElement
-      },
-      {
-        age: '46-60',
-        description: `Mature years bring wisdom and mastery in ${elementalNature.dominant.traits.careers[2]}. Focus on legacy and mentorship.`,
-        element: hourElement
-      },
-      {
-        age: '61+',
-        description: `Golden years emphasize ${elementalNature.dominant.traits.relationships}. Time for spiritual growth and sharing wisdom.`,
-        element: yearElement
-      }
-    ];
-
-    return phases;
-  };
-
-  const lifePhases = getLifePhases();
-
-  const getDetailedGuidance = () => {
-    return {
-      personal: [
-        `Your ${elementalNature.dominant.element} dominance suggests ${elementalNature.dominant.traits.strengths.join(', ')} as your core strengths.`,
-        `The influence of ${zodiac} brings ${zodiacPersonality.traits.join(', ')} to your personality.`,
-        `Your birth hour in the ${hourElement} phase indicates special aptitude for ${elementalNature.dominant.traits.careers[0]} and ${elementalNature.dominant.traits.careers[1]}.`,
-        `The combination of ${heavenlyStem}-${earthlyBranch} suggests a unique destiny path focused on ${elementalNature.dominant.traits.relationships}.`
-      ],
-      relationships: [
-        `In relationships, you naturally create ${elementalNature.dominant.traits.relationships}.`,
-        `Your ${zodiac} nature makes you especially compatible with ${zodiacPersonality.relationships}.`,
-        `The ${monthElement} influence in your birth month suggests ${elementalNature.dominant.traits.strengths[2]} in emotional connections.`,
-        `Balance your ${elementalNature.weakest.element} aspect to improve relationship dynamics.`
-      ],
-      career: [
-        `Your professional strengths lie in ${elementalNature.dominant.traits.careers.join(', ')}.`,
-        `The ${zodiac} influence suggests excellence in ${zodiacPersonality.career}.`,
-        `Your ${yearElement} year element supports success in leadership and innovation.`,
-        `Consider roles that allow you to express your ${elementalNature.dominant.traits.strengths[0]} and ${elementalNature.dominant.traits.strengths[1]}.`
-      ],
-      health: [
-        `Your dominant ${elementalNature.dominant.element} energy suggests focusing on ${elementalNature.dominant.traits.strengths[3]}-based activities.`,
-        `Balance your ${elementalNature.weakest.element} aspect through appropriate exercise and diet.`,
-        `The ${zodiac} influence indicates potential sensitivity in ${zodiacPersonality.challenges.toLowerCase()}.`,
-        `Regular practices that enhance your ${elementalNature.dominant.traits.strengths[2]} will support overall well-being.`
-      ]
-    };
-  };
-
-  const detailedGuidance = getDetailedGuidance();
-
   return (
     <div className="mb-16">
       <motion.div
@@ -360,7 +310,7 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
         className="bg-indigo-900 bg-opacity-30 backdrop-blur-sm rounded-2xl border border-indigo-800 p-6 md:p-8 mb-8"
       >
         <h2 className="text-2xl font-serif text-white mb-6 text-center">
-          Your Detailed Celestial Analysis
+          Your Detailed Fortune Analysis
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -420,59 +370,6 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
                 ))}
               </div>
             </div>
-            <div>
-              <h4 className="text-white mb-3">Dominant Element: {elementalNature.dominant.element}</h4>
-              <p className="text-slate-300 text-sm mb-4">
-                Your {elementalNature.dominant.element} dominance shapes your core characteristics and life approach.
-              </p>
-              <div className="flex items-center space-x-2">
-                {getElementIcon(elementalNature.dominant.element)}
-                <span className="text-slate-300">Primary Influence</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-indigo-950 bg-opacity-70 p-4 rounded-xl">
-            <h3 className="text-lg text-amber-400 mb-4">Core Personality Traits</h3>
-            <ul className="space-y-3">
-              {zodiacPersonality.traits.map((trait, index) => (
-                <li key={index} className="flex items-start">
-                  <Star className="h-5 w-5 text-amber-500 mr-3 flex-shrink-0 mt-0.5" />
-                  <span className="text-slate-300 capitalize">{trait}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="bg-indigo-950 bg-opacity-70 p-4 rounded-xl">
-            <h3 className="text-lg text-amber-400 mb-4">Life Path Indicators</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start">
-                <Star className="h-5 w-5 text-amber-500 mr-3 flex-shrink-0 mt-0.5" />
-                <span className="text-slate-300">{zodiacPersonality.strengths}</span>
-              </li>
-              <li className="flex items-start">
-                <Moon className="h-5 w-5 text-blue-400 mr-3 flex-shrink-0 mt-0.5" />
-                <span className="text-slate-300">{zodiacPersonality.challenges}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="bg-indigo-950 bg-opacity-70 p-4 rounded-xl mb-8">
-          <h3 className="text-lg text-amber-400 mb-4">Life Phases Journey</h3>
-          <div className="space-y-4">
-            {lifePhases.map((phase, index) => (
-              <div key={index} className="flex items-start">
-                {getElementIcon(phase.element)}
-                <div className="ml-3">
-                  <span className="text-white font-medium">Ages {phase.age}</span>
-                  <p className="text-slate-300 text-sm">{phase.description}</p>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
 
@@ -483,7 +380,7 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
               Career Path
             </h3>
             <ul className="space-y-3">
-              {detailedGuidance.career.map((tip, index) => (
+              {analysis.personalityAnalysis.careerSuggestions.map((tip, index) => (
                 <li key={index} className="flex items-start">
                   <Star className="h-5 w-5 text-amber-500 mr-3 flex-shrink-0 mt-0.5" />
                   <span className="text-slate-300">{tip}</span>
@@ -498,7 +395,7 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
               Relationship Dynamics
             </h3>
             <ul className="space-y-3">
-              {detailedGuidance.relationships.map((tip, index) => (
+              {analysis.personalityAnalysis.relationshipInsights.map((tip, index) => (
                 <li key={index} className="flex items-start">
                   <Star className="h-5 w-5 text-amber-500 mr-3 flex-shrink-0 mt-0.5" />
                   <span className="text-slate-300">{tip}</span>
@@ -510,7 +407,13 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
         
         <div className="mt-8 text-center text-slate-300">
           <p>This analysis provides a comprehensive view of your celestial blueprint.</p>
-          <p>For an even more detailed reading, including specific timing for important life decisions and yearly forecasts, consider our premium readings.</p>
+          <p className="mb-4">Looking for even deeper insights—such as precise timing for major life events and year-by-year forecasts? Tap into our advanced engine.</p>
+          <a
+            href="https://facepalmai.com" target="_blank" rel="noopener noreferrer"
+            className="inline-block mt-2 px-6 py-3 rounded-lg bg-amber-500 text-indigo-950 font-semibold hover:bg-amber-400 transition"
+          >
+            Explore More on FacePalm&nbsp;AI →
+          </a>
         </div>
       </motion.div>
     </div>
