@@ -15,7 +15,7 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const generateMockAnalysis = () => {
+    const performAnalysis = async () => {
       setLoading(true);
       setLoadingStep(0);
       setProgress(0);
@@ -31,7 +31,7 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
       let currentStep = 0;
       let currentProgress = 0;
 
-      const processStep = () => {
+      const processStep = async () => {
         if (currentStep < steps.length) {
           setLoadingStep(currentStep);
           
@@ -51,49 +51,25 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
             }
           }, steps[currentStep].duration / 50);
         } else {
-          // Analysis complete
-          const mockAnalysis: BaziAnalysis = {
-            basicInfo: {
-              chineseZodiac: getChineseZodiac(new Date(formData.birthDate).getFullYear()),
-              heavenlyStem: getHeavenlyStem(new Date(formData.birthDate).getFullYear()),
-              earthlyBranch: getEarthlyBranch(new Date(formData.birthDate).getFullYear()),
-              elements: {
-                year: getElement(getHeavenlyStem(new Date(formData.birthDate).getFullYear())),
-                month: getMonthElement(new Date(formData.birthDate).getMonth() + 1),
-                day: getDayElement(new Date(formData.birthDate).getDate()),
-                hour: getHourElement(parseInt(formData.birthTime.split(':')[0]))
-              }
-            },
-            personalityAnalysis: {
-              strengths: ['Natural leadership abilities', 'Strong intuition', 'Creative problem solving', 'Excellent communication skills'],
-              challenges: ['Tendency to overthink', 'Difficulty with routine tasks', 'Emotional sensitivity', 'Perfectionist tendencies'],
-              careerSuggestions: ['Leadership roles', 'Creative industries', 'Consulting', 'Education', 'Healthcare'],
-              relationshipInsights: ['Values deep emotional connections', 'Seeks intellectual compatibility', 'Natural counselor and supporter', 'Appreciates loyalty and trust']
-            },
-            lifePath: {
-              currentPhase: 'A period of personal growth and career development',
-              opportunities: ['New professional ventures', 'Expanding social networks', 'Skill development', 'Travel and exploration'],
-              challenges: ['Balancing work and personal life', 'Making important decisions', 'Managing stress levels', 'Financial planning'],
-              recommendations: ['Focus on personal development', 'Build stronger relationships', 'Pursue creative outlets', 'Maintain work-life balance']
-            },
-            detailedGuidance: {
-              career: 'Your natural leadership abilities and creative thinking make you well-suited for roles that involve innovation and team management. Consider pursuing opportunities in fields that allow for personal expression and growth.',
-              relationships: 'You thrive in relationships built on mutual respect and intellectual connection. Focus on building deep, meaningful bonds rather than superficial connections. Your empathetic nature makes you a natural counselor.',
-              health: 'Pay attention to stress management and maintain a balanced lifestyle. Regular exercise and mindfulness practices will benefit your overall well-being. Focus on maintaining good sleep patterns.',
-              wealth: 'Your financial success will come through consistent effort and smart planning. Avoid impulsive spending and focus on long-term investments. Your career growth will be the primary driver of wealth accumulation.'
-            }
-          };
-          
-          setAnalysis(mockAnalysis);
-          setProgress(100);
-          setTimeout(() => setLoading(false), 500);
+          try {
+            console.log('🔮 Starting real API analysis...');
+            const result = await analyzeBazi(formData);
+            console.log('✅ API analysis completed:', result);
+            setAnalysis(result);
+            setProgress(100);
+            setTimeout(() => setLoading(false), 500);
+          } catch (error) {
+            console.error('❌ API analysis failed:', error);
+            // Show error or fallback to mock data
+            setLoading(false);
+          }
         }
       };
 
       processStep();
     };
 
-    generateMockAnalysis();
+    performAnalysis();
   }, [formData]);
 
   // Helper functions

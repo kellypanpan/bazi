@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1';
-const MODEL = 'deepseek/deepseek-r1-0528:free';
-const API_KEY = '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';
+const MODEL = 'qwen/qwen3-8b:free';
+const API_KEY = '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';
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
