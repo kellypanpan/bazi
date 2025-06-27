@@ -113,7 +113,7 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
   const hourElement = getHourElement(birthHour);
 
   const getElementalBalance = () => {
-    const elements = {
+    const elements: Record<string, number> = {
       Wood: 0,
       Fire: 0,
       Earth: 0,
@@ -121,10 +121,10 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
       Water: 0
     };
 
-    elements[yearElement]++;
-    elements[monthElement]++;
-    elements[dayElement]++;
-    elements[hourElement]++;
+    elements[yearElement] = (elements[yearElement] || 0) + 1;
+    elements[monthElement] = (elements[monthElement] || 0) + 1;
+    elements[dayElement] = (elements[dayElement] || 0) + 1;
+    elements[hourElement] = (elements[hourElement] || 0) + 1;
 
     return elements;
   };
