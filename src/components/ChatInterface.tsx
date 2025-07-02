@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
+
 interface Message {
   role: 'user' | 'assistant' | 'system';
   content: string;
