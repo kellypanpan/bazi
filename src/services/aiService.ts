@@ -19,6 +19,43 @@ export interface AnalysisResult {
   summary: string;
 }
 
+export interface DetailedBaziAnalysis {
+  careerForecast: {
+    next12Months: string;
+    luckyDays: string[];
+    recommendations: string;
+    score: number;
+  };
+  wealthAnalysis: {
+    overallTrend: string;
+    windfall: string;
+    investments: string;
+    score: number;
+  };
+  marriageDestiny: {
+    romanticFortune: string;
+    compatibility: string;
+    bestMarriageTime: string;
+    score: number;
+  };
+  healthInsights: {
+    potentialIssues: string;
+    preventiveCare: string;
+    recommendations: string;
+    score: number;
+  };
+  annualForecast: {
+    year2025: { month: string; prediction: string; score: number; }[];
+    year2026: { month: string; prediction: string; score: number; }[];
+  };
+  lifeOverview: {
+    overallScore: number;
+    strengthsWeaknesses: string;
+    lifeThemes: string;
+    spiritualPath: string;
+  };
+}
+
 export interface AIAnalysisResponse {
   bazi: AnalysisResult;
   ziwei: AnalysisResult;
@@ -54,13 +91,13 @@ export const analyzeBaziWithAI = async (baziData: BaziData): Promise<AIAnalysisR
           }
         }
       } catch (apiError) {
-        console.log(`API ${api.url} failed:`, apiError.message);
+        console.log(`API ${api.url} failed:`, (apiError as Error).message);
         continue;
       }
     }
 
     throw new Error('All AI APIs failed');
-  } catch (error) {
+  } catch {
     console.log('🔄 All AI APIs unavailable, using enhanced mock data');
     // Enhanced mock data with more realistic delay
     await new Promise(resolve => setTimeout(resolve, 2000));

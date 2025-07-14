@@ -4,6 +4,7 @@ import BirthDateForm from '../components/BirthDateForm';
 import BasicResultsDisplay from '../components/BasicResultsDisplay';
 import PremiumFeatures from '../components/PremiumFeatures';
 import ChatInterface from '../components/ChatInterface';
+import DetailedResultsSection from '../components/DetailedResultsSection';
 
 type BirthData = {
   name: string;
@@ -45,6 +46,7 @@ const Readings: React.FC = () => {
         ) : (
           <div className="space-y-8">
             <BasicResultsDisplay formData={formData!} />
+            <DetailedResultsSection formData={formData!} />
             <div className="mt-8">
               <h2 className="text-2xl font-serif text-white mb-6 text-center">
                 Ask Questions About Your Reading

@@ -2,9 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap');
+
 @layer base {
   body {
-    @apply antialiased;
+    @apply antialiased font-sans text-slate-200 bg-indigo-950;
   }
 }
 

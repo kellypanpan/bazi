@@ -1,14 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import BirthDateForm from './BirthDateForm';
-import { FormData } from './BirthDateForm';
+import BirthDateForm, { BirthData } from './BirthDateForm';
 import BasicResultsDisplay from './BasicResultsDisplay';
 
 const HeroSection: React.FC = () => {
   const [showResults, setShowResults] = React.useState(false);
-  const [formData, setFormData] = React.useState<FormData | null>(null);
+  const [formData, setFormData] = React.useState<BirthData | null>(null);
 
-  const handleFormSubmit = (data: FormData) => {
+  const handleFormSubmit = (data: BirthData) => {
     setFormData(data);
     setShowResults(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });

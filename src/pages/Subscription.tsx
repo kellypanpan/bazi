@@ -67,10 +67,14 @@ const Subscription: React.FC = () => {
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 items-center">
+        {/* Subscription Plans */}
+        <PremiumFeatures />
+
+        {/* Why Choose Section */}
+        <div className="grid grid-cols-1 gap-12 mb-16">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <h2 className="text-2xl font-serif text-amber-400 mb-6">
@@ -101,23 +105,7 @@ const Subscription: React.FC = () => {
               </div>
             </div>
           </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="relative"
-          >
-            <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-amber-600 to-red-600 rounded-2xl opacity-20 blur-3xl"></div>
-            <img 
-              src="https://images.pexels.com/photos/1809644/pexels-photo-1809644.jpeg?auto=compress&cs=tinysrgb&w=800" 
-              alt="Premium Astrology Reading" 
-              className="w-full h-auto rounded-2xl border-4 border-indigo-800 shadow-2xl relative z-10"
-            />
-          </motion.div>
         </div>
-        
-        <PremiumFeatures />
         
         <div className="mt-16">
           <h2 className="text-2xl font-serif text-white text-center mb-12">

@@ -21,7 +21,7 @@ const About: React.FC = () => {
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+        <div className="grid grid-cols-1 gap-12 mb-16">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -31,7 +31,7 @@ const About: React.FC = () => {
               The Ancient Art of Chinese Astrology
             </h2>
             
-            <div className="prose prose-invert max-w-none">
+            <div className="prose prose-invert max-w-none text-slate-200">
               <p>
                 Chinese astrology is one of the oldest astrological systems in the world, dating back thousands of years. 
                 Unlike Western astrology which focuses primarily on the positions of celestial bodies, Chinese astrology 
@@ -50,20 +50,6 @@ const About: React.FC = () => {
                 and navigate life's challenges with greater awareness and harmony.
               </p>
             </div>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="relative"
-          >
-            <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl opacity-20 blur-3xl"></div>
-            <img 
-              src="https://images.pexels.com/photos/5731874/pexels-photo-5731874.jpeg?auto=compress&cs=tinysrgb&w=800" 
-              alt="Ancient Chinese Astrology Chart" 
-              className="w-full h-auto rounded-2xl border-4 border-indigo-800 shadow-2xl relative z-10"
-            />
           </motion.div>
         </div>
         

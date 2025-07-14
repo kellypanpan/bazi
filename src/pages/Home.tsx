@@ -17,18 +17,27 @@ const Home: React.FC = () => {
   const features = [
     {
       title: 'BaZi (Four Pillars)',
-      description: 'Discover your destiny code based on your birth time revealing your personal traits and life path.',
-      icon: <Sun className="h-6 w-6 text-amber-500" />
+      description: 'Discover your destiny code based on your birth time revealing your personal traits and life path with detailed career, wealth, and relationship insights.',
+      icon: <Sun className="h-6 w-6 text-amber-500" />,
+      link: '/readings'
     },
     {
       title: 'Zi Wei Dou Shu',
-      description: 'The "Purple Star Astrology" maps celestial influences on different aspects of your life.',
-      icon: <Star className="h-6 w-6 text-purple-500" />
+      description: 'Generate your complete Chinese astrology chart with 12 life palaces, star positions, and detailed destiny analysis.',
+      icon: <Compass className="h-6 w-6 text-purple-500" />,
+      link: '/zi-wei'
     },
     {
-      title: 'Personalized Guidance',
-      description: 'Receive actionable insights to harmonize your life with cosmic energies.',
-      icon: <Moon className="h-6 w-6 text-blue-400" />
+      title: 'Daily Horoscopes',
+      description: 'Get personalized daily, weekly, and monthly zodiac predictions with love, career, and health insights.',
+      icon: <Star className="h-6 w-6 text-indigo-500" />,
+      link: '/leo'
+    },
+    {
+      title: 'Compatibility Analysis',
+      description: 'Discover relationship compatibility between zodiac signs with detailed analysis and shareable results.',
+      icon: <Moon className="h-6 w-6 text-blue-400" />,
+      link: '/compatibility'
     }
   ];
 
@@ -69,7 +78,7 @@ const Home: React.FC = () => {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
@@ -84,7 +93,7 @@ const Home: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-medium text-white mb-3">{feature.title}</h3>
                 <p className="text-slate-300 mb-6">{feature.description}</p>
-                <Link to="/readings" className="text-amber-400 inline-flex items-center group">
+                <Link to={feature.link} className="text-amber-400 inline-flex items-center group">
                   Learn more 
                   <ChevronRight className="h-4 w-4 ml-1 group-hover:ml-2 transition-all" />
                 </Link>
@@ -129,6 +138,68 @@ const Home: React.FC = () => {
                 </p>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Zodiac Signs Quick Access */}
+      <section className="py-16 px-4 relative z-10">
+        <div className="container mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">
+              Explore Your Zodiac Sign
+            </h2>
+            <p className="text-slate-300 max-w-2xl mx-auto">
+              Get instant access to your daily horoscope, compatibility insights, and personalized predictions.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 max-w-5xl mx-auto">
+            {[
+              { name: 'Aries', symbol: '♈', dates: 'Mar 21 - Apr 19' },
+              { name: 'Taurus', symbol: '♉', dates: 'Apr 20 - May 20' },
+              { name: 'Gemini', symbol: '♊', dates: 'May 21 - Jun 20' },
+              { name: 'Cancer', symbol: '♋', dates: 'Jun 21 - Jul 22' },
+              { name: 'Leo', symbol: '♌', dates: 'Jul 23 - Aug 22' },
+              { name: 'Virgo', symbol: '♍', dates: 'Aug 23 - Sep 22' },
+              { name: 'Libra', symbol: '♎', dates: 'Sep 23 - Oct 22' },
+              { name: 'Scorpio', symbol: '♏', dates: 'Oct 23 - Nov 21' },
+              { name: 'Sagittarius', symbol: '♐', dates: 'Nov 22 - Dec 21' },
+              { name: 'Capricorn', symbol: '♑', dates: 'Dec 22 - Jan 19' },
+              { name: 'Aquarius', symbol: '♒', dates: 'Jan 20 - Feb 18' },
+              { name: 'Pisces', symbol: '♓', dates: 'Feb 19 - Mar 20' }
+            ].map((sign, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                viewport={{ once: true }}
+                whileHover={{ scale: 1.05 }}
+                className="group cursor-pointer"
+              >
+                <Link
+                  to={`/${sign.name.toLowerCase()}`}
+                  className="block bg-indigo-900 bg-opacity-30 backdrop-blur-sm rounded-xl border border-indigo-800 p-4 text-center hover:border-amber-500 hover:bg-opacity-50 transition-all duration-300"
+                >
+                  <div className="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300">
+                    {sign.symbol}
+                  </div>
+                  <h3 className="text-white font-medium text-sm mb-1">{sign.name}</h3>
+                  <p className="text-slate-400 text-xs">{sign.dates}</p>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+          
+          <div className="text-center mt-12">
+            <Link
+              to="/compatibility"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all"
+            >
+              Check Compatibility
+              <ChevronRight className="h-5 w-5" />
+            </Link>
           </div>
         </div>
       </section>
