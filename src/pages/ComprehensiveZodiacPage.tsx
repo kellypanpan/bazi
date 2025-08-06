@@ -26,6 +26,7 @@ import {
   MonthlyForecast, 
   YearlyForecast 
 } from '../services/enhancedZodiacService';
+import SEO from '../components/SEO';
 
 const ComprehensiveZodiacPage: React.FC = () => {
   const { sign } = useParams<{ sign: string }>();
@@ -108,8 +109,53 @@ const ComprehensiveZodiacPage: React.FC = () => {
     );
   }
 
+  // Create dynamic SEO data
+  const signName = zodiacData.name;
+  const pageTitle = `${signName} Horoscope Today | ${signName} Daily Predictions & Personality Traits`;
+  const pageDescription = `Get your ${signName} horoscope today! Discover ${signName} personality traits, daily predictions, love compatibility, career insights, and more. Born ${zodiacData.dates}.`;
+  const pageUrl = `https://bazi.panzhao.org/${signName.toLowerCase()}`;
+  
+  const zodiacStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": `${signName} Horoscope and Personality Guide`,
+    "description": pageDescription,
+    "author": {
+      "@type": "Organization",
+      "name": "Chinese Astrology & Fortune Telling"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Chinese Astrology & Fortune Telling",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://bazi.panzhao.org/logo.png"
+      }
+    },
+    "dateModified": new Date().toISOString(),
+    "mainEntityOfPage": pageUrl,
+    "about": {
+      "@type": "Thing",
+      "name": `${signName} Zodiac Sign`,
+      "description": `${signName} astrology sign covering dates ${zodiacData.dates}`
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950">
+      <SEO 
+        title={pageTitle}
+        description={pageDescription}
+        keywords={[
+          `${signName.toLowerCase()} horoscope`, `${signName.toLowerCase()} daily`, `${signName.toLowerCase()} personality`,
+          `${signName.toLowerCase()} traits`, `${signName.toLowerCase()} compatibility`, `${signName.toLowerCase()} love`,
+          `${signName.toLowerCase()} career`, "zodiac sign", "astrology", "horoscope today",
+          zodiacData.dates, zodiacData.element.toLowerCase(), zodiacData.rulingPlanet.toLowerCase()
+        ]}
+        url={pageUrl}
+        type="article"
+        structuredData={zodiacStructuredData}
+      />
       <div className="container mx-auto px-4 pt-24 pb-8">
         
         {/* SEO-Optimized Header Section */}
@@ -631,7 +677,7 @@ const ComprehensiveZodiacPage: React.FC = () => {
           <div className="bg-gradient-to-br from-purple-900 to-pink-900 bg-opacity-50 backdrop-blur-sm rounded-2xl border border-purple-600 p-4 sm:p-6 lg:p-8 text-center">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-3 sm:mb-4 px-2">Discover More About Yourself</h2>
             <p className="text-slate-300 mb-6 sm:mb-8 max-w-2xl mx-auto text-sm sm:text-base px-2">
-              Ready to dive deeper into your cosmic profile? Explore our comprehensive analysis tools and unlock your full potential.
+              Ready to dive deeper into your cosmic profile? Explore our comprehensive BaZi analysis tools and unlock your full potential with authentic BaZi Four Pillars readings.
             </p>
             
             <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 max-w-4xl mx-auto">
@@ -640,7 +686,7 @@ const ComprehensiveZodiacPage: React.FC = () => {
                 className="flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all text-sm sm:text-base"
               >
                 <Star className="h-4 w-4 sm:h-5 sm:w-5" />
-                Free BaZi Analysis
+                Get Your BaZi Analysis
               </Link>
               
               <Link 

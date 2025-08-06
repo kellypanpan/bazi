@@ -4,6 +4,7 @@ import { ChevronRight, Star, Moon, Sun, Sparkles, Flame, Droplets, Compass } fro
 import { motion } from 'framer-motion';
 import HeroSection from '../components/HeroSection';
 import TestimonialCard from '../components/TestimonialCard';
+import SEO from '../components/SEO';
 
 const Home: React.FC = () => {
   const elements = [
@@ -17,7 +18,7 @@ const Home: React.FC = () => {
   const features = [
     {
       title: 'BaZi (Four Pillars)',
-      description: 'Discover your destiny code based on your birth time revealing your personal traits and life path with detailed career, wealth, and relationship insights.',
+      description: 'Discover your BaZi destiny code based on your birth time. BaZi analysis reveals your personal traits and life path with detailed BaZi career, wealth, and relationship insights using authentic BaZi methods.',
       icon: <Sun className="h-6 w-6 text-amber-500" />,
       link: '/readings'
     },
@@ -45,7 +46,7 @@ const Home: React.FC = () => {
     {
       name: 'Emily Chen',
       role: 'Entrepreneur',
-      content: 'The BaZi reading was incredibly accurate about my career path. It helped me make an important business decision that paid off tremendously.',
+      content: 'The BaZi reading was incredibly accurate about my career path. My BaZi analysis helped me understand my natural strengths and make an important business decision that paid off tremendously. I now consult my BaZi chart regularly.',
       avatar: 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150'
     },
     {
@@ -62,8 +63,36 @@ const Home: React.FC = () => {
     }
   ];
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Chinese Astrology & Fortune Telling",
+    "url": "https://bazi.panzhao.org",
+    "description": "Authentic Chinese astrology with free BaZi analysis, daily horoscopes, Zi Wei Dou Shu readings, and zodiac compatibility insights.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://bazi.panzhao.org/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    },
+    "offers": {
+      "@type": "Offer",
+      "description": "Free Chinese astrology readings and horoscope analysis"
+    }
+  };
+
   return (
     <div className="w-full">
+      <SEO 
+        title="Free Chinese Fortune Telling & Astrology | BaZi Analysis & Daily Horoscopes"
+        description="Discover your destiny with authentic Chinese astrology. Get free BaZi Four Pillars analysis, daily horoscopes, Zi Wei Dou Shu readings, and zodiac compatibility insights."
+        keywords={[
+          "chinese astrology", "bazi analysis", "four pillars destiny", "zi wei dou shu",
+          "fortune telling", "daily horoscope", "zodiac compatibility", "birth chart analysis",
+          "chinese fortune", "destiny reading", "五行", "八字", "紫微斗数", "free astrology"
+        ]}
+        url="https://bazi.panzhao.org"
+        structuredData={structuredData}
+      />
       <HeroSection />
       
       {/* Features Section */}
@@ -71,10 +100,10 @@ const Home: React.FC = () => {
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-serif text-white mb-4">
-              Discover Ancient Wisdom for Modern Life
+              Discover Ancient BaZi Wisdom for Modern Life
             </h2>
             <p className="text-slate-300 max-w-2xl mx-auto">
-              Our readings combine thousands of years of Chinese astrological knowledge with modern insights to guide your journey.
+              Our BaZi readings combine thousands of years of Chinese astrological knowledge with modern insights. Experience authentic BaZi Four Pillars analysis to guide your journey through life's challenges and opportunities.
             </p>
           </div>
           

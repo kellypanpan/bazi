@@ -2,10 +2,35 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Calendar, Star } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const About: React.FC = () => {
+  const aboutStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About Chinese Astrology",
+    "description": "Learn about the ancient traditions of Chinese astrology, BaZi Four Pillars, and Zi Wei Dou Shu systems.",
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "Chinese Astrology & Fortune Telling",
+      "description": "Providing authentic Chinese astrology readings and guidance through ancient wisdom traditions."
+    }
+  };
+
   return (
     <div className="pt-24 pb-16 px-4">
+      <SEO 
+        title="About Chinese Astrology | Learn BaZi & Zi Wei Dou Shu Systems"
+        description="Discover the ancient wisdom traditions of Chinese astrology. Learn about BaZi Four Pillars, Zi Wei Dou Shu, Five Elements, and how these systems guide modern life."
+        keywords={[
+          "chinese astrology", "bazi four pillars", "zi wei dou shu", "five elements",
+          "ancient wisdom", "astrology systems", "chinese fortune telling", "destiny analysis",
+          "wu xing", "purple star astrology", "天干地支", "五行相克"
+        ]}
+        url="https://bazi.panzhao.org/about"
+        type="article"
+        structuredData={aboutStructuredData}
+      />
       <div className="container mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -72,21 +97,21 @@ const About: React.FC = () => {
                 <div>
                   <h3 className="text-xl font-medium text-white mb-2">BaZi (Four Pillars of Destiny)</h3>
                   <p className="text-slate-300">
-                    Also known as "Four Pillars of Destiny," BaZi charts map your cosmic blueprint based on your birth time, 
-                    with each pillar representing the year, month, day, and hour of birth. Each pillar contains elements that 
-                    interact to reveal insights about your personality, strengths, challenges, and life path.
+                    Also known as "Four Pillars of Destiny," BaZi charts map your cosmic blueprint based on your birth time. 
+                    BaZi analysis uses each pillar representing the year, month, day, and hour of birth. Each BaZi pillar contains elements that 
+                    interact to reveal insights about your personality, strengths, challenges, and life path. BaZi readings provide deep understanding of your destiny.
                   </p>
                 </div>
               </div>
               
               <div className="pl-16">
-                <h4 className="text-lg text-amber-400 mb-2">Key Features:</h4>
+                <h4 className="text-lg text-amber-400 mb-2">BaZi Key Features:</h4>
                 <ul className="text-slate-300 space-y-2 list-disc pl-5">
-                  <li>Analyzes the balance of Five Elements (Wood, Fire, Earth, Metal, Water)</li>
-                  <li>Reveals hidden talents and natural aptitudes</li>
-                  <li>Identifies favorable periods and potential challenges</li>
-                  <li>Provides insights into relationship dynamics</li>
-                  <li>Offers guidance for personal and professional decisions</li>
+                  <li>BaZi analyzes the balance of Five Elements (Wood, Fire, Earth, Metal, Water)</li>
+                  <li>BaZi reveals hidden talents and natural aptitudes through elemental analysis</li>
+                  <li>BaZi identifies favorable periods and potential challenges in your life cycle</li>
+                  <li>BaZi provides insights into relationship dynamics and compatibility</li>
+                  <li>BaZi offers guidance for personal and professional decisions based on your elemental makeup</li>
                 </ul>
               </div>
             </motion.div>
@@ -207,7 +232,7 @@ const About: React.FC = () => {
         
         <div className="text-center mb-8">
           <Link to="/readings" className="bg-gradient-to-r from-amber-500 to-red-600 text-white px-8 py-3 rounded-full font-medium text-lg inline-block transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/20">
-            Discover Your Personal Reading
+            Get Your Free BaZi Reading
           </Link>
         </div>
       </div>
