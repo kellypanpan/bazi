@@ -27,7 +27,7 @@ const About: React.FC = () => {
           "ancient wisdom", "astrology systems", "chinese fortune telling", "destiny analysis",
           "wu xing", "purple star astrology", "天干地支", "五行相克"
         ]}
-        url="https://bazi.panzhao.org/about"
+        url="https://fortunetelling.it.com/about"
         type="article"
         structuredData={aboutStructuredData}
       />

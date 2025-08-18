@@ -13,20 +13,21 @@ interface SEOProps {
 }
 
 const SEO: React.FC<SEOProps> = ({
-  title = "Chinese Fortune Telling & Astrology | Free BaZi & Zi Wei Analysis",
-  description = "Discover your destiny with authentic Chinese astrology. Get free BaZi analysis, daily horoscopes, Zi Wei Dou Shu readings, and zodiac compatibility insights.",
+  title = "BaZi Chinese Astrology | Free BaZi Readings, BaZi Compatibility & Zi Wei",
+  description = "Free BaZi readings and BaZi analysis for Chinese astrology. Explore BaZi compatibility, Four Pillars (BaZi) destiny insights, Zi Wei Dou Shu, daily horoscope and personalized Chinese fortune guidance.",
   keywords = [
-    "chinese astrology", "bazi", "four pillars", "zi wei dou shu", 
+    "bazi", "bazi analysis", "bazi reading", "bazi readings", "bazi compatibility",
+    "four pillars", "four pillars of destiny", "zi wei dou shu", "chinese astrology",
     "fortune telling", "horoscope", "zodiac compatibility", "birth chart",
     "chinese fortune", "destiny analysis", "五行", "八字", "紫微斗数"
   ],
-  image = "https://bazi.panzhao.org/og-image.jpg",
-  url = "https://bazi.panzhao.org",
+  image = "https://fortunetelling.it.com/og-image.jpg",
+  url = "https://fortunetelling.it.com/",
   type = "website",
   siteName = "Chinese Astrology & Fortune Telling",
   structuredData
 }) => {
-  const fullTitle = title.includes("Chinese") ? title : `${title} | Chinese Astrology & Fortune Telling`;
+  const fullTitle = title.includes("Chinese") || title.includes("BaZi") ? title : `${title} | Chinese Astrology & Fortune Telling`;
 
   return (
     <Helmet>

@@ -67,11 +67,11 @@ const Home: React.FC = () => {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Chinese Astrology & Fortune Telling",
-    "url": "https://bazi.panzhao.org",
+    "url": "https://fortunetelling.it.com/",
     "description": "Authentic Chinese astrology with free BaZi analysis, daily horoscopes, Zi Wei Dou Shu readings, and zodiac compatibility insights.",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://bazi.panzhao.org/search?q={search_term_string}",
+      "target": "https://fortunetelling.it.com/search?q={search_term_string}",
       "query-input": "required name=search_term_string"
     },
     "offers": {
@@ -90,7 +90,7 @@ const Home: React.FC = () => {
           "fortune telling", "daily horoscope", "zodiac compatibility", "birth chart analysis",
           "chinese fortune", "destiny reading", "五行", "八字", "紫微斗数", "free astrology"
         ]}
-        url="https://bazi.panzhao.org"
+        url="https://fortunetelling.it.com/"
         structuredData={structuredData}
       />
       <HeroSection />

@@ -113,7 +113,7 @@ const ComprehensiveZodiacPage: React.FC = () => {
   const signName = zodiacData.name;
   const pageTitle = `${signName} Horoscope Today | ${signName} Daily Predictions & Personality Traits`;
   const pageDescription = `Get your ${signName} horoscope today! Discover ${signName} personality traits, daily predictions, love compatibility, career insights, and more. Born ${zodiacData.dates}.`;
-  const pageUrl = `https://bazi.panzhao.org/${signName.toLowerCase()}`;
+  const pageUrl = `https://fortunetelling.it.com/${signName.toLowerCase()}`;
   
   const zodiacStructuredData = {
     "@context": "https://schema.org",
@@ -129,7 +129,7 @@ const ComprehensiveZodiacPage: React.FC = () => {
       "name": "Chinese Astrology & Fortune Telling",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://bazi.panzhao.org/logo.png"
+        "url": "https://fortunetelling.it.com/logo.png"
       }
     },
     "dateModified": new Date().toISOString(),
