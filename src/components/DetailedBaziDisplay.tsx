@@ -15,93 +15,229 @@ import {
   LockKeyhole
 } from 'lucide-react';
 import { DetailedBaziAnalysis } from '../services/aiService';
+import { useI18n } from '../i18n';
 
 interface DetailedBaziDisplayProps {
   analysis: DetailedBaziAnalysis;
   userName: string;
 }
 
+const detailedBaziCopy = {
+  en: {
+    completeFor: (name: string) => `Complete BaZi Analysis for ${name}`,
+    subtitle: 'Your comprehensive fortune analysis covering all aspects of life with detailed insights and predictions.',
+    modules: {
+      career: ['Career Forecast', 'Next 12 months career opportunities'],
+      wealth: ['Wealth Analysis', 'Financial trends and investment guidance'],
+      marriage: ['Marriage Destiny', 'Romance and relationship compatibility'],
+      health: ['Health Insights', 'Wellness guidance and prevention'],
+      annual: ['Annual Forecast', '2025-2026 monthly predictions'],
+      overview: ['Life Overview', 'Complete life path analysis'],
+    },
+    locked: ['10-year Luck Pillars timeline', 'Year-by-year timing windows', 'Marriage and relationship timing', 'Wealth opportunities and risk map', 'Downloadable PDF report', 'AI follow-up questions'],
+    premiumSections: [
+      ['Chart Foundation', ['Four Pillars structure', 'Day Master strength', 'Five Elements balance', 'Hidden stems and seasonal context']],
+      ['Life Area Reading', ['Career strategy', 'Wealth rhythm', 'Relationship patterns', 'Health and energy management']],
+      ['Timing Layer', ['Current luck cycle', 'Annual opportunity windows', 'Risk periods', 'Decision timing notes']],
+      ['Practical Plan', ['Priority actions', 'What to avoid', 'Best environments', 'Questions for deeper follow-up']],
+    ],
+    unlockTitle: 'Unlock Complete Analysis',
+    unlockBody: "You're seeing the free preview of your fortune analysis. Unlock the Pro report for timing, Ten Gods, relationship, wealth, career, PDF, and follow-up modules.",
+    upgrade: 'Upgrade Now',
+    continueFree: 'Continue with Free',
+    share: 'Share Reading',
+    download: 'Download PDF',
+    details: {
+      careerSub: 'Your professional journey ahead',
+      next12: 'Next 12 Months',
+      recommendations: 'Recommendations',
+      luckyCareerDays: 'Lucky Career Days',
+      wealthSub: 'Financial fortune and investment guidance',
+      overallTrend: 'Overall Trend',
+      windfall: 'Windfall Opportunities',
+      investment: 'Investment Advice',
+      marriageSub: 'Love, relationships, and marriage timing',
+      romantic: 'Romantic Fortune',
+      compatibility: 'Compatibility Insights',
+      bestMarriage: 'Best Marriage Time',
+      healthSub: 'Wellness guidance and preventive care',
+      potential: 'Potential Areas',
+      preventive: 'Preventive Care',
+      annualSub: 'Monthly predictions for 2025-2026',
+      forecast2025: '2025 Forecast',
+      forecast2026: '2026 Forecast',
+      overviewSub: 'Complete life path analysis and spiritual guidance',
+      overallLifeScore: 'Overall Life Score',
+      scoreBasis: 'Based on complete BaZi analysis',
+      strengths: 'Strengths & Challenges',
+      themes: 'Life Themes',
+      spiritual: 'Spiritual Path',
+      fallback: 'Select a module to view detailed analysis',
+    },
+  },
+  'zh-CN': {
+    completeFor: (name: string) => `${name} 的完整八字分析`,
+    subtitle: '覆盖事业、财富、关系、健康、年度节奏和人生主题的综合命理报告。',
+    modules: {
+      career: ['事业预测', '未来 12 个月事业机会'],
+      wealth: ['财富分析', '财务趋势与投资参考'],
+      marriage: ['婚恋缘分', '爱情关系与适配度'],
+      health: ['健康洞察', '身心平衡与预防建议'],
+      annual: ['年度预测', '2025-2026 月度趋势'],
+      overview: ['人生总览', '完整人生路径分析'],
+    },
+    locked: ['十年大运时间轴', '逐年时间窗口', '婚恋与关系时机', '财富机会与风险地图', '可下载 PDF 报告', 'AI 追问问题'],
+    premiumSections: [
+      ['命盘基础', ['四柱结构', '日主强弱', '五行平衡', '藏干与季节背景']],
+      ['人生领域解读', ['事业策略', '财富节奏', '关系模式', '健康与能量管理']],
+      ['时间层判断', ['当前大运周期', '年度机会窗口', '风险阶段', '决策时机提示']],
+      ['实用计划', ['优先行动', '需要避免的事', '适合环境', '深入追问问题']],
+    ],
+    unlockTitle: '解锁完整分析',
+    unlockBody: '你现在看到的是免费预览。升级 Pro 报告可解锁时间判断、十神、关系、财富、事业、PDF 和 AI 追问模块。',
+    upgrade: '立即升级',
+    continueFree: '继续免费版',
+    share: '分享解读',
+    download: '下载 PDF',
+    details: {
+      careerSub: '你的事业发展路径',
+      next12: '未来 12 个月',
+      recommendations: '建议',
+      luckyCareerDays: '事业有利日',
+      wealthSub: '财富趋势与投资参考',
+      overallTrend: '整体趋势',
+      windfall: '额外机会',
+      investment: '投资建议',
+      marriageSub: '爱情、关系与婚姻时机',
+      romantic: '桃花与感情运',
+      compatibility: '适配度洞察',
+      bestMarriage: '适合婚恋时机',
+      healthSub: '健康平衡与预防建议',
+      potential: '需要关注的方面',
+      preventive: '预防建议',
+      annualSub: '2025-2026 月度趋势',
+      forecast2025: '2025 年预测',
+      forecast2026: '2026 年预测',
+      overviewSub: '人生路径与精神成长参考',
+      overallLifeScore: '人生综合分',
+      scoreBasis: '基于完整八字分析',
+      strengths: '优势与挑战',
+      themes: '人生主题',
+      spiritual: '精神路径',
+      fallback: '请选择一个模块查看详细分析',
+    },
+  },
+  'zh-TW': {
+    completeFor: (name: string) => `${name} 的完整八字分析`,
+    subtitle: '覆蓋事業、財富、關係、健康、年度節奏和人生主題的綜合命理報告。',
+    modules: {
+      career: ['事業預測', '未來 12 個月事業機會'],
+      wealth: ['財富分析', '財務趨勢與投資參考'],
+      marriage: ['婚戀緣分', '愛情關係與適配度'],
+      health: ['健康洞察', '身心平衡與預防建議'],
+      annual: ['年度預測', '2025-2026 月度趨勢'],
+      overview: ['人生總覽', '完整人生路徑分析'],
+    },
+    locked: ['十年大運時間軸', '逐年時間窗口', '婚戀與關係時機', '財富機會與風險地圖', '可下載 PDF 報告', 'AI 追問問題'],
+    premiumSections: [
+      ['命盤基礎', ['四柱結構', '日主強弱', '五行平衡', '藏干與季節背景']],
+      ['人生領域解讀', ['事業策略', '財富節奏', '關係模式', '健康與能量管理']],
+      ['時間層判斷', ['當前大運週期', '年度機會窗口', '風險階段', '決策時機提示']],
+      ['實用計畫', ['優先行動', '需要避免的事', '適合環境', '深入追問問題']],
+    ],
+    unlockTitle: '解鎖完整分析',
+    unlockBody: '你現在看到的是免費預覽。升級 Pro 報告可解鎖時間判斷、十神、關係、財富、事業、PDF 和 AI 追問模組。',
+    upgrade: '立即升級',
+    continueFree: '繼續免費版',
+    share: '分享解讀',
+    download: '下載 PDF',
+    details: {
+      careerSub: '你的事業發展路徑',
+      next12: '未來 12 個月',
+      recommendations: '建議',
+      luckyCareerDays: '事業有利日',
+      wealthSub: '財富趨勢與投資參考',
+      overallTrend: '整體趨勢',
+      windfall: '額外機會',
+      investment: '投資建議',
+      marriageSub: '愛情、關係與婚姻時機',
+      romantic: '桃花與感情運',
+      compatibility: '適配度洞察',
+      bestMarriage: '適合婚戀時機',
+      healthSub: '健康平衡與預防建議',
+      potential: '需要關注的方面',
+      preventive: '預防建議',
+      annualSub: '2025-2026 月度趨勢',
+      forecast2025: '2025 年預測',
+      forecast2026: '2026 年預測',
+      overviewSub: '人生路徑與精神成長參考',
+      overallLifeScore: '人生綜合分',
+      scoreBasis: '基於完整八字分析',
+      strengths: '優勢與挑戰',
+      themes: '人生主題',
+      spiritual: '精神路徑',
+      fallback: '請選擇一個模組查看詳細分析',
+    },
+  },
+};
+
+type DetailedBaziCopy = typeof detailedBaziCopy.en;
+
 const DetailedBaziDisplay: React.FC<DetailedBaziDisplayProps> = ({ analysis, userName }) => {
+  const { pick } = useI18n();
+  const copy = pick(detailedBaziCopy);
   const [activeTab, setActiveTab] = useState<string>('career');
   const [showPreview, setShowPreview] = useState(true);
 
   const modules = [
     {
       id: 'career',
-      title: 'Career Forecast',
+      title: copy.modules.career[0],
       icon: TrendingUp,
       color: 'from-blue-500 to-blue-700',
       data: analysis.careerForecast,
-      description: 'Next 12 months career opportunities'
+      description: copy.modules.career[1]
     },
     {
       id: 'wealth',
-      title: 'Wealth Analysis',
+      title: copy.modules.wealth[0],
       icon: DollarSign,
       color: 'from-green-500 to-green-700',
       data: analysis.wealthAnalysis,
-      description: 'Financial trends and investment guidance'
+      description: copy.modules.wealth[1]
     },
     {
       id: 'marriage',
-      title: 'Marriage Destiny',
+      title: copy.modules.marriage[0],
       icon: Heart,
       color: 'from-pink-500 to-pink-700',
       data: analysis.marriageDestiny,
-      description: 'Romance and relationship compatibility'
+      description: copy.modules.marriage[1]
     },
     {
       id: 'health',
-      title: 'Health Insights',
+      title: copy.modules.health[0],
       icon: Activity,
       color: 'from-orange-500 to-orange-700',
       data: analysis.healthInsights,
-      description: 'Wellness guidance and prevention'
+      description: copy.modules.health[1]
     },
     {
       id: 'annual',
-      title: 'Annual Forecast',
+      title: copy.modules.annual[0],
       icon: Calendar,
       color: 'from-purple-500 to-purple-700',
       data: analysis.annualForecast,
-      description: '2025-2026 monthly predictions'
+      description: copy.modules.annual[1]
     },
     {
       id: 'overview',
-      title: 'Life Overview',
+      title: copy.modules.overview[0],
       icon: Star,
       color: 'from-yellow-500 to-yellow-700',
       data: analysis.lifeOverview,
-      description: 'Complete life path analysis'
+      description: copy.modules.overview[1]
     }
-  ];
-
-  const lockedModules = [
-    '10-year Luck Pillars timeline',
-    'Year-by-year timing windows',
-    'Marriage and relationship timing',
-    'Wealth opportunities and risk map',
-    'Downloadable PDF report',
-    'AI follow-up questions'
-  ];
-
-  const premiumReportSections = [
-    {
-      title: 'Chart Foundation',
-      items: ['Four Pillars structure', 'Day Master strength', 'Five Elements balance', 'Hidden stems and seasonal context'],
-    },
-    {
-      title: 'Life Area Reading',
-      items: ['Career strategy', 'Wealth rhythm', 'Relationship patterns', 'Health and energy management'],
-    },
-    {
-      title: 'Timing Layer',
-      items: ['Current luck cycle', 'Annual opportunity windows', 'Risk periods', 'Decision timing notes'],
-    },
-    {
-      title: 'Practical Plan',
-      items: ['Priority actions', 'What to avoid', 'Best environments', 'Questions for deeper follow-up'],
-    },
   ];
 
   const getScoreRing = (score: number) => {
@@ -125,10 +261,10 @@ const DetailedBaziDisplay: React.FC<DetailedBaziDisplayProps> = ({ analysis, use
         className="text-center mb-12"
       >
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-          Complete BaZi Analysis for {userName}
+          {copy.completeFor(userName)}
         </h2>
         <p className="text-slate-300 max-w-2xl mx-auto">
-          Your comprehensive fortune analysis covering all aspects of life with detailed insights and predictions.
+          {copy.subtitle}
         </p>
       </motion.div>
 
@@ -209,7 +345,7 @@ const DetailedBaziDisplay: React.FC<DetailedBaziDisplayProps> = ({ analysis, use
         transition={{ duration: 0.4 }}
         className="glass-panel mb-8 p-8"
       >
-        {renderModuleContent(activeTab, analysis, modules)}
+        {renderModuleContent(activeTab, analysis, modules, copy)}
       </motion.div>
 
       {/* Premium Upgrade Notice */}
@@ -223,29 +359,31 @@ const DetailedBaziDisplay: React.FC<DetailedBaziDisplayProps> = ({ analysis, use
           <div className="relative z-10">
             <Gem className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-white mb-4">
-              Unlock Complete Analysis
+              {copy.unlockTitle}
             </h3>
             <p className="text-slate-300 mb-6 max-w-2xl mx-auto">
-              You're seeing the free preview of your fortune analysis. Unlock the Pro report for timing,
-              Ten Gods, relationship, wealth, career, PDF, and follow-up modules.
+              {copy.unlockBody}
             </p>
             <div className="mx-auto mb-7 grid max-w-5xl grid-cols-1 gap-4 text-left md:grid-cols-2 lg:grid-cols-4">
-              {premiumReportSections.map((section) => (
-                <div key={section.title} className="glass-card p-4">
-                  <h4 className="mb-3 font-semibold text-white">{section.title}</h4>
-                  <ul className="space-y-2">
-                    {section.items.map((item) => (
-                      <li key={item} className="flex gap-2 text-xs leading-5 text-slate-300">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-300" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+              {copy.premiumSections.map((section) => {
+                const [title, items] = section as [string, string[]];
+                return (
+                  <div key={title} className="glass-card p-4">
+                    <h4 className="mb-3 font-semibold text-white">{title}</h4>
+                    <ul className="space-y-2">
+                      {items.map((item) => (
+                        <li key={item} className="flex gap-2 text-xs leading-5 text-slate-300">
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-300" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
             </div>
             <div className="mx-auto mb-7 grid max-w-4xl grid-cols-1 gap-3 text-left sm:grid-cols-2 lg:grid-cols-3">
-              {lockedModules.map((module) => (
+              {copy.locked.map((module) => (
                 <div key={module} className="glass-inset flex items-center gap-3 p-3">
                   <LockKeyhole className="h-4 w-4 shrink-0 text-amber-300" />
                   <span className="text-sm text-slate-200">{module}</span>
@@ -257,13 +395,13 @@ const DetailedBaziDisplay: React.FC<DetailedBaziDisplayProps> = ({ analysis, use
                 to="/subscription?source=reading&plan=pro#plans"
                 className="glass-primary-button rounded-lg px-8 py-3 font-semibold"
               >
-                Upgrade Now
+                {copy.upgrade}
               </Link>
               <button 
                 onClick={() => setShowPreview(false)}
                 className="glass-secondary-button rounded-lg px-8 py-3 font-semibold"
               >
-                Continue with Free
+                {copy.continueFree}
               </button>
             </div>
           </div>
@@ -280,14 +418,14 @@ const DetailedBaziDisplay: React.FC<DetailedBaziDisplayProps> = ({ analysis, use
         <div className="flex flex-col justify-center gap-3 sm:flex-row">
           <button className="glass-secondary-button flex items-center gap-2 rounded-lg px-6 py-3">
             <Share2 className="h-5 w-5" />
-            Share Reading
+            {copy.share}
           </button>
           <Link
             to="/subscription?source=download&plan=pro#plans"
             className="glass-primary-button flex items-center gap-2 rounded-lg px-6 py-3"
           >
             <Download className="h-5 w-5" />
-            Download PDF
+            {copy.download}
           </Link>
         </div>
       </motion.div>
@@ -323,7 +461,7 @@ interface ModuleData {
   description: string;
 }
 
-function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, modules: ModuleData[]) {
+function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, modules: ModuleData[], copy: DetailedBaziCopy) {
   const activeModule = modules.find(m => m.id === activeTab);
   if (!activeModule) return null;
 
@@ -336,22 +474,22 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
               <TrendingUp className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-white">Career Forecast</h3>
-              <p className="text-slate-400">Your professional journey ahead</p>
+              <h3 className="text-2xl font-bold text-white">{copy.modules.career[0]}</h3>
+              <p className="text-slate-400">{copy.details.careerSub}</p>
             </div>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
-              <h4 className="text-lg font-semibold text-white mb-4">Next 12 Months</h4>
+              <h4 className="text-lg font-semibold text-white mb-4">{copy.details.next12}</h4>
               <p className="text-slate-300 mb-6">{analysis.careerForecast.next12Months}</p>
               
-              <h4 className="text-lg font-semibold text-white mb-4">Recommendations</h4>
+              <h4 className="text-lg font-semibold text-white mb-4">{copy.details.recommendations}</h4>
               <p className="text-slate-300">{analysis.careerForecast.recommendations}</p>
             </div>
             
             <div>
-              <h4 className="text-lg font-semibold text-white mb-4">Lucky Career Days</h4>
+              <h4 className="text-lg font-semibold text-white mb-4">{copy.details.luckyCareerDays}</h4>
               <div className="space-y-3">
                 {analysis.careerForecast.luckyDays.map((day, index) => (
                   <div key={index} className="glass-inset p-3">
@@ -372,22 +510,22 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
               <DollarSign className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-white">Wealth Analysis</h3>
-              <p className="text-slate-400">Financial fortune and investment guidance</p>
+              <h3 className="text-2xl font-bold text-white">{copy.modules.wealth[0]}</h3>
+              <p className="text-slate-400">{copy.details.wealthSub}</p>
             </div>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="glass-card p-6">
-              <h4 className="text-lg font-semibold text-green-300 mb-3">Overall Trend</h4>
+              <h4 className="text-lg font-semibold text-green-300 mb-3">{copy.details.overallTrend}</h4>
               <p className="text-slate-300 text-sm">{analysis.wealthAnalysis.overallTrend}</p>
             </div>
             <div className="glass-card p-6">
-              <h4 className="text-lg font-semibold text-yellow-300 mb-3">Windfall Opportunities</h4>
+              <h4 className="text-lg font-semibold text-yellow-300 mb-3">{copy.details.windfall}</h4>
               <p className="text-slate-300 text-sm">{analysis.wealthAnalysis.windfall}</p>
             </div>
             <div className="glass-card p-6">
-              <h4 className="text-lg font-semibold text-blue-300 mb-3">Investment Advice</h4>
+              <h4 className="text-lg font-semibold text-blue-300 mb-3">{copy.details.investment}</h4>
               <p className="text-slate-300 text-sm">{analysis.wealthAnalysis.investments}</p>
             </div>
           </div>
@@ -402,24 +540,24 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
               <Heart className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-white">Marriage Destiny</h3>
-              <p className="text-slate-400">Love, relationships, and marriage timing</p>
+              <h3 className="text-2xl font-bold text-white">{copy.modules.marriage[0]}</h3>
+              <p className="text-slate-400">{copy.details.marriageSub}</p>
             </div>
           </div>
           
           <div className="space-y-6">
             <div className="glass-card p-6">
-              <h4 className="text-lg font-semibold text-pink-300 mb-3">Romantic Fortune</h4>
+              <h4 className="text-lg font-semibold text-pink-300 mb-3">{copy.details.romantic}</h4>
               <p className="text-slate-300">{analysis.marriageDestiny.romanticFortune}</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="glass-card p-6">
-                <h4 className="text-lg font-semibold text-purple-300 mb-3">Compatibility Insights</h4>
+                <h4 className="text-lg font-semibold text-purple-300 mb-3">{copy.details.compatibility}</h4>
                 <p className="text-slate-300">{analysis.marriageDestiny.compatibility}</p>
               </div>
               <div className="glass-card p-6">
-                <h4 className="text-lg font-semibold text-red-300 mb-3">Best Marriage Time</h4>
+                <h4 className="text-lg font-semibold text-red-300 mb-3">{copy.details.bestMarriage}</h4>
                 <p className="text-slate-300">{analysis.marriageDestiny.bestMarriageTime}</p>
               </div>
             </div>
@@ -435,22 +573,22 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
               <Activity className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-white">Health Insights</h3>
-              <p className="text-slate-400">Wellness guidance and preventive care</p>
+              <h3 className="text-2xl font-bold text-white">{copy.modules.health[0]}</h3>
+              <p className="text-slate-400">{copy.details.healthSub}</p>
             </div>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="glass-card p-6">
-              <h4 className="text-lg font-semibold text-orange-300 mb-3">Potential Areas</h4>
+              <h4 className="text-lg font-semibold text-orange-300 mb-3">{copy.details.potential}</h4>
               <p className="text-slate-300 text-sm">{analysis.healthInsights.potentialIssues}</p>
             </div>
             <div className="glass-card p-6">
-              <h4 className="text-lg font-semibold text-green-300 mb-3">Preventive Care</h4>
+              <h4 className="text-lg font-semibold text-green-300 mb-3">{copy.details.preventive}</h4>
               <p className="text-slate-300 text-sm">{analysis.healthInsights.preventiveCare}</p>
             </div>
             <div className="glass-card p-6">
-              <h4 className="text-lg font-semibold text-blue-300 mb-3">Recommendations</h4>
+              <h4 className="text-lg font-semibold text-blue-300 mb-3">{copy.details.recommendations}</h4>
               <p className="text-slate-300 text-sm">{analysis.healthInsights.recommendations}</p>
             </div>
           </div>
@@ -465,14 +603,14 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
               <Calendar className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-white">Annual Forecast</h3>
-              <p className="text-slate-400">Monthly predictions for 2025-2026</p>
+              <h3 className="text-2xl font-bold text-white">{copy.modules.annual[0]}</h3>
+              <p className="text-slate-400">{copy.details.annualSub}</p>
             </div>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
-              <h4 className="text-xl font-semibold text-white mb-4">2025 Forecast</h4>
+              <h4 className="text-xl font-semibold text-white mb-4">{copy.details.forecast2025}</h4>
               <div className="space-y-3">
                 {analysis.annualForecast.year2025.map((month, index) => (
                   <div key={index} className="glass-inset p-4">
@@ -487,7 +625,7 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
             </div>
             
             <div>
-              <h4 className="text-xl font-semibold text-white mb-4">2026 Forecast</h4>
+              <h4 className="text-xl font-semibold text-white mb-4">{copy.details.forecast2026}</h4>
               <div className="space-y-3">
                 {analysis.annualForecast.year2026.map((month, index) => (
                   <div key={index} className="glass-inset p-4">
@@ -512,8 +650,8 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
               <Star className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-white">Life Overview</h3>
-              <p className="text-slate-400">Complete life path analysis and spiritual guidance</p>
+              <h3 className="text-2xl font-bold text-white">{copy.modules.overview[0]}</h3>
+              <p className="text-slate-400">{copy.details.overviewSub}</p>
             </div>
           </div>
           
@@ -523,8 +661,8 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
                 {analysis.lifeOverview.overallScore}/100
               </div>
               <div>
-                <div className="text-white font-semibold">Overall Life Score</div>
-                <div className="text-slate-400 text-sm">Based on complete BaZi analysis</div>
+                <div className="text-white font-semibold">{copy.details.overallLifeScore}</div>
+                <div className="text-slate-400 text-sm">{copy.details.scoreBasis}</div>
               </div>
             </div>
           </div>
@@ -532,19 +670,19 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-6">
               <div className="glass-card p-6">
-                <h4 className="text-lg font-semibold text-green-300 mb-3">Strengths & Challenges</h4>
+                <h4 className="text-lg font-semibold text-green-300 mb-3">{copy.details.strengths}</h4>
                 <p className="text-slate-300">{analysis.lifeOverview.strengthsWeaknesses}</p>
               </div>
               
               <div className="glass-card p-6">
-                <h4 className="text-lg font-semibold text-purple-300 mb-3">Life Themes</h4>
+                <h4 className="text-lg font-semibold text-purple-300 mb-3">{copy.details.themes}</h4>
                 <p className="text-slate-300">{analysis.lifeOverview.lifeThemes}</p>
               </div>
             </div>
             
             <div>
               <div className="glass-card p-6">
-                <h4 className="text-lg font-semibold text-indigo-300 mb-3">Spiritual Path</h4>
+                <h4 className="text-lg font-semibold text-indigo-300 mb-3">{copy.details.spiritual}</h4>
                 <p className="text-slate-300">{analysis.lifeOverview.spiritualPath}</p>
               </div>
             </div>
@@ -553,7 +691,7 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
       );
 
     default:
-      return <div className="text-white">Select a module to view detailed analysis</div>;
+      return <div className="text-white">{copy.details.fallback}</div>;
   }
 }
 

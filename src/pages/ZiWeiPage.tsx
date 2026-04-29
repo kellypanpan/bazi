@@ -14,6 +14,7 @@ import {
   Compass,
   Zap
 } from 'lucide-react';
+import { useI18n } from '../i18n';
 
 interface ZiWeiBirthData {
   name?: string;
@@ -95,7 +96,108 @@ const premiumZiWeiChapters = [
   },
 ];
 
+const ziWeiCopy = {
+  en: {
+    palaceAnalysis: 'Palace Analysis',
+    unlockFullReport: 'Unlock Full Report',
+    aiAnalysis: 'AI Analysis',
+    unlockTitle: 'Unlock Your Complete Zi Wei Report',
+    unlockBody: 'Get detailed analysis of all 12 palaces, special formations, annual forecasts, and personalized guidance based on your complete chart.',
+    unlockButton: 'Unlock Full Zi Wei Report',
+    download: 'Download Chart Image',
+    faq: 'Frequently Asked Questions',
+    heroBody: 'Discover your destiny through the ancient Chinese star map. Generate your complete 12-palace chart and unlock the secrets of your cosmic blueprint.',
+    formTitle: 'Generate Your Zi Wei Chart',
+    name: 'Name (Optional)',
+    namePlaceholder: 'Enter your name',
+    gender: 'Gender',
+    male: 'Male',
+    female: 'Female',
+    birthDate: 'Birth Date (Gregorian Calendar)',
+    year: 'Year',
+    month: 'Month',
+    day: 'Day',
+    birthTime: 'Birth Time (24-hour format)',
+    birthPlace: 'Birth Place',
+    placePlaceholder: 'City, Country',
+    generating: 'Generating Your Chart...',
+    generate: 'Generate My Zi Wei Chart',
+    discoverTitle: "What You'll Discover",
+    features: [
+      ['12 Life Palaces', 'Detailed analysis of career, wealth, relationships, health, and more'],
+      ['Star Positions', 'Major stars, transformations, and their influence on your destiny'],
+      ['Special Formations', 'Rare patterns and structures that shape your unique life path'],
+    ],
+  },
+  'zh-CN': {
+    palaceAnalysis: '宫位分析',
+    unlockFullReport: '解锁完整报告',
+    aiAnalysis: 'AI 解读',
+    unlockTitle: '解锁完整紫微斗数报告',
+    unlockBody: '获取十二宫、格局、四化、年度趋势和个性化建议的完整分析。',
+    unlockButton: '解锁完整紫微报告',
+    download: '下载命盘图片',
+    faq: '常见问题',
+    heroBody: '通过古老的中国星曜命盘理解人生结构。生成完整十二宫命盘，进一步解锁你的命盘蓝图。',
+    formTitle: '生成你的紫微命盘',
+    name: '姓名（选填）',
+    namePlaceholder: '输入姓名',
+    gender: '性别',
+    male: '男',
+    female: '女',
+    birthDate: '出生日期（公历）',
+    year: '年',
+    month: '月',
+    day: '日',
+    birthTime: '出生时间（24 小时制）',
+    birthPlace: '出生地点',
+    placePlaceholder: '城市，国家',
+    generating: '正在生成命盘...',
+    generate: '生成我的紫微命盘',
+    discoverTitle: '你将看到什么',
+    features: [
+      ['十二宫位', '详细分析事业、财富、关系、健康等人生领域'],
+      ['星曜位置', '主星、四化与星曜组合对命运结构的影响'],
+      ['特殊格局', '识别塑造独特人生路径的关键格局和结构'],
+    ],
+  },
+  'zh-TW': {
+    palaceAnalysis: '宮位分析',
+    unlockFullReport: '解鎖完整報告',
+    aiAnalysis: 'AI 解讀',
+    unlockTitle: '解鎖完整紫微斗數報告',
+    unlockBody: '獲取十二宮、格局、四化、年度趨勢和個人化建議的完整分析。',
+    unlockButton: '解鎖完整紫微報告',
+    download: '下載命盤圖片',
+    faq: '常見問題',
+    heroBody: '透過古老的中國星曜命盤理解人生結構。生成完整十二宮命盤，進一步解鎖你的命盤藍圖。',
+    formTitle: '生成你的紫微命盤',
+    name: '姓名（選填）',
+    namePlaceholder: '輸入姓名',
+    gender: '性別',
+    male: '男',
+    female: '女',
+    birthDate: '出生日期（公曆）',
+    year: '年',
+    month: '月',
+    day: '日',
+    birthTime: '出生時間（24 小時制）',
+    birthPlace: '出生地點',
+    placePlaceholder: '城市，國家',
+    generating: '正在生成命盤...',
+    generate: '生成我的紫微命盤',
+    discoverTitle: '你將看到什麼',
+    features: [
+      ['十二宮位', '詳細分析事業、財富、關係、健康等人生領域'],
+      ['星曜位置', '主星、四化與星曜組合對命運結構的影響'],
+      ['特殊格局', '識別塑造獨特人生路徑的關鍵格局和結構'],
+    ],
+  },
+};
+
 const ZiWeiPage: React.FC = () => {
+  const { pick } = useI18n();
+  const copy = pick(ziWeiCopy);
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [birthData, setBirthData] = useState<ZiWeiBirthData>({
     gender: 'male',
@@ -727,7 +829,7 @@ const ZiWeiPage: React.FC = () => {
             transition={{ delay: 0.6 }}
             className="mb-8"
           >
-            <h2 className="text-2xl font-bold text-white text-center mb-6">Palace Analysis</h2>
+            <h2 className="text-2xl font-bold text-white text-center mb-6">{copy.palaceAnalysis}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {chart.palaces.slice(0, 4).map((palace) => (
                 <div
@@ -742,7 +844,7 @@ const ZiWeiPage: React.FC = () => {
                     <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
                       <div className="text-center">
                         <Lock className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-gray-300 text-sm">Unlock Full Report</p>
+                        <p className="text-gray-300 text-sm">{copy.unlockFullReport}</p>
                       </div>
                     </div>
                   )}
@@ -756,7 +858,7 @@ const ZiWeiPage: React.FC = () => {
                   <p className="text-slate-300 mb-4 text-sm">{palace.description}</p>
                   {palace.isUnlocked && (
                     <div className="glass-inset p-4">
-                      <h4 className="text-indigo-300 font-medium mb-2">AI Analysis</h4>
+                      <h4 className="text-indigo-300 font-medium mb-2">{copy.aiAnalysis}</h4>
                       <p className="text-slate-300 text-sm">{palace.aiAnalysis}</p>
                     </div>
                   )}
@@ -774,9 +876,9 @@ const ZiWeiPage: React.FC = () => {
           >
             <div className="glass-panel p-8 text-center">
               <Crown className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-white mb-4">Unlock Your Complete Zi Wei Report</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">{copy.unlockTitle}</h2>
               <p className="text-slate-300 mb-6 max-w-2xl mx-auto">
-                Get detailed analysis of all 12 palaces, special formations, annual forecasts, and personalized guidance based on your complete chart.
+                {copy.unlockBody}
               </p>
               <div className="mx-auto mb-7 grid max-w-5xl grid-cols-1 gap-4 text-left md:grid-cols-2 lg:grid-cols-4">
                 {premiumZiWeiChapters.map((chapter) => (
@@ -796,11 +898,11 @@ const ZiWeiPage: React.FC = () => {
               </div>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/subscription?source=ziwei&plan=pro#plans" className="glass-primary-button rounded-lg px-6 py-3 font-semibold">
-                  Unlock Full Zi Wei Report
+                  {copy.unlockButton}
                 </Link>
                 <Link to="/subscription?source=ziwei-download&plan=pro#plans" className="glass-secondary-button rounded-lg px-6 py-3 font-semibold">
                   <Download className="h-5 w-5 inline mr-2" />
-                  Download Chart Image
+                  {copy.download}
                 </Link>
               </div>
             </div>
@@ -813,7 +915,7 @@ const ZiWeiPage: React.FC = () => {
             transition={{ delay: 1.0 }}
             className="mb-8"
           >
-            <h2 className="text-2xl font-bold text-white text-center mb-6">Frequently Asked Questions</h2>
+            <h2 className="text-2xl font-bold text-white text-center mb-6">{copy.faq}</h2>
             <div className="max-w-4xl mx-auto space-y-4">
               {[
                 {
@@ -857,7 +959,7 @@ const ZiWeiPage: React.FC = () => {
           </h1>
           <p className="text-xl text-indigo-300 mb-2">紫微斗数</p>
           <p className="text-slate-300 max-w-2xl mx-auto">
-            Discover your destiny through the ancient Chinese star map. Generate your complete 12-palace chart and unlock the secrets of your cosmic blueprint.
+            {copy.heroBody}
           </p>
         </motion.div>
 
@@ -870,7 +972,7 @@ const ZiWeiPage: React.FC = () => {
         >
           <div className="glass-panel p-8">
             <h2 className="text-2xl font-bold text-white mb-6 text-center">
-              Generate Your Zi Wei Chart
+              {copy.formTitle}
             </h2>
             
             <div className="space-y-6">
@@ -878,20 +980,20 @@ const ZiWeiPage: React.FC = () => {
               <div>
                 <label className="block text-indigo-300 text-sm font-medium mb-2">
                   <User className="h-4 w-4 inline mr-2" />
-                  Name (Optional)
+                  {copy.name}
                 </label>
                 <input
                   type="text"
                   value={birthData.name || ''}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="Enter your name"
+                  placeholder={copy.namePlaceholder}
                   className="glass-input w-full rounded-lg px-4 py-3"
                 />
               </div>
 
               {/* Gender */}
               <div>
-                <label className="block text-indigo-300 text-sm font-medium mb-2">Gender</label>
+                <label className="block text-indigo-300 text-sm font-medium mb-2">{copy.gender}</label>
                 <div className="flex gap-4">
                   <label className="flex items-center">
                     <input
@@ -901,7 +1003,7 @@ const ZiWeiPage: React.FC = () => {
                       onChange={(e) => handleInputChange('gender', e.target.value)}
                       className="mr-2"
                     />
-                    <span className="text-white">Male</span>
+                    <span className="text-white">{copy.male}</span>
                   </label>
                   <label className="flex items-center">
                     <input
@@ -911,7 +1013,7 @@ const ZiWeiPage: React.FC = () => {
                       onChange={(e) => handleInputChange('gender', e.target.value)}
                       className="mr-2"
                     />
-                    <span className="text-white">Female</span>
+                    <span className="text-white">{copy.female}</span>
                   </label>
                 </div>
               </div>
@@ -920,11 +1022,11 @@ const ZiWeiPage: React.FC = () => {
               <div>
                 <label className="block text-indigo-300 text-sm font-medium mb-2">
                   <Calendar className="h-4 w-4 inline mr-2" />
-                  Birth Date (Gregorian Calendar)
+                  {copy.birthDate}
                 </label>
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Year</label>
+                    <label className="block text-xs text-slate-400 mb-1">{copy.year}</label>
                     <input
                       type="number"
                       value={birthData.year}
@@ -935,7 +1037,7 @@ const ZiWeiPage: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Month</label>
+                    <label className="block text-xs text-slate-400 mb-1">{copy.month}</label>
                     <select
                       value={birthData.month}
                       onChange={(e) => handleInputChange('month', parseInt(e.target.value))}
@@ -949,7 +1051,7 @@ const ZiWeiPage: React.FC = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1">Day</label>
+                    <label className="block text-xs text-slate-400 mb-1">{copy.day}</label>
                     <select
                       value={birthData.day}
                       onChange={(e) => handleInputChange('day', parseInt(e.target.value))}
@@ -968,7 +1070,7 @@ const ZiWeiPage: React.FC = () => {
               {/* Birth Time */}
               <div>
                 <label className="block text-indigo-300 text-sm font-medium mb-2">
-                  Birth Time (24-hour format)
+                  {copy.birthTime}
                 </label>
                 <select
                   value={birthData.hour}
@@ -987,13 +1089,13 @@ const ZiWeiPage: React.FC = () => {
               <div>
                 <label className="block text-indigo-300 text-sm font-medium mb-2">
                   <MapPin className="h-4 w-4 inline mr-2" />
-                  Birth Place
+                  {copy.birthPlace}
                 </label>
                 <input
                   type="text"
                   value={birthData.birthplace}
                   onChange={(e) => handleInputChange('birthplace', e.target.value)}
-                  placeholder="City, Country"
+                  placeholder={copy.placePlaceholder}
                   className="glass-input w-full rounded-lg px-4 py-3"
                   required
                 />
@@ -1008,12 +1110,12 @@ const ZiWeiPage: React.FC = () => {
                 {loading ? (
                   <div className="flex items-center justify-center">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
-                    Generating Your Chart...
+                    {copy.generating}
                   </div>
                 ) : (
                   <>
                     <Zap className="h-6 w-6 inline mr-2" />
-                    Generate My Zi Wei Chart
+                    {copy.generate}
                   </>
                 )}
               </button>
@@ -1029,24 +1131,24 @@ const ZiWeiPage: React.FC = () => {
           className="mt-16"
         >
           <h2 className="text-2xl font-bold text-white text-center mb-8">
-            What You'll Discover
+            {copy.discoverTitle}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {[
               {
                 icon: <Star className="h-8 w-8 text-yellow-400" />,
-                title: "12 Life Palaces",
-                description: "Detailed analysis of career, wealth, relationships, health, and more"
+                title: copy.features[0][0],
+                description: copy.features[0][1]
               },
               {
                 icon: <Sparkles className="h-8 w-8 text-purple-400" />,
-                title: "Star Positions",
-                description: "Major stars, transformations, and their influence on your destiny"
+                title: copy.features[1][0],
+                description: copy.features[1][1]
               },
               {
                 icon: <Crown className="h-8 w-8 text-amber-400" />,
-                title: "Special Formations",
-                description: "Rare patterns and structures that shape your unique life path"
+                title: copy.features[2][0],
+                description: copy.features[2][1]
               }
             ].map((feature, index) => (
               <div key={index} className="glass-card glass-card-hover p-6 text-center">

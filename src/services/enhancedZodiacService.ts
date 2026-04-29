@@ -2,7 +2,7 @@ export interface EnhancedZodiacSign {
   name: string;
   chineseName: string;
   symbol: string;
-  element: 'Fire' | 'Earth' | 'Air' | 'Water';
+  element: string;
   dates: string;
   rulingPlanet: string;
   luckyColor: string[];
@@ -103,6 +103,77 @@ export interface YearlyForecast {
   challenges: string[];
   opportunities: string[];
 }
+
+export type EnhancedZodiacLanguage = 'en' | 'zh-CN' | 'zh-TW';
+
+const elementLabels: Record<EnhancedZodiacLanguage, Record<string, string>> = {
+  en: { Fire: 'Fire', Earth: 'Earth', Air: 'Air', Water: 'Water' },
+  'zh-CN': { Fire: '火象', Earth: '土象', Air: '风象', Water: '水象' },
+  'zh-TW': { Fire: '火象', Earth: '土象', Air: '風象', Water: '水象' },
+};
+
+const rulingPlanetLabels: Record<EnhancedZodiacLanguage, Record<string, string>> = {
+  en: {},
+  'zh-CN': { Mars: '火星', Venus: '金星', Mercury: '水星', Moon: '月亮', Sun: '太阳', Pluto: '冥王星', Jupiter: '木星', Saturn: '土星', Uranus: '天王星', Neptune: '海王星' },
+  'zh-TW': { Mars: '火星', Venus: '金星', Mercury: '水星', Moon: '月亮', Sun: '太陽', Pluto: '冥王星', Jupiter: '木星', Saturn: '土星', Uranus: '天王星', Neptune: '海王星' },
+};
+
+const colorLabels: Record<EnhancedZodiacLanguage, Record<string, string>> = {
+  en: {},
+  'zh-CN': {
+    Red: '红色', Orange: '橙色', Yellow: '黄色', Gold: '金色', Green: '绿色', Pink: '粉色', White: '白色', Silver: '银色',
+    Blue: '蓝色', Purple: '紫色', Black: '黑色', Brown: '棕色', Lavender: '薰衣草紫', Turquoise: '绿松石色', 'Dark Green': '深绿色',
+  },
+  'zh-TW': {
+    Red: '紅色', Orange: '橙色', Yellow: '黃色', Gold: '金色', Green: '綠色', Pink: '粉色', White: '白色', Silver: '銀色',
+    Blue: '藍色', Purple: '紫色', Black: '黑色', Brown: '棕色', Lavender: '薰衣草紫', Turquoise: '綠松石色', 'Dark Green': '深綠色',
+  },
+};
+
+const profileCopy = {
+  'zh-CN': {
+    positive: ['有行动力', '表达直接', '目标感强', '适应力好', '愿意承担'],
+    negative: ['容易急躁', '偶尔固执', '需要学习稳定节奏', '压力下容易过度反应', '不喜欢被限制'],
+    inLove: (name: string) => `${name} 在感情里重视真实回应和情绪安全。适合与能沟通、能尊重节奏的人建立关系。`,
+    atWork: (name: string) => `${name} 在工作中适合发挥主动性、判断力和协作能力。清晰目标会让效率明显提升。`,
+    withMoney: (name: string) => `${name} 的财务重点是把直觉和计划结合起来，避免被短期情绪带着消费或投资。`,
+    interpersonal: (name: string) => `${name} 的社交模式重视真诚和边界，关系越稳定，越能展现支持力。`,
+    childhood: (name: string) => `${name} 的早年模式通常与自我表达、安全感和被认可有关，适合在稳定鼓励中成长。`,
+    underStress: (name: string) => `${name} 在压力下需要降低外界干扰，先恢复节奏，再处理复杂沟通。`,
+    professions: ['顾问', '创意策划', '管理岗位', '教育培训', '内容创作', '品牌营销', '心理与身心服务'],
+    workStyle: (name: string) => `${name} 适合目标清晰、反馈及时、允许发挥个人优势的工作环境。`,
+    leadership: (name: string) => `${name} 的领导方式适合以方向感和稳定沟通带动团队。`,
+    faqs: (name: string) => [
+      [`${name} 适合什么职业？`, `${name} 适合能发挥个人判断、沟通、创造力或组织能力的职业，尤其适合目标明确且能持续成长的岗位。`],
+      [`${name} 最大的挑战是什么？`, `主要挑战是节奏管理和情绪反应。越能建立稳定计划，越能把优势发挥出来。`],
+      [`${name} 的感情重点是什么？`, `感情中需要真实表达、稳定回应和清晰边界。适合与愿意沟通的人长期发展。`],
+      [`${name} 如何处理金钱？`, `适合设定预算、长期目标和自动储蓄，减少冲动消费。`],
+      [`${name} 如何提升状态？`, `规律作息、运动、复盘计划和减少无效社交，都能帮助状态回稳。`],
+      [`如何和 ${name} 沟通？`, `直接、尊重、具体地表达需求，避免含糊试探或情绪化拉扯。`],
+    ],
+  },
+  'zh-TW': {
+    positive: ['有行動力', '表達直接', '目標感強', '適應力好', '願意承擔'],
+    negative: ['容易急躁', '偶爾固執', '需要學習穩定節奏', '壓力下容易過度反應', '不喜歡被限制'],
+    inLove: (name: string) => `${name} 在感情裡重視真實回應和情緒安全。適合與能溝通、能尊重節奏的人建立關係。`,
+    atWork: (name: string) => `${name} 在工作中適合發揮主動性、判斷力和協作能力。清晰目標會讓效率明顯提升。`,
+    withMoney: (name: string) => `${name} 的財務重點是把直覺和計畫結合起來，避免被短期情緒帶著消費或投資。`,
+    interpersonal: (name: string) => `${name} 的社交模式重視真誠和邊界，關係越穩定，越能展現支持力。`,
+    childhood: (name: string) => `${name} 的早年模式通常與自我表達、安全感和被認可有關，適合在穩定鼓勵中成長。`,
+    underStress: (name: string) => `${name} 在壓力下需要降低外界干擾，先恢復節奏，再處理複雜溝通。`,
+    professions: ['顧問', '創意策劃', '管理職位', '教育培訓', '內容創作', '品牌行銷', '心理與身心服務'],
+    workStyle: (name: string) => `${name} 適合目標清晰、回饋及時、允許發揮個人優勢的工作環境。`,
+    leadership: (name: string) => `${name} 的領導方式適合以方向感和穩定溝通帶動團隊。`,
+    faqs: (name: string) => [
+      [`${name} 適合什麼職業？`, `${name} 適合能發揮個人判斷、溝通、創造力或組織能力的職業，尤其適合目標明確且能持續成長的職位。`],
+      [`${name} 最大的挑戰是什麼？`, `主要挑戰是節奏管理和情緒反應。越能建立穩定計畫，越能把優勢發揮出來。`],
+      [`${name} 的感情重點是什麼？`, `感情中需要真實表達、穩定回應和清晰邊界。適合與願意溝通的人長期發展。`],
+      [`${name} 如何處理金錢？`, `適合設定預算、長期目標和自動儲蓄，減少衝動消費。`],
+      [`${name} 如何提升狀態？`, `規律作息、運動、複盤計畫和減少無效社交，都能幫助狀態回穩。`],
+      [`如何和 ${name} 溝通？`, `直接、尊重、具體地表達需求，避免含糊試探或情緒化拉扯。`],
+    ],
+  },
+};
 
 export class EnhancedZodiacService {
   private static readonly enhancedZodiacData: Record<string, EnhancedZodiacSign> = {
@@ -864,36 +935,39 @@ export class EnhancedZodiacService {
     }
   };
 
-  static getEnhancedZodiacData(sign: string): EnhancedZodiacSign | null {
-    return this.enhancedZodiacData[sign.toLowerCase()] || null;
+  static getEnhancedZodiacData(sign: string, language: EnhancedZodiacLanguage = 'en'): EnhancedZodiacSign | null {
+    const data = this.enhancedZodiacData[sign.toLowerCase()];
+    if (!data) return null;
+    if (language === 'en') return data;
+    return this.localizeEnhancedSign(data, language);
   }
 
-  static async getDailyHoroscope(sign: string, date?: string): Promise<HoroscopeData> {
+  static async getDailyHoroscope(sign: string, date?: string, language: EnhancedZodiacLanguage = 'en'): Promise<HoroscopeData> {
     const targetDate = date || new Date().toISOString().split('T')[0];
     
     // Simulate AI-generated content with realistic delay
     await new Promise(resolve => setTimeout(resolve, 800));
     
-    const horoscopes = this.generateDailyHoroscope(sign, targetDate);
+    const horoscopes = this.generateDailyHoroscope(sign, targetDate, language);
     return horoscopes;
   }
 
-  static async getMonthlyForecast(sign: string, month?: number, year?: number): Promise<MonthlyForecast> {
+  static async getMonthlyForecast(sign: string, month?: number, year?: number, language: EnhancedZodiacLanguage = 'en'): Promise<MonthlyForecast> {
     const now = new Date();
     const targetMonth = month || now.getMonth() + 1;
     const targetYear = year || now.getFullYear();
     
     await new Promise(resolve => setTimeout(resolve, 1200));
     
-    return this.generateMonthlyForecast(sign, targetMonth, targetYear);
+    return this.generateMonthlyForecast(sign, targetMonth, targetYear, language);
   }
 
-  static async getYearlyForecast(sign: string, year?: number): Promise<YearlyForecast> {
+  static async getYearlyForecast(sign: string, year?: number, language: EnhancedZodiacLanguage = 'en'): Promise<YearlyForecast> {
     const targetYear = year || new Date().getFullYear();
     
     await new Promise(resolve => setTimeout(resolve, 1500));
     
-    return this.generateYearlyForecast(sign, targetYear);
+    return this.generateYearlyForecast(sign, targetYear, language);
   }
 
   static getAllEnhancedSigns(): string[] {
@@ -901,8 +975,50 @@ export class EnhancedZodiacService {
   }
 
   // Private helper methods for generating content
-  private static generateDailyHoroscope(sign: string, date: string): HoroscopeData {
-    const predictions = {
+  private static localizeEnhancedSign(data: EnhancedZodiacSign, language: Exclude<EnhancedZodiacLanguage, 'en'>): EnhancedZodiacSign {
+    const copy = profileCopy[language];
+    const name = data.chineseName;
+    const faqs = copy.faqs(name).map(([question, answer]) => ({ question, answer }));
+
+    return {
+      ...data,
+      element: elementLabels[language][data.element] || data.element,
+      dates: this.localizeDates(data.dates, language),
+      rulingPlanet: rulingPlanetLabels[language][data.rulingPlanet] || data.rulingPlanet,
+      luckyColor: data.luckyColor.map((color) => colorLabels[language][color] || color),
+      keywords: copy.positive,
+      personality: {
+        positiveTraits: copy.positive,
+        negativeTraits: copy.negative,
+        inLove: copy.inLove(name),
+        atWork: copy.atWork(name),
+        withMoney: copy.withMoney(name),
+        interpersonal: copy.interpersonal(name),
+        childhood: copy.childhood(name),
+        underStress: copy.underStress(name),
+      },
+      famousPeople: data.famousPeople.map((person) => ({
+        ...person,
+        profession: language === 'zh-CN' ? '知名人物' : '知名人物',
+      })),
+      career: {
+        suitedProfessions: copy.professions,
+        workStyle: copy.workStyle(name),
+        leadership: copy.leadership(name),
+      },
+      faqs,
+    };
+  }
+
+  private static localizeDates(dates: string, language: Exclude<EnhancedZodiacLanguage, 'en'>): string {
+    const monthMap = language === 'zh-CN'
+      ? { January: '1月', February: '2月', March: '3月', April: '4月', May: '5月', June: '6月', July: '7月', August: '8月', September: '9月', October: '10月', November: '11月', December: '12月' }
+      : { January: '1月', February: '2月', March: '3月', April: '4月', May: '5月', June: '6月', July: '7月', August: '8月', September: '9月', October: '10月', November: '11月', December: '12月' };
+    return Object.entries(monthMap).reduce((value, [en, zh]) => value.replace(new RegExp(en, 'g'), zh), dates).replace(' - ', ' - ');
+  }
+
+  private static generateDailyHoroscope(sign: string, date: string, language: EnhancedZodiacLanguage): HoroscopeData {
+    const predictions = language === 'en' ? {
       overall: [
         'Today brings a perfect balance of opportunity and challenge for you.',
         'The cosmic energies align in your favor, bringing unexpected blessings.',
@@ -933,23 +1049,29 @@ export class EnhancedZodiacService {
         'Physical activity will boost both mood and vitality.',
         'Pay attention to your body\'s signals and rest when needed.'
       ]
+    } : {
+      overall: ['今天机会与挑战并存，适合稳步推进重要事项。', '整体能量对你有利，可能出现意外助力。', '新的可能性正在打开，适合主动做出调整。', '相信直觉，但也要用清晰计划承接行动。'],
+      love: ['感情层面可能有温暖回应。', '与亲近的人沟通会比平时更顺畅。', '单身者可能遇到值得留意的新连接。', '坦诚表达会带来更深层的靠近。'],
+      career: ['事业机会可能来自人脉和协作。', '你的创意方案容易被看见。', '今天更适合合作而不是单打独斗。', '某个工作项目可能进入关键节点。'],
+      wealth: ['财务规划开始显现效果。', '可能出现新的收入或资源机会。', '今天适合做长期有利的消费决定。', '适合复盘预算并做必要调整。'],
+      health: ['精力比平时更充足，可以善加利用。', '适合减压、深呼吸和放慢节奏。', '身体活动会提升情绪和活力。', '注意身体信号，需要休息时不要硬撑。']
     };
 
-    const doToday = [
+    const doToday = language === 'en' ? [
       'Practice gratitude for three things',
       'Reach out to an old friend',
       'Take a short walk in nature',
       'Try something creative',
       'Help someone in need'
-    ];
+    ] : ['记录三件值得感谢的事', '联系一位旧友', '到户外短暂散步', '尝试一件有创造力的事', '帮助一个需要支持的人'];
 
-    const avoidToday = [
+    const avoidToday = language === 'en' ? [
       'Making impulsive financial decisions',
       'Engaging in negative gossip',
       'Procrastinating on important tasks',
       'Overthinking past mistakes',
       'Isolating yourself from others'
-    ];
+    ] : ['冲动做财务决定', '卷入负面八卦', '拖延重要任务', '反复纠结过去错误', '把自己完全隔离起来'];
 
     return {
       date,
@@ -962,48 +1084,71 @@ export class EnhancedZodiacService {
       love: {
         prediction: predictions.love[Math.floor(Math.random() * predictions.love.length)],
         score: Math.floor(Math.random() * 40) + 60,
-        advice: 'Be open and honest in your communications.'
+        advice: language === 'en' ? 'Be open and honest in your communications.' : '沟通时保持开放和诚实。'
       },
       career: {
         prediction: predictions.career[Math.floor(Math.random() * predictions.career.length)],
         score: Math.floor(Math.random() * 35) + 65,
-        advice: 'Focus on teamwork and collaboration.'
+        advice: language === 'en' ? 'Focus on teamwork and collaboration.' : '把重点放在团队合作和协作上。'
       },
       wealth: {
         prediction: predictions.wealth[Math.floor(Math.random() * predictions.wealth.length)],
         score: Math.floor(Math.random() * 30) + 70,
-        advice: 'Consider long-term financial goals.'
+        advice: language === 'en' ? 'Consider long-term financial goals.' : '优先考虑长期财务目标。'
       },
       health: {
         prediction: predictions.health[Math.floor(Math.random() * predictions.health.length)],
         score: Math.floor(Math.random() * 25) + 75,
-        advice: 'Maintain a balanced lifestyle.'
+        advice: language === 'en' ? 'Maintain a balanced lifestyle.' : '保持更平衡的生活节奏。'
       },
       doToday: doToday.slice(0, 3),
       avoidToday: avoidToday.slice(0, 3)
     };
   }
 
-  private static generateMonthlyForecast(sign: string, month: number, year: number): MonthlyForecast {
+  private static generateMonthlyForecast(sign: string, month: number, year: number, language: EnhancedZodiacLanguage): MonthlyForecast {
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
                        'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthLabel = language === 'en' ? monthNames[month - 1] : `${month}月`;
     
     return {
-      month: monthNames[month - 1],
+      month: monthLabel,
       year,
       sign,
-      overview: `This month brings significant opportunities for personal growth and positive changes. The planetary alignments favor ${sign} individuals, creating favorable conditions for both personal and professional advancement.`,
-      keyThemes: ['Personal transformation', 'Career advancement', 'Relationship harmony', 'Financial stability'],
+      overview: language === 'en' ? `This month brings significant opportunities for personal growth and positive changes. The planetary alignments favor ${sign} individuals, creating favorable conditions for both personal and professional advancement.` : '本月适合个人成长和积极调整。整体节奏有利于推进个人与事业目标，但需要保持清晰沟通和稳定执行。',
+      keyThemes: language === 'en' ? ['Personal transformation', 'Career advancement', 'Relationship harmony', 'Financial stability'] : ['个人转变', '事业推进', '关系和谐', '财务稳定'],
       importantDates: [`${month}/7`, `${month}/15`, `${month}/23`],
-      advice: 'Focus on clear communication and stay open to unexpected opportunities that align with your long-term goals.',
-      loveInsights: 'Romantic energy peaks mid-month. Existing relationships deepen while singles may find meaningful connections.',
-      careerHighlights: 'Professional recognition and new opportunities emerge. Network actively and showcase your unique talents.',
-      healthFocus: 'Maintain balance between work and rest. Regular exercise and proper nutrition support your increased activity levels.',
-      financialGuidance: 'Conservative investments and careful budgeting lead to steady financial growth. Avoid impulsive purchases.'
+      advice: language === 'en' ? 'Focus on clear communication and stay open to unexpected opportunities that align with your long-term goals.' : '保持清晰沟通，同时对符合长期目标的机会保持开放。',
+      loveInsights: language === 'en' ? 'Romantic energy peaks mid-month. Existing relationships deepen while singles may find meaningful connections.' : '月中感情能量较强，现有关系有机会加深，单身者也可能遇到更有意义的连接。',
+      careerHighlights: language === 'en' ? 'Professional recognition and new opportunities emerge. Network actively and showcase your unique talents.' : '事业上可能出现认可和新机会，适合主动经营人脉并展示优势。',
+      healthFocus: language === 'en' ? 'Maintain balance between work and rest. Regular exercise and proper nutrition support your increased activity levels.' : '需要在工作和休息之间保持平衡，规律运动和饮食会支持你的行动力。',
+      financialGuidance: language === 'en' ? 'Conservative investments and careful budgeting lead to steady financial growth. Avoid impulsive purchases.' : '保守投资和谨慎预算更有利于稳定增长，避免冲动消费。'
     };
   }
 
-  private static generateYearlyForecast(sign: string, year: number): YearlyForecast {
+  private static generateYearlyForecast(sign: string, year: number, language: EnhancedZodiacLanguage): YearlyForecast {
+    if (language !== 'en') {
+      return {
+        year,
+        sign,
+        overview: `${year} 年是适合重新整理目标和稳步成长的一年。整体趋势支持事业推进、关系深化和个人能力升级，但需要避免过度承诺。`,
+        majorThemes: ['事业成长', '关系进化', '自我掌控', '财务稳健'],
+        quarters: {
+          q1: '第一季度适合打基础、做计划和重新确认优先级。',
+          q2: '第二季度行动力增强，机会和任务都会变多。',
+          q3: '第三季度适合收获前期努力，也要注意资源分配。',
+          q4: '第四季度适合复盘、整理，并为下一年设定方向。'
+        },
+        loveYear: '关系会进入更深层的理解阶段，稳定沟通比短期激情更重要。',
+        careerYear: '事业成长来自技能提升和策略性人脉，可能出现领导或负责项目的机会。',
+        healthYear: '健康重点在长期稳定的习惯，身心状态会随着规律照顾而改善。',
+        wealthYear: '财务适合稳健增长，避免过度冒险和快速致富心态。',
+        keyDates: [`3月 ${year}`, `6月 ${year}`, `9月 ${year}`, `12月 ${year}`],
+        challenges: ['在野心和耐心之间取得平衡', '管理增加的责任', '避免过度承诺'],
+        opportunities: ['领导角色', '创意合作', '投资潜力', '个人品牌建设']
+      };
+    }
+
     return {
       year,
       sign,
