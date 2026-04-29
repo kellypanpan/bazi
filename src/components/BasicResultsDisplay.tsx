@@ -1,8 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { BirthData } from './BirthDateForm';
-import { Calendar, Clock, Star, Flame, Heart, Briefcase, Leaf, Mountain, Gem, Waves } from 'lucide-react';
+import {
+  BarChart3,
+  Briefcase,
+  Calendar,
+  Clock,
+  Compass,
+  Flame,
+  Gem,
+  Heart,
+  Leaf,
+  MapPin,
+  Mountain,
+  Settings2,
+  Star,
+  Waves,
+} from 'lucide-react';
 import { analyzeBazi, BaziAnalysis } from '../services/baziAnalysisService';
+import { calculateBaziChart } from '../services/baziCore';
+import { useI18n } from '../i18n';
 
 interface BasicResultsDisplayProps {
   formData: BirthData;
@@ -13,6 +30,179 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
   const [loading, setLoading] = useState(true);
   const [loadingStep, setLoadingStep] = useState(0);
   const [progress, setProgress] = useState(0);
+  const { pick } = useI18n();
+
+  const text = useMemo(() => pick({
+    en: {
+      loadingSteps: [
+        ['Calculating celestial coordinates and birth chart positions...', 'Determining exact astronomical positions at your birth time'],
+        ['Analyzing Five Elements balance and interactions...', 'Examining Wood, Fire, Earth, Metal, and Water influences'],
+        ['Computing Four Pillars and Heavenly Stems combinations...', 'Processing Year, Month, Day, and Hour pillars'],
+        ['Interpreting Zodiac influences and personality traits...', 'Understanding your Chinese zodiac characteristics'],
+        ['Generating life path predictions and guidance...', 'Creating personalized insights and recommendations'],
+      ],
+      whyTitle: 'Why does this take time?',
+      whyBody: 'Fortune analysis requires precise calculations of celestial positions, elemental interactions, and complex astrological computations.',
+      eyebrow: 'BaZi Chart',
+      title: 'Your Four Pillars Overview',
+      birthInfo: 'Birth Information',
+      chartIdentity: 'Chart Identity',
+      dayMaster: 'Day Master',
+      rules: 'Calculation Rules',
+      snapshot: 'Four Pillars Snapshot',
+      pillar: 'Pillar',
+      stem: 'Heavenly Stem',
+      branch: 'Earthly Branch',
+      elements: 'Elements',
+      tenGod: 'Ten God',
+      hiddenStems: 'Hidden Stems',
+      focus: 'Reading Focus',
+      elemental: 'Elemental Analysis',
+      distribution: 'Birth Elements Distribution',
+      howToRead: 'How to read this section',
+      strongest: 'Strongest signal',
+      weakest: 'Weakest signal',
+      engineNote: 'This overview now comes from the shared chart engine, including stems, branches, hidden stems, Ten Gods, and weighted element scores.',
+      notes: 'Calculation Notes',
+      strengths: 'Core Strengths',
+      challenges: 'Growth Challenges',
+      lifePhase: 'Current Life Phase',
+      opportunities: 'Upcoming Opportunities',
+      risks: 'Areas to Watch',
+      recommendations: 'Practical Recommendations',
+      detailedGuidance: 'Detailed Life Guidance',
+      wealth: 'Wealth & Resources',
+      health: 'Health & Balance',
+      career: 'Career Path',
+      relationship: 'Relationship Dynamics',
+      ctaLine1: 'This analysis provides a comprehensive view of your celestial blueprint.',
+      ctaLine2: 'Looking for even deeper insights such as precise timing for major life events and year-by-year forecasts? Tap into our advanced engine.',
+      cta: 'Explore More on FacePalm AI',
+      ruleLabels: {},
+    },
+    'zh-CN': {
+      loadingSteps: [
+        ['正在计算出生时空与命盘位置...', '根据出生时间推定命盘基础位置'],
+        ['正在分析五行平衡与互动...', '检查木、火、土、金、水的分布'],
+        ['正在计算四柱与天干组合...', '处理年柱、月柱、日柱、时柱'],
+        ['正在解读生肖与性格信号...', '理解生肖和命盘特征'],
+        ['正在生成生命路径建议...', '整理个性化洞察和建议'],
+      ],
+      whyTitle: '为什么需要一点时间？',
+      whyBody: '命理分析需要处理出生时间、五行互动和多层命盘结构。',
+      eyebrow: '八字命盘',
+      title: '你的四柱概览',
+      birthInfo: '出生信息',
+      chartIdentity: '命盘身份',
+      dayMaster: '日主',
+      rules: '计算规则',
+      snapshot: '四柱快照',
+      pillar: '柱位',
+      stem: '天干',
+      branch: '地支',
+      elements: '五行',
+      tenGod: '十神',
+      hiddenStems: '藏干',
+      focus: '解读重点',
+      elemental: '五行分析',
+      distribution: '出生五行分布',
+      howToRead: '如何阅读这一部分',
+      strongest: '最强信号',
+      weakest: '最弱信号',
+      engineNote: '此概览来自统一命盘引擎，包含天干、地支、藏干、十神和加权五行分数。',
+      notes: '计算说明',
+      strengths: '核心优势',
+      challenges: '成长挑战',
+      lifePhase: '当前人生阶段',
+      opportunities: '未来机会',
+      risks: '需要留意的方面',
+      recommendations: '实用建议',
+      detailedGuidance: '详细人生指导',
+      wealth: '财富与资源',
+      health: '健康与平衡',
+      career: '事业路径',
+      relationship: '关系动态',
+      ctaLine1: '这份分析提供了你的命盘结构概览。',
+      ctaLine2: '如果你需要更深入的重大事件时间点和逐年预测，可以继续解锁高级解读。',
+      cta: '查看更多 FacePalm AI 解读',
+      ruleLabels: {
+        'Solar calendar input': '阳历输入',
+        'Lunar calendar input': '农历输入',
+        'Leap lunar month selected': '已选择农历闰月',
+        'No leap month': '非闰月',
+        'True solar time enabled': '已启用真太阳时',
+        'Clock time mode': '使用钟表时间',
+        'Midnight day boundary': '午夜换日',
+        'Zi hour day boundary': '子时换日',
+        'Lunar New Year boundary': '春节换年',
+        'Li Chun year boundary': '立春换年',
+        'Birth time unknown': '出生时间未知',
+        'exact birth time': '准确出生时间',
+        'approximate birth time': '大概出生时间',
+      },
+    },
+    'zh-TW': {
+      loadingSteps: [
+        ['正在計算出生時空與命盤位置...', '根據出生時間推定命盤基礎位置'],
+        ['正在分析五行平衡與互動...', '檢查木、火、土、金、水的分布'],
+        ['正在計算四柱與天干組合...', '處理年柱、月柱、日柱、時柱'],
+        ['正在解讀生肖與性格訊號...', '理解生肖和命盤特徵'],
+        ['正在生成生命路徑建議...', '整理個人化洞察和建議'],
+      ],
+      whyTitle: '為什麼需要一點時間？',
+      whyBody: '命理分析需要處理出生時間、五行互動和多層命盤結構。',
+      eyebrow: '八字命盤',
+      title: '你的四柱概覽',
+      birthInfo: '出生資訊',
+      chartIdentity: '命盤身份',
+      dayMaster: '日主',
+      rules: '計算規則',
+      snapshot: '四柱快照',
+      pillar: '柱位',
+      stem: '天干',
+      branch: '地支',
+      elements: '五行',
+      tenGod: '十神',
+      hiddenStems: '藏干',
+      focus: '解讀重點',
+      elemental: '五行分析',
+      distribution: '出生五行分布',
+      howToRead: '如何閱讀這一部分',
+      strongest: '最強訊號',
+      weakest: '最弱訊號',
+      engineNote: '此概覽來自統一命盤引擎，包含天干、地支、藏干、十神和加權五行分數。',
+      notes: '計算說明',
+      strengths: '核心優勢',
+      challenges: '成長挑戰',
+      lifePhase: '當前人生階段',
+      opportunities: '未來機會',
+      risks: '需要留意的方面',
+      recommendations: '實用建議',
+      detailedGuidance: '詳細人生指導',
+      wealth: '財富與資源',
+      health: '健康與平衡',
+      career: '事業路徑',
+      relationship: '關係動態',
+      ctaLine1: '這份分析提供了你的命盤結構概覽。',
+      ctaLine2: '如果你需要更深入的重大事件時間點和逐年預測，可以繼續解鎖高級解讀。',
+      cta: '查看更多 FacePalm AI 解讀',
+      ruleLabels: {
+        'Solar calendar input': '陽曆輸入',
+        'Lunar calendar input': '農曆輸入',
+        'Leap lunar month selected': '已選擇農曆閏月',
+        'No leap month': '非閏月',
+        'True solar time enabled': '已啟用真太陽時',
+        'Clock time mode': '使用鐘錶時間',
+        'Midnight day boundary': '午夜換日',
+        'Zi hour day boundary': '子時換日',
+        'Lunar New Year boundary': '春節換年',
+        'Li Chun year boundary': '立春換年',
+        'Birth time unknown': '出生時間未知',
+        'exact birth time': '準確出生時間',
+        'approximate birth time': '大概出生時間',
+      },
+    },
+  }), [pick]);
 
   useEffect(() => {
     const performAnalysis = async () => {
@@ -21,11 +211,11 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
       setProgress(0);
       
       const steps = [
-        { message: "Calculating celestial coordinates and birth chart positions...", duration: 1200 },
-        { message: "Analyzing Five Elements balance and interactions...", duration: 1000 },
-        { message: "Computing Four Pillars and Heavenly Stems combinations...", duration: 800 },
-        { message: "Interpreting Zodiac influences and personality traits...", duration: 600 },
-        { message: "Generating life path predictions and guidance...", duration: 400 }
+        { message: text.loadingSteps[0][0], duration: 1200 },
+        { message: text.loadingSteps[1][0], duration: 1000 },
+        { message: text.loadingSteps[2][0], duration: 800 },
+        { message: text.loadingSteps[3][0], duration: 600 },
+        { message: text.loadingSteps[4][0], duration: 400 }
       ];
 
       let currentStep = 0;
@@ -70,61 +260,15 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
     };
 
     performAnalysis();
-  }, [formData]);
-
-  // Helper functions
-  const getChineseZodiac = (year: number) => {
-    const animals = ['Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
-    return animals[(year - 4) % 12];
-  };
-
-  const getHeavenlyStem = (year: number) => {
-    const stems = ['Jia', 'Yi', 'Bing', 'Ding', 'Wu', 'Ji', 'Geng', 'Xin', 'Ren', 'Gui'];
-    return stems[(year - 4) % 10];
-  };
-
-  const getEarthlyBranch = (year: number) => {
-    const branches = ['Zi', 'Chou', 'Yin', 'Mao', 'Chen', 'Si', 'Wu', 'Wei', 'Shen', 'You', 'Xu', 'Hai'];
-    return branches[(year - 4) % 12];
-  };
-
-  const getElement = (stem: string) => {
-    const elements = {
-      'Jia': 'Wood', 'Yi': 'Wood',
-      'Bing': 'Fire', 'Ding': 'Fire',
-      'Wu': 'Earth', 'Ji': 'Earth',
-      'Geng': 'Metal', 'Xin': 'Metal',
-      'Ren': 'Water', 'Gui': 'Water'
-    };
-    return elements[stem as keyof typeof elements];
-  };
-
-  const getMonthElement = (month: number) => {
-    const elements = ['Wood', 'Wood', 'Wood', 'Wood', 'Earth', 'Fire', 'Fire', 'Earth', 'Metal', 'Metal', 'Water', 'Water'];
-    return elements[month - 1];
-  };
-
-  const getDayElement = (day: number) => {
-    return ['Metal', 'Water', 'Wood', 'Fire', 'Earth'][day % 5];
-  };
-
-  const getHourElement = (hour: number) => {
-    if (hour >= 23 || hour < 1) return 'Water';
-    if (hour >= 1 && hour < 5) return 'Wood';
-    if (hour >= 5 && hour < 9) return 'Fire';
-    if (hour >= 9 && hour < 13) return 'Earth';
-    if (hour >= 13 && hour < 17) return 'Metal';
-    if (hour >= 17 && hour < 21) return 'Water';
-    return 'Wood';
-  };
+  }, [formData, text.loadingSteps]);
 
   if (loading) {
     const steps = [
-      { message: "Calculating celestial coordinates and birth chart positions...", description: "Determining exact astronomical positions at your birth time" },
-      { message: "Analyzing Five Elements balance and interactions...", description: "Examining Wood, Fire, Earth, Metal, and Water influences" },
-      { message: "Computing Four Pillars and Heavenly Stems combinations...", description: "Processing Year, Month, Day, and Hour pillars" },
-      { message: "Interpreting Zodiac influences and personality traits...", description: "Understanding your Chinese zodiac characteristics" },
-      { message: "Generating life path predictions and guidance...", description: "Creating personalized insights and recommendations" }
+      { message: text.loadingSteps[0][0], description: text.loadingSteps[0][1] },
+      { message: text.loadingSteps[1][0], description: text.loadingSteps[1][1] },
+      { message: text.loadingSteps[2][0], description: text.loadingSteps[2][1] },
+      { message: text.loadingSteps[3][0], description: text.loadingSteps[3][1] },
+      { message: text.loadingSteps[4][0], description: text.loadingSteps[4][1] }
     ];
 
     return (
@@ -217,12 +361,10 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
           </div>
 
           {/* Explanation */}
-          <div className="bg-indigo-900 bg-opacity-50 rounded-lg p-4 border border-indigo-700">
+          <div className="glass-card p-4">
             <p className="text-indigo-200 text-sm leading-relaxed">
-              ✨ <strong>Why does this take time?</strong><br/>
-              Fortune analysis requires precise calculations of celestial positions, elemental interactions, 
-              and complex astrological computations. Our system carefully analyzes hundreds of variables 
-              from your birth data to provide the most accurate personalized insights.
+              <strong>{text.whyTitle}</strong><br/>
+              {text.whyBody}
             </p>
           </div>
         </motion.div>
@@ -234,37 +376,8 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
     return null;
   }
 
-  const birthYear = new Date(formData.birthDate).getFullYear();
-  const birthMonth = new Date(formData.birthDate).getMonth() + 1;
-  const birthDay = new Date(formData.birthDate).getDate();
-  const birthHour = parseInt(formData.birthTime.split(':')[0]);
-  
-  const zodiac = getChineseZodiac(birthYear);
-  const heavenlyStem = getHeavenlyStem(birthYear);
-  const earthlyBranch = getEarthlyBranch(birthYear);
-  const yearElement = getElement(heavenlyStem);
-  const monthElement = getMonthElement(birthMonth);
-  const dayElement = getDayElement(birthDay);
-  const hourElement = getHourElement(birthHour);
-
-  const getElementalBalance = () => {
-    const elements: Record<string, number> = {
-      Wood: 0,
-      Fire: 0,
-      Earth: 0,
-      Metal: 0,
-      Water: 0
-    };
-
-    elements[yearElement] = (elements[yearElement] || 0) + 1;
-    elements[monthElement] = (elements[monthElement] || 0) + 1;
-    elements[dayElement] = (elements[dayElement] || 0) + 1;
-    elements[hourElement] = (elements[hourElement] || 0) + 1;
-
-    return elements;
-  };
-
-  const elementalBalance = getElementalBalance();
+  const chart = calculateBaziChart(formData);
+  const maxElementCount = Math.max(...Object.values(chart.elementScores), 1);
 
   const getElementIcon = (element: string) => {
     switch (element) {
@@ -283,15 +396,26 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="bg-indigo-900 bg-opacity-30 backdrop-blur-sm rounded-2xl border border-indigo-800 p-6 md:p-8 mb-8"
+        className="glass-panel mb-8 p-6 md:p-8"
       >
-        <h2 className="text-2xl font-serif text-white mb-6 text-center">
-          Your Detailed Fortune Analysis
-        </h2>
+        <div className="mb-6 flex flex-col gap-3 border-b border-white/10 pb-5 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="mb-2 text-sm font-semibold uppercase tracking-[0.16em] text-amber-300">
+              {text.eyebrow}
+            </p>
+            <h2 className="text-2xl font-serif text-white">
+              {text.title}
+            </h2>
+          </div>
+          <div className="glass-inset inline-flex items-center gap-2 px-3 py-2 text-sm text-slate-300">
+            <Settings2 className="h-4 w-4 text-amber-400" />
+            {formData.useSolarTime ? 'True solar time' : 'Clock time'}
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-indigo-950 bg-opacity-70 p-4 rounded-xl">
-            <h3 className="text-lg text-amber-400 mb-4">Birth Information</h3>
+          <div className="glass-card p-4">
+            <h3 className="text-lg text-amber-400 mb-4">{text.birthInfo}</h3>
             <div className="space-y-3">
               <div className="flex items-center">
                 <Calendar className="h-5 w-5 text-slate-400 mr-3" />
@@ -313,47 +437,195 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
                   })}
                 </span>
               </div>
+              <div className="flex items-center">
+                <MapPin className="h-5 w-5 text-slate-400 mr-3" />
+                <span className="text-slate-300">{formData.location}</span>
+              </div>
             </div>
           </div>
           
-          <div className="bg-indigo-950 bg-opacity-70 p-4 rounded-xl">
-            <h3 className="text-lg text-amber-400 mb-4">Celestial Identity</h3>
+          <div className="glass-card p-4">
+            <h3 className="text-lg text-amber-400 mb-4">{text.chartIdentity}</h3>
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <div className="bg-amber-500 bg-opacity-20 p-3 rounded-full mr-4">
-                  <Star className="h-6 w-6 text-amber-500" />
+                <div className="mr-4 rounded-full border border-amber-300/20 bg-amber-300/10 p-3 backdrop-blur-xl">
+                  <Compass className="h-6 w-6 text-amber-500" />
                 </div>
                 <div>
-                  <span className="block text-white text-xl">{zodiac}</span>
-                  <span className="text-slate-400 text-sm">{heavenlyStem}-{earthlyBranch} Year</span>
+                  <span className="block text-white text-xl">{chart.zodiac}</span>
+                  <span className="text-slate-400 text-sm">
+                    {chart.pillars[0].stem}-{chart.pillars[0].branch}, {chart.dayMasterElement} {text.dayMaster}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-indigo-950 bg-opacity-70 p-4 rounded-xl mb-8">
-          <h3 className="text-lg text-amber-400 mb-4">Elemental Analysis</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="glass-card mb-8 p-4">
+          <h3 className="mb-4 text-lg text-amber-400">{text.rules}</h3>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
+            {chart.rules.map((rule) => (
+              <div key={rule} className="glass-inset px-3 py-2 text-sm text-slate-300">
+                {text.ruleLabels[rule as keyof typeof text.ruleLabels] ?? rule}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="glass-card mb-8 overflow-x-auto p-4">
+          <h3 className="mb-4 text-lg text-amber-400">{text.snapshot}</h3>
+          <table className="w-full min-w-[720px] border-collapse text-left">
+            <thead>
+              <tr className="border-b border-white/10 text-sm text-slate-400">
+                <th className="py-3 pr-4 font-medium">{text.pillar}</th>
+                <th className="px-4 py-3 font-medium">{text.stem}</th>
+                <th className="px-4 py-3 font-medium">{text.branch}</th>
+                <th className="px-4 py-3 font-medium">{text.elements}</th>
+                <th className="px-4 py-3 font-medium">{text.tenGod}</th>
+                <th className="px-4 py-3 font-medium">{text.hiddenStems}</th>
+                <th className="py-3 pl-4 font-medium">{text.focus}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {chart.pillars.map((pillar) => (
+                <tr key={pillar.label} className="border-b border-white/10 last:border-0">
+                  <td className="py-4 pr-4 font-semibold text-white">{pillar.label}</td>
+                  <td className="px-4 py-4 text-amber-300">{pillar.stem}</td>
+                  <td className="px-4 py-4 text-slate-200">{pillar.branch}</td>
+                  <td className="px-4 py-4 text-slate-200">{pillar.stemElement} / {pillar.branchElement}</td>
+                  <td className="px-4 py-4 text-slate-200">{pillar.tenGod}</td>
+                  <td className="px-4 py-4 text-slate-300">{pillar.hiddenStems.join(', ')}</td>
+                  <td className="py-4 pl-4 text-sm text-slate-300">{pillar.meaning}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="glass-card mb-8 p-4">
+          <div className="mb-4 flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-amber-400" />
+            <h3 className="text-lg text-amber-400">{text.elemental}</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <h4 className="text-white mb-3">Birth Elements Distribution</h4>
+              <h4 className="text-white mb-3">{text.distribution}</h4>
               <div className="space-y-3">
-                {Object.entries(elementalBalance).map(([element, count]) => (
-                  <div key={element} className="flex items-center">
-                    {getElementIcon(element)}
-                    <span className="text-slate-300 ml-2">{element}: {count}</span>
+                {Object.entries(chart.elementScores).map(([element, count]) => (
+                  <div key={element}>
+                    <div className="mb-1 flex items-center justify-between">
+                      <span className="flex items-center text-slate-300">
+                        {getElementIcon(element)}
+                        <span className="ml-2">{element}</span>
+                      </span>
+                      <span className="text-sm text-slate-400">{count}</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-white/10">
+                      <div
+                        className="h-2 rounded-full bg-amber-400"
+                        style={{ width: `${Math.max((count / maxElementCount) * 100, 12)}%` }}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
+            <div className="glass-inset p-4">
+              <h4 className="mb-3 text-white">{text.howToRead}</h4>
+              <p className="text-sm leading-6 text-slate-300">
+                {text.strongest}: {chart.strongestElement}. {text.weakest}: {chart.weakestElement}.
+                {text.engineNote}
+              </p>
+            </div>
           </div>
         </div>
 
+        <div className="mb-8 rounded-xl border border-amber-500/25 bg-amber-500/10 p-4">
+          <h3 className="mb-3 text-lg text-amber-300">{text.notes}</h3>
+          <ul className="space-y-2 text-sm leading-6 text-slate-300">
+            {chart.notes.map((note) => (
+              <li key={note} className="flex gap-2">
+                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-300" />
+                <span>{note}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <section className="glass-card p-5">
+            <h3 className="mb-4 text-lg text-amber-400">{text.strengths}</h3>
+            <ul className="space-y-3">
+              {analysis.personalityAnalysis.strengths.map((item, index) => (
+                <li key={index} className="flex items-start gap-3 text-sm leading-6 text-slate-300">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="glass-card p-5">
+            <h3 className="mb-4 text-lg text-amber-400">{text.challenges}</h3>
+            <ul className="space-y-3">
+              {analysis.personalityAnalysis.challenges.map((item, index) => (
+                <li key={index} className="flex items-start gap-3 text-sm leading-6 text-slate-300">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
+
+        <section className="glass-card mb-8 p-5">
+          <h3 className="mb-4 text-lg text-amber-400">{text.lifePhase}</h3>
+          <p className="text-sm leading-7 text-slate-300">{analysis.lifePath.currentPhase}</p>
+        </section>
+
+        <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {[
+            { title: text.opportunities, items: analysis.lifePath.opportunities, dot: 'bg-emerald-400' },
+            { title: text.risks, items: analysis.lifePath.challenges, dot: 'bg-red-400' },
+            { title: text.recommendations, items: analysis.lifePath.recommendations, dot: 'bg-sky-400' },
+          ].map((section) => (
+            <section key={section.title} className="glass-card p-5">
+              <h3 className="mb-4 text-lg text-amber-400">{section.title}</h3>
+              <ul className="space-y-3">
+                {section.items.map((item, index) => (
+                  <li key={index} className="flex items-start gap-3 text-sm leading-6 text-slate-300">
+                    <span className={`mt-2 h-1.5 w-1.5 shrink-0 rounded-full ${section.dot}`} />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+
+        <section className="glass-card mb-8 p-5">
+          <h3 className="mb-5 text-lg text-amber-400">{text.detailedGuidance}</h3>
+          <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+            {[
+              { title: text.career, body: analysis.detailedGuidance.career },
+              { title: text.relationship, body: analysis.detailedGuidance.relationships },
+              { title: text.health, body: analysis.detailedGuidance.health },
+              { title: text.wealth, body: analysis.detailedGuidance.wealth },
+            ].map((section) => (
+              <article key={section.title} className="glass-inset p-4">
+                <h4 className="mb-3 font-semibold text-white">{section.title}</h4>
+                <p className="text-sm leading-7 text-slate-300">{section.body}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-indigo-950 bg-opacity-70 p-4 rounded-xl">
+          <div className="glass-card p-4">
             <h3 className="flex items-center text-lg text-amber-400 mb-4">
               <Briefcase className="h-5 w-5 mr-2" />
-              Career Path
+              {text.career}
             </h3>
             <ul className="space-y-3">
               {analysis.personalityAnalysis.careerSuggestions.map((tip, index) => (
@@ -365,10 +637,10 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
             </ul>
           </div>
           
-          <div className="bg-indigo-950 bg-opacity-70 p-4 rounded-xl">
+          <div className="glass-card p-4">
             <h3 className="flex items-center text-lg text-amber-400 mb-4">
               <Heart className="h-5 w-5 mr-2" />
-              Relationship Dynamics
+              {text.relationship}
             </h3>
             <ul className="space-y-3">
               {analysis.personalityAnalysis.relationshipInsights.map((tip, index) => (
@@ -382,13 +654,13 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
         </div>
         
         <div className="mt-8 text-center text-slate-300">
-          <p>This analysis provides a comprehensive view of your celestial blueprint.</p>
-          <p className="mb-4">Looking for even deeper insights—such as precise timing for major life events and year-by-year forecasts? Tap into our advanced engine.</p>
+          <p>{text.ctaLine1}</p>
+          <p className="mb-4">{text.ctaLine2}</p>
           <a
             href="https://facepalmai.com" target="_blank" rel="noopener noreferrer"
-            className="inline-block mt-2 px-6 py-3 rounded-lg bg-amber-500 text-indigo-950 font-semibold hover:bg-amber-400 transition"
+            className="glass-primary-button mt-2 inline-block rounded-lg px-6 py-3 font-semibold"
           >
-            Explore More on FacePalm&nbsp;AI →
+            {text.cta}
           </a>
         </div>
       </motion.div>

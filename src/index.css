@@ -5,6 +5,46 @@
 @layer base {
   body {
     @apply antialiased;
+    background:
+      linear-gradient(145deg, #070b1a 0%, #111827 38%, #1e1b4b 100%);
+  }
+}
+
+@layer components {
+  .glass-shell {
+    @apply border border-white/10 bg-white/[0.055] shadow-2xl shadow-black/25 backdrop-blur-2xl;
+  }
+
+  .glass-panel {
+    @apply rounded-xl border border-white/10 bg-white/[0.07] shadow-2xl shadow-black/25 backdrop-blur-2xl;
+  }
+
+  .glass-card {
+    @apply rounded-xl border border-white/10 bg-white/[0.055] shadow-xl shadow-black/20 backdrop-blur-xl transition-all duration-300;
+  }
+
+  .glass-card-hover {
+    @apply hover:border-amber-300/40 hover:bg-white/[0.085] hover:shadow-amber-500/10;
+  }
+
+  .glass-inset {
+    @apply rounded-lg border border-white/10 bg-black/20 shadow-inner shadow-black/20 backdrop-blur-xl;
+  }
+
+  .glass-nav {
+    @apply border-b border-white/10 bg-slate-950/55 shadow-2xl shadow-black/20 backdrop-blur-2xl;
+  }
+
+  .glass-input {
+    @apply border-white/10 bg-white/[0.065] text-white placeholder-slate-400 shadow-inner shadow-black/20 backdrop-blur-xl focus:border-amber-300/60 focus:ring-2 focus:ring-amber-300/30;
+  }
+
+  .glass-primary-button {
+    @apply bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/20 transition hover:bg-amber-300 hover:shadow-amber-400/30;
+  }
+
+  .glass-secondary-button {
+    @apply border border-white/10 bg-white/[0.055] text-slate-100 shadow-lg shadow-black/10 backdrop-blur-xl transition hover:border-amber-300/50 hover:bg-white/[0.09] hover:text-amber-200;
   }
 }
 
@@ -32,7 +72,7 @@
 
 /* Custom Styling for Form Elements */
 input[type="date"], input[type="time"], input[type="text"], input[type="email"], select {
-  @apply bg-indigo-950 border border-indigo-700 rounded-lg px-4 py-2 text-white w-full focus:outline-none focus:ring-2 focus:ring-amber-500;
+  @apply glass-input rounded-lg px-4 py-2 w-full focus:outline-none;
   appearance: none;
   color-scheme: dark;
 }

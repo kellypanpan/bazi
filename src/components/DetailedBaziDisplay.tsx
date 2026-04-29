@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { 
   TrendingUp, 
   DollarSign, 
@@ -10,7 +11,8 @@ import {
   Share2,
   Download,
   ChevronRight,
-  Gem
+  Gem,
+  LockKeyhole
 } from 'lucide-react';
 import { DetailedBaziAnalysis } from '../services/aiService';
 
@@ -74,6 +76,33 @@ const DetailedBaziDisplay: React.FC<DetailedBaziDisplayProps> = ({ analysis, use
     }
   ];
 
+  const lockedModules = [
+    '10-year Luck Pillars timeline',
+    'Year-by-year timing windows',
+    'Marriage and relationship timing',
+    'Wealth opportunities and risk map',
+    'Downloadable PDF report',
+    'AI follow-up questions'
+  ];
+
+  const premiumReportSections = [
+    {
+      title: 'Chart Foundation',
+      items: ['Four Pillars structure', 'Day Master strength', 'Five Elements balance', 'Hidden stems and seasonal context'],
+    },
+    {
+      title: 'Life Area Reading',
+      items: ['Career strategy', 'Wealth rhythm', 'Relationship patterns', 'Health and energy management'],
+    },
+    {
+      title: 'Timing Layer',
+      items: ['Current luck cycle', 'Annual opportunity windows', 'Risk periods', 'Decision timing notes'],
+    },
+    {
+      title: 'Practical Plan',
+      items: ['Priority actions', 'What to avoid', 'Best environments', 'Questions for deeper follow-up'],
+    },
+  ];
 
   const getScoreRing = (score: number) => {
     const circumference = 2 * Math.PI * 45;
@@ -116,9 +145,9 @@ const DetailedBaziDisplay: React.FC<DetailedBaziDisplayProps> = ({ analysis, use
               activeTab === module.id ? 'ring-4 ring-amber-400/60 shadow-lg shadow-amber-400/20' : 'hover:ring-2 hover:ring-indigo-600/60'
             } rounded-2xl`}
           >
-            <div className="bg-indigo-900 bg-opacity-50 backdrop-blur-sm rounded-2xl border border-indigo-800 p-6 h-full overflow-hidden relative">
+            <div className="glass-card glass-card-hover h-full overflow-hidden p-6 relative">
               {/* subtle gradient glow */}
-              <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl pointer-events-none ${module.color.replace('from-', 'bg-gradient-to-br from-').replace(' to-', ' to-')}`}></div>
+              <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-xl pointer-events-none ${module.color.replace('from-', 'bg-gradient-to-br from-').replace(' to-', ' to-')}`}></div>
               <div className="flex items-center gap-4 mb-4 relative z-10">
                 <div className={`p-3 rounded-xl bg-gradient-to-r ${module.color}`}>
                   <module.icon className="h-6 w-6 text-white" />
@@ -178,7 +207,7 @@ const DetailedBaziDisplay: React.FC<DetailedBaziDisplayProps> = ({ analysis, use
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.4 }}
-        className="bg-indigo-900 bg-opacity-50 backdrop-blur-sm rounded-2xl border border-indigo-800 p-8 mb-8"
+        className="glass-panel mb-8 p-8"
       >
         {renderModuleContent(activeTab, analysis, modules)}
       </motion.div>
@@ -188,7 +217,7 @@ const DetailedBaziDisplay: React.FC<DetailedBaziDisplayProps> = ({ analysis, use
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-purple-900 to-pink-900 bg-opacity-50 backdrop-blur-sm rounded-2xl border border-purple-600 p-8 text-center relative overflow-hidden"
+          className="glass-panel relative overflow-hidden p-8 text-center"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 animate-pulse"></div>
           <div className="relative z-10">
@@ -197,16 +226,42 @@ const DetailedBaziDisplay: React.FC<DetailedBaziDisplayProps> = ({ analysis, use
               Unlock Complete Analysis
             </h3>
             <p className="text-slate-300 mb-6 max-w-2xl mx-auto">
-              You're seeing 30% of your complete fortune analysis. Unlock detailed insights, 
-              personalized recommendations, and exclusive content for just $1.99/month.
+              You're seeing the free preview of your fortune analysis. Unlock the Pro report for timing,
+              Ten Gods, relationship, wealth, career, PDF, and follow-up modules.
             </p>
+            <div className="mx-auto mb-7 grid max-w-5xl grid-cols-1 gap-4 text-left md:grid-cols-2 lg:grid-cols-4">
+              {premiumReportSections.map((section) => (
+                <div key={section.title} className="glass-card p-4">
+                  <h4 className="mb-3 font-semibold text-white">{section.title}</h4>
+                  <ul className="space-y-2">
+                    {section.items.map((item) => (
+                      <li key={item} className="flex gap-2 text-xs leading-5 text-slate-300">
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-300" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <div className="mx-auto mb-7 grid max-w-4xl grid-cols-1 gap-3 text-left sm:grid-cols-2 lg:grid-cols-3">
+              {lockedModules.map((module) => (
+                <div key={module} className="glass-inset flex items-center gap-3 p-3">
+                  <LockKeyhole className="h-4 w-4 shrink-0 text-amber-300" />
+                  <span className="text-sm text-slate-200">{module}</span>
+                </div>
+              ))}
+            </div>
             <div className="flex justify-center gap-4">
-              <button className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-pink-700 transition-all">
+              <Link
+                to="/subscription?source=reading&plan=pro#plans"
+                className="glass-primary-button rounded-lg px-8 py-3 font-semibold"
+              >
                 Upgrade Now
-              </button>
+              </Link>
               <button 
                 onClick={() => setShowPreview(false)}
-                className="px-8 py-3 bg-slate-700 text-white rounded-lg font-semibold hover:bg-slate-600 transition-all"
+                className="glass-secondary-button rounded-lg px-8 py-3 font-semibold"
               >
                 Continue with Free
               </button>
@@ -222,15 +277,18 @@ const DetailedBaziDisplay: React.FC<DetailedBaziDisplayProps> = ({ analysis, use
         transition={{ delay: 0.6 }}
         className="text-center mt-8"
       >
-        <div className="flex justify-center gap-4">
-          <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all">
+        <div className="flex flex-col justify-center gap-3 sm:flex-row">
+          <button className="glass-secondary-button flex items-center gap-2 rounded-lg px-6 py-3">
             <Share2 className="h-5 w-5" />
             Share Reading
           </button>
-          <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all">
+          <Link
+            to="/subscription?source=download&plan=pro#plans"
+            className="glass-primary-button flex items-center gap-2 rounded-lg px-6 py-3"
+          >
             <Download className="h-5 w-5" />
             Download PDF
-          </button>
+          </Link>
         </div>
       </motion.div>
     </div>
@@ -296,7 +354,7 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
               <h4 className="text-lg font-semibold text-white mb-4">Lucky Career Days</h4>
               <div className="space-y-3">
                 {analysis.careerForecast.luckyDays.map((day, index) => (
-                  <div key={index} className="bg-blue-900 bg-opacity-30 rounded-lg p-3">
+                  <div key={index} className="glass-inset p-3">
                     <span className="text-blue-300 text-sm">{day}</span>
                   </div>
                 ))}
@@ -320,15 +378,15 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="bg-green-900 bg-opacity-30 rounded-xl p-6">
+            <div className="glass-card p-6">
               <h4 className="text-lg font-semibold text-green-300 mb-3">Overall Trend</h4>
               <p className="text-slate-300 text-sm">{analysis.wealthAnalysis.overallTrend}</p>
             </div>
-            <div className="bg-yellow-900 bg-opacity-30 rounded-xl p-6">
+            <div className="glass-card p-6">
               <h4 className="text-lg font-semibold text-yellow-300 mb-3">Windfall Opportunities</h4>
               <p className="text-slate-300 text-sm">{analysis.wealthAnalysis.windfall}</p>
             </div>
-            <div className="bg-blue-900 bg-opacity-30 rounded-xl p-6">
+            <div className="glass-card p-6">
               <h4 className="text-lg font-semibold text-blue-300 mb-3">Investment Advice</h4>
               <p className="text-slate-300 text-sm">{analysis.wealthAnalysis.investments}</p>
             </div>
@@ -350,17 +408,17 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
           </div>
           
           <div className="space-y-6">
-            <div className="bg-pink-900 bg-opacity-30 rounded-xl p-6">
+            <div className="glass-card p-6">
               <h4 className="text-lg font-semibold text-pink-300 mb-3">Romantic Fortune</h4>
               <p className="text-slate-300">{analysis.marriageDestiny.romanticFortune}</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-purple-900 bg-opacity-30 rounded-xl p-6">
+              <div className="glass-card p-6">
                 <h4 className="text-lg font-semibold text-purple-300 mb-3">Compatibility Insights</h4>
                 <p className="text-slate-300">{analysis.marriageDestiny.compatibility}</p>
               </div>
-              <div className="bg-red-900 bg-opacity-30 rounded-xl p-6">
+              <div className="glass-card p-6">
                 <h4 className="text-lg font-semibold text-red-300 mb-3">Best Marriage Time</h4>
                 <p className="text-slate-300">{analysis.marriageDestiny.bestMarriageTime}</p>
               </div>
@@ -383,15 +441,15 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="bg-orange-900 bg-opacity-30 rounded-xl p-6">
+            <div className="glass-card p-6">
               <h4 className="text-lg font-semibold text-orange-300 mb-3">Potential Areas</h4>
               <p className="text-slate-300 text-sm">{analysis.healthInsights.potentialIssues}</p>
             </div>
-            <div className="bg-green-900 bg-opacity-30 rounded-xl p-6">
+            <div className="glass-card p-6">
               <h4 className="text-lg font-semibold text-green-300 mb-3">Preventive Care</h4>
               <p className="text-slate-300 text-sm">{analysis.healthInsights.preventiveCare}</p>
             </div>
-            <div className="bg-blue-900 bg-opacity-30 rounded-xl p-6">
+            <div className="glass-card p-6">
               <h4 className="text-lg font-semibold text-blue-300 mb-3">Recommendations</h4>
               <p className="text-slate-300 text-sm">{analysis.healthInsights.recommendations}</p>
             </div>
@@ -416,8 +474,8 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
             <div>
               <h4 className="text-xl font-semibold text-white mb-4">2025 Forecast</h4>
               <div className="space-y-3">
-                {analysis.annualForecast.year2025.slice(0, 6).map((month, index) => (
-                  <div key={index} className="bg-purple-900 bg-opacity-30 rounded-lg p-4">
+                {analysis.annualForecast.year2025.map((month, index) => (
+                  <div key={index} className="glass-inset p-4">
                     <div className="flex justify-between items-start mb-2">
                       <span className="font-medium text-purple-300">{month.month}</span>
                       <span className="text-sm text-yellow-400">★ {month.score}/100</span>
@@ -431,8 +489,8 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
             <div>
               <h4 className="text-xl font-semibold text-white mb-4">2026 Forecast</h4>
               <div className="space-y-3">
-                {analysis.annualForecast.year2026.slice(0, 6).map((month, index) => (
-                  <div key={index} className="bg-indigo-900 bg-opacity-30 rounded-lg p-4">
+                {analysis.annualForecast.year2026.map((month, index) => (
+                  <div key={index} className="glass-inset p-4">
                     <div className="flex justify-between items-start mb-2">
                       <span className="font-medium text-indigo-300">{month.month}</span>
                       <span className="text-sm text-yellow-400">★ {month.score}/100</span>
@@ -460,7 +518,7 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
           </div>
           
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-4 bg-gradient-to-r from-yellow-900 to-orange-900 bg-opacity-50 rounded-2xl p-6">
+            <div className="glass-card inline-flex items-center gap-4 p-6">
               <div className="text-4xl font-bold text-yellow-400">
                 {analysis.lifeOverview.overallScore}/100
               </div>
@@ -473,19 +531,19 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-6">
-              <div className="bg-gradient-to-r from-green-900 to-blue-900 bg-opacity-30 rounded-xl p-6">
+              <div className="glass-card p-6">
                 <h4 className="text-lg font-semibold text-green-300 mb-3">Strengths & Challenges</h4>
                 <p className="text-slate-300">{analysis.lifeOverview.strengthsWeaknesses}</p>
               </div>
               
-              <div className="bg-gradient-to-r from-purple-900 to-pink-900 bg-opacity-30 rounded-xl p-6">
+              <div className="glass-card p-6">
                 <h4 className="text-lg font-semibold text-purple-300 mb-3">Life Themes</h4>
                 <p className="text-slate-300">{analysis.lifeOverview.lifeThemes}</p>
               </div>
             </div>
             
             <div>
-              <div className="bg-gradient-to-r from-indigo-900 to-purple-900 bg-opacity-30 rounded-xl p-6">
+              <div className="glass-card p-6">
                 <h4 className="text-lg font-semibold text-indigo-300 mb-3">Spiritual Path</h4>
                 <p className="text-slate-300">{analysis.lifeOverview.spiritualPath}</p>
               </div>

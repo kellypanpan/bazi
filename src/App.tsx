@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Readings from './pages/Readings';
 import About from './pages/About';
 import Subscription from './pages/Subscription';
+import CheckoutSuccess from './pages/CheckoutSuccess';
 import ZodiacPage from './pages/ZodiacPage';
 import ComprehensiveZodiacPage from './pages/ComprehensiveZodiacPage';
 import CompatibilityPage from './pages/CompatibilityPage';
@@ -20,6 +21,7 @@ function App() {
           <Route path="/readings" element={<Readings />} />
           <Route path="/about" element={<About />} />
           <Route path="/subscription" element={<Subscription />} />
+          <Route path="/checkout/success" element={<CheckoutSuccess />} />
           
           {/* Zodiac Routes */}
           <Route path="/zodiac/:sign" element={<ComprehensiveZodiacPage />} />

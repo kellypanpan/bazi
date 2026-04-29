@@ -1,11 +1,18 @@
 {
   "name": "bazi",
+  "main": "src/worker.ts",
   "compatibility_date": "2025-06-03",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "binding": "ASSETS"
   },
   "vars": {
     "VITE_OPENROUTER_API_KEY": "",
-    "VITE_GA_ID": ""
+    "VITE_GA_ID": "",
+    "DODO_PAYMENTS_ENVIRONMENT": "test",
+    "PUBLIC_SITE_URL": "",
+    "DODO_PRODUCT_ESSENTIAL": "",
+    "DODO_PRODUCT_PRO": "",
+    "DODO_PRODUCT_ANNUAL": ""
   }
 }

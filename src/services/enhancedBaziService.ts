@@ -1,90 +1,89 @@
 import { BaziData, DetailedBaziAnalysis } from './aiService';
+import { BaziChart, calculateBaziChart } from './baziCore';
 
 export class EnhancedBaziService {
   
   static async getDetailedBaziAnalysis(baziData: BaziData): Promise<DetailedBaziAnalysis> {
-    // In production, this would call your AI service with detailed prompts
-    // For now, providing comprehensive mock data based on birth information
-    
-    const birthYear = new Date(baziData.birthDate).getFullYear();
-    const zodiacAnimal = this.getZodiacAnimal(birthYear);
-    const element = this.getDominantElement(baziData);
+    const chart = calculateBaziChart({
+      birthDate: baziData.birthDate,
+      birthTime: baziData.birthTime,
+      location: baziData.location,
+    });
     
     await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
     
     return {
-      careerForecast: this.generateCareerForecast(zodiacAnimal, element),
-      wealthAnalysis: this.generateWealthAnalysis(zodiacAnimal, element),
-      marriageDestiny: this.generateMarriageAnalysis(zodiacAnimal, element),
-      healthInsights: this.generateHealthInsights(zodiacAnimal, element),
-      annualForecast: this.generateAnnualForecast(),
-      lifeOverview: this.generateLifeOverview(zodiacAnimal, element)
+      careerForecast: this.generateCareerForecast(chart),
+      wealthAnalysis: this.generateWealthAnalysis(chart),
+      marriageDestiny: this.generateMarriageAnalysis(chart),
+      healthInsights: this.generateHealthInsights(chart),
+      annualForecast: this.generateAnnualForecast(chart),
+      lifeOverview: this.generateLifeOverview(chart)
     };
   }
 
-  private static getZodiacAnimal(year: number): string {
-    const animals = ['Rat', 'Ox', 'Tiger', 'Rabbit', 'Dragon', 'Snake', 'Horse', 'Goat', 'Monkey', 'Rooster', 'Dog', 'Pig'];
-    return animals[(year - 4) % 12];
+  private static getScore(chart: BaziChart, base: number, offset: number): number {
+    const strongest = chart.elementScores[chart.strongestElement];
+    const weakest = chart.elementScores[chart.weakestElement];
+    return Math.min(98, Math.max(62, base + strongest - weakest + offset));
   }
 
-  private static getDominantElement(baziData: BaziData): string {
-    // Simplified element calculation based on birth year
-    const year = new Date(baziData.birthDate).getFullYear();
-    const elements = ['Metal', 'Water', 'Wood', 'Fire', 'Earth'];
-    return elements[year % 5];
+  private static getTenGodPattern(chart: BaziChart): string {
+    return chart.pillars
+      .filter((pillar) => pillar.label !== 'Day')
+      .map((pillar) => `${pillar.label} pillar ${pillar.tenGod}`)
+      .join(', ');
   }
 
-  private static generateCareerForecast(zodiac: string, element: string) {
-    const luckyMonths = [2, 5, 8, 11]; // Spring, summer, autumn, winter starts
+  private static generateCareerForecast(chart: BaziChart) {
+    const tenGodPattern = this.getTenGodPattern(chart);
     
     return {
-      next12Months: `Your ${zodiac} nature combined with ${element} energy suggests significant career opportunities in the coming year. Peak periods for advancement will be in ${this.getSeasonNames(luckyMonths)}. Your natural leadership abilities will be recognized, leading to increased responsibilities and potential promotions. Focus on collaborative projects in Q2 and independent initiatives in Q4.`,
+      next12Months: `Your career reading should be anchored in the month pillar, the ${chart.dayMaster} Day Master, and the visible Ten Gods pattern: ${tenGodPattern}. The chart shows ${chart.strongestElement} as the strongest weighted signal, which can become a professional advantage when it is expressed through consistent skill, service, structure, or leadership. The weakest element is ${chart.weakestElement}, so career growth should include systems, collaborators, or training that compensate for that missing mode. Over the next 12 months, the most useful approach is to treat opportunities as timing windows rather than guaranteed outcomes. Focus first on roles where your strongest element can produce visible results, then build the weaker element through deliberate habits. If you are considering a job change, business launch, or major negotiation, compare the timing against annual cycles before committing. The safest career strategy is not to chase every visible chance, but to choose opportunities that strengthen the full chart balance. Watch for periods when pressure pushes you to overuse familiar strengths and ignore the support you actually need.`,
       luckyDays: [
-        "January 15th, 2025 - New project opportunities",
-        "March 22nd, 2025 - Important meeting success", 
-        "June 8th, 2025 - Career breakthrough",
-        "September 13th, 2025 - Recognition and rewards",
-        "November 27th, 2025 - Strategic planning success"
+        "Early spring window - review career positioning and skill gaps",
+        "Mid-spring window - initiate networking, interviews, or client outreach",
+        "Early summer window - test a visible project or leadership responsibility",
+        "Early autumn window - review compensation, contracts, and long-term structure",
+        "Late autumn window - consolidate gains and document repeatable systems"
       ],
-      recommendations: `Leverage your ${element} energy by taking calculated risks in your field. Network actively during spring months. Consider additional training or certification in emerging technologies. Your ${zodiac} traits make you particularly suited for mentoring roles.`,
-      score: Math.floor(Math.random() * 30) + 70 // 70-100 range
+      recommendations: `Use the ${chart.dayMasterElement} Day Master as your work-style anchor, but do not let the strongest element, ${chart.strongestElement}, dominate every decision. Build a plan that turns existing strengths into measurable results and uses mentors, tools, or collaborators to support ${chart.weakestElement}. Avoid making career decisions only from excitement or short-term recognition. A strong report should next add luck pillars to identify whether the timing favors expansion, consolidation, learning, or restraint.`,
+      score: this.getScore(chart, 78, 3)
     };
   }
 
-  private static generateWealthAnalysis(zodiac: string, element: string) {
+  private static generateWealthAnalysis(chart: BaziChart) {
     return {
-      overallTrend: `Your wealth pattern shows steady growth with ${element} energy bringing stability to your financial decisions. The ${zodiac} influence suggests periods of conservative saving followed by strategic investments. Expect gradual wealth accumulation rather than sudden windfalls, with peak earning potential in your late thirties to early forties.`,
-      windfall: `Unexpected financial opportunities may arise through social connections and collaborative ventures. Your ${zodiac} nature attracts benefactors and mentors who can open doors to profitable opportunities. Small windfalls likely in spring and autumn seasons through real estate or investment returns.`,
-      investments: `Your ${element} element favors long-term, stable investments over high-risk ventures. Consider diversified portfolios with emphasis on blue-chip stocks, real estate, and precious metals. Avoid speculative trading. Best investment timing: late spring and early autumn. Technology and sustainable energy sectors align well with your elemental profile.`,
-      score: Math.floor(Math.random() * 25) + 75 // 75-100 range
+      overallTrend: `Wealth should be read through the Day Master, the elements it controls, visible Ten Gods, and timing cycles rather than through a single lucky sign. In this chart, ${chart.strongestElement} provides the easiest momentum, while ${chart.weakestElement} shows the area that needs structure, discipline, or outside support. This suggests wealth growth is more likely to come from repeatable systems and informed decisions than from sudden speculation. The chart favors treating money as a managed resource: income generation, reserves, investment risk, and spending should be reviewed separately. If the person overuses the strongest element, they may feel confident but overlook risk controls. If the weakest element is ignored, financial decisions may lack the missing ingredient needed for stability.`,
+      windfall: `Windfall potential should be interpreted cautiously. The chart may show periods when visibility, relationships, or timing create unexpected openings, but a true windfall reading requires luck pillars and annual cycles. The more practical opportunity is to prepare for sudden openings by having clear offers, organized finances, and a disciplined decision process. When a chance appears quickly, the person should ask whether it strengthens the whole chart balance or only excites the strongest element. Unexpected money should be stabilized before it is expanded.`,
+      investments: `This is not financial advice, but the chart suggests that investment behavior should prioritize risk management, patience, and alignment with real expertise. The strongest element, ${chart.strongestElement}, can show where confidence is easiest, while ${chart.weakestElement} can show where blind spots may appear. Avoid speculative decisions based only on emotion, social pressure, or a single favorable timing signal. A better approach is to define rules before acting: position size, exit conditions, review dates, and professional consultation. Major financial decisions should always be checked with qualified financial professionals.`,
+      score: this.getScore(chart, 76, 1)
     };
   }
 
-  private static generateMarriageAnalysis(zodiac: string, element: string) {
-    const compatibleZodiacs = this.getCompatibleZodiacs(zodiac);
-    
+  private static generateMarriageAnalysis(chart: BaziChart) {
     return {
-      romanticFortune: `Your ${zodiac} nature brings loyalty and depth to relationships. The ${element} influence adds emotional intelligence and intuitive understanding of partners' needs. You attract partners who appreciate stability and long-term commitment. Peak romantic periods occur during your favorable seasonal cycles.`,
-      compatibility: `Most compatible with ${compatibleZodiacs.join(', ')} signs. Seek partners who complement your ${element} energy with balancing elements. Look for intellectual compatibility and shared values. Avoid impulsive romantic decisions during your challenging months (typically summer if you're earth/metal signs).`,
-      bestMarriageTime: `Optimal marriage timing falls between ages 28-34, with especially favorable periods in years ending in 5 and 8. The most auspicious months for marriage are spring (March-May) and autumn (September-November). Consider years when your lunar birthday aligns with lucky star configurations.`,
-      score: Math.floor(Math.random() * 20) + 80 // 80-100 range
+      romanticFortune: `Relationship reading should begin with the day pillar because it represents the self and close partnership palace. The ${chart.dayMaster} Day Master with ${chart.dayMasterElement} as the core element suggests that emotional compatibility depends on whether a partner respects this natural processing style. The strongest element, ${chart.strongestElement}, may be attractive and expressive, but it can become repetitive or overwhelming if not balanced. The weakest element, ${chart.weakestElement}, often shows what the person seeks, avoids, or needs to develop in intimate relationships. Hidden stems matter because private needs may not match the surface impression.`,
+      compatibility: `Compatibility should compare two complete charts across elements, branches, Ten Gods, hidden stems, and timing cycles. Zodiac-sign matching alone is too broad for serious relationship guidance. A supportive partner may either strengthen ${chart.weakestElement} or help the person express ${chart.strongestElement} in a healthier way. Long-term harmony is more likely when both people can name needs clearly and avoid turning the strongest element into a repeated conflict pattern.`,
+      bestMarriageTime: `Marriage timing should not be reduced to a fixed age or generic lucky year. The responsible next step is to compare the natal chart with luck pillars, annual branches, and the partner's chart. Favorable periods are those that support relationship stability, communication, shared resources, and emotional readiness at the same time. If a period creates attraction but not stability, it may be better for dating than formal commitment. Use this section as relationship planning context rather than a fixed prediction.`,
+      score: this.getScore(chart, 80, 2)
     };
   }
 
-  private static generateHealthInsights(zodiac: string, element: string) {
+  private static generateHealthInsights(chart: BaziChart) {
     return {
-      potentialIssues: `Your ${element} constitution may be prone to ${this.getElementHealthRisks(element)}. The ${zodiac} influence suggests attention needed for stress management and maintaining work-life balance. Monitor digestive health and circulation, especially during seasonal transitions.`,
-      preventiveCare: `Regular exercise aligning with your ${element} nature is recommended - gentle activities like swimming or yoga for water/earth types, more dynamic exercises for fire/wood types. Seasonal detox programs, meditation practices, and consistent sleep schedules will support your natural rhythms.`,
-      recommendations: `Strengthen your health through ${element}-balancing foods and activities. Avoid overwork during your challenging lunar months. Consider traditional Chinese medicine approaches like acupuncture or herbal supplements. Pay attention to emotional health as it directly impacts your physical well-being.`,
-      score: Math.floor(Math.random() * 15) + 85 // 85-100 range
+      potentialIssues: `Health guidance from BaZi should be handled conservatively and symbolically. The current element distribution shows ${chart.strongestElement} as strongest and ${chart.weakestElement} as weakest, which can be used to reflect on lifestyle imbalance, stress patterns, and recovery needs. It is not a diagnosis. When life pressure rises, the person may overuse the strongest element and neglect the weaker mode. This can show up as uneven routines, emotional strain, overwork, or inconsistent restoration depending on the person's real circumstances.`,
+      preventiveCare: `Preventive care should focus on consistency, sleep, movement, emotional regulation, and realistic boundaries. The practical goal is to keep ${chart.strongestElement} productive rather than excessive while slowly supporting ${chart.weakestElement}. Choose simple habits that can be maintained through busy periods instead of dramatic lifestyle changes. If the birth time is uncertain, hour-pillar wellness interpretation should remain cautious.`,
+      recommendations: `Use this as wellness reflection only, not medical advice. If symptoms or health concerns exist, consult qualified medical professionals. From a lifestyle perspective, track stress triggers, recovery quality, and the moments when the strongest element becomes overused. Add one small practice that supports the weakest element through environment, routine, food awareness, movement style, or emotional support. Review the pattern monthly rather than expecting immediate transformation.`,
+      score: this.getScore(chart, 82, 0)
     };
   }
 
-  private static generateAnnualForecast() {
+  private static generateAnnualForecast(chart: BaziChart) {
     const months2025 = [
-      { month: "January", prediction: "New beginnings in career, focus on planning", score: 75 },
-      { month: "February", prediction: "Romantic opportunities, social networking", score: 82 },
-      { month: "March", prediction: "Financial gains, investment opportunities", score: 88 },
+      { month: "January", prediction: `Planning month: review how ${chart.strongestElement} is being used and where ${chart.weakestElement} needs support.`, score: 75 },
+      { month: "February", prediction: "Relationship and networking month: observe which contacts strengthen balance rather than only excitement.", score: 82 },
+      { month: "March", prediction: "Resource month: organize finances, tools, and work systems before expanding commitments.", score: 88 },
       { month: "April", prediction: "Health focus, establish good habits", score: 79 },
       { month: "May", prediction: "Travel and learning experiences", score: 85 },
       { month: "June", prediction: "Family harmony, home improvements", score: 91 },
@@ -117,140 +116,12 @@ export class EnhancedBaziService {
     };
   }
 
-  private static generateLifeOverview(zodiac: string, element: string) {
-    const overallScore = Math.floor(Math.random() * 15) + 85; // 85-100 range
-    
+  private static generateLifeOverview(chart: BaziChart) {
     return {
-      overallScore,
-      strengthsWeaknesses: `Strengths: Your ${zodiac} nature provides ${this.getZodiacStrengths(zodiac)}, while your ${element} element adds ${this.getElementStrengths(element)}. Challenges to work on: ${this.getElementChallenges(element)} and managing ${zodiac} tendencies toward ${this.getZodiacChallenges(zodiac)}.`,
-      lifeThemes: `Your life journey centers around ${this.getLifeThemes(zodiac, element)}. Key lessons involve balancing material success with spiritual growth, and learning to trust your intuitive wisdom while maintaining practical grounding.`,
-      spiritualPath: `Your spiritual development follows the path of ${this.getSpiritualPath(element)}, with emphasis on ${this.getZodiacSpirituality(zodiac)}. Consider practices that align with your elemental nature for optimal growth.`
+      overallScore: this.getScore(chart, 84, 4),
+      strengthsWeaknesses: `Strengths: the ${chart.dayMaster} Day Master gives the chart a clear center, while ${chart.strongestElement} provides the most accessible momentum. Hidden stems show secondary resources that may emerge through maturity, pressure, or specific environments. Challenges: ${chart.weakestElement} needs deliberate cultivation, and the strongest element should not be allowed to dominate every decision. The person grows fastest when they understand which Ten God role is active instead of reacting only from habit.`,
+      lifeThemes: `The major life theme is learning to turn natural momentum into balanced, repeatable life structure. The chart asks the person to honor the Day Master, use the month pillar for social and career direction, and develop the weakest element through practical habits. Life becomes more coherent when career, relationships, health, and wealth are read from the same structural map rather than treated as separate problems.`,
+      spiritualPath: `The spiritual path is not escape from practical life; it is the refinement of repeated patterns. The person benefits from observing when ${chart.strongestElement} becomes excessive and when ${chart.weakestElement} is avoided. Practices that build rhythm, honesty, and balanced action will usually be more useful than dramatic transformation. The chart supports steady self-knowledge over fatalistic prediction.`
     };
-  }
-
-  // Helper methods for generating specific content
-  private static getSeasonNames(months: number[]): string {
-    const seasons = ['Winter', 'Spring', 'Summer', 'Autumn'];
-    return months.map(m => seasons[Math.floor(m / 3)]).join(' and ');
-  }
-
-  private static getCompatibleZodiacs(zodiac: string): string[] {
-    const compatibility = {
-      'Rat': ['Dragon', 'Monkey', 'Ox'],
-      'Ox': ['Rat', 'Snake', 'Rooster'],
-      'Tiger': ['Horse', 'Dog', 'Pig'],
-      'Rabbit': ['Goat', 'Pig', 'Dog'],
-      'Dragon': ['Rat', 'Monkey', 'Rooster'],
-      'Snake': ['Ox', 'Rooster', 'Monkey'],
-      'Horse': ['Tiger', 'Dog', 'Goat'],
-      'Goat': ['Rabbit', 'Horse', 'Pig'],
-      'Monkey': ['Rat', 'Dragon', 'Snake'],
-      'Rooster': ['Ox', 'Snake', 'Dragon'],
-      'Dog': ['Tiger', 'Horse', 'Rabbit'],
-      'Pig': ['Tiger', 'Rabbit', 'Goat']
-    };
-    return compatibility[zodiac as keyof typeof compatibility] || ['Dragon', 'Monkey', 'Rooster'];
-  }
-
-  private static getElementHealthRisks(element: string): string {
-    const risks = {
-      'Metal': 'respiratory issues and skin sensitivities',
-      'Water': 'kidney function and circulatory concerns',
-      'Wood': 'liver health and tendon flexibility',
-      'Fire': 'heart health and blood pressure',
-      'Earth': 'digestive system and spleen function'
-    };
-    return risks[element as keyof typeof risks] || 'general constitutional balance';
-  }
-
-  private static getZodiacStrengths(zodiac: string): string {
-    const strengths = {
-      'Rat': 'adaptability, intelligence, and resourcefulness',
-      'Ox': 'reliability, determination, and methodical approach',
-      'Tiger': 'courage, leadership, and natural charisma',
-      'Rabbit': 'diplomacy, artistic sensitivity, and peaceful nature',
-      'Dragon': 'confidence, innovation, and natural authority',
-      'Snake': 'wisdom, intuition, and analytical thinking',
-      'Horse': 'independence, enthusiasm, and adventurous spirit',
-      'Goat': 'creativity, compassion, and aesthetic appreciation',
-      'Monkey': 'cleverness, versatility, and problem-solving skills',
-      'Rooster': 'precision, honesty, and organizational abilities',
-      'Dog': 'loyalty, justice, and protective instincts',
-      'Pig': 'generosity, optimism, and genuine heart'
-    };
-    return strengths[zodiac as keyof typeof strengths] || 'balanced characteristics';
-  }
-
-  private static getElementStrengths(element: string): string {
-    const strengths = {
-      'Metal': 'clarity, structure, and refined judgment',
-      'Water': 'adaptability, wisdom, and emotional depth',
-      'Wood': 'growth mindset, flexibility, and creative expansion',
-      'Fire': 'passion, enthusiasm, and transformative energy',
-      'Earth': 'stability, nurturing ability, and practical grounding'
-    };
-    return strengths[element as keyof typeof strengths] || 'elemental balance';
-  }
-
-  private static getElementChallenges(element: string): string {
-    const challenges = {
-      'Metal': 'rigidity and perfectionist tendencies',
-      'Water': 'emotional overwhelm and indecisiveness', 
-      'Wood': 'impatience and scattered energy',
-      'Fire': 'impulsiveness and burnout risk',
-      'Earth': 'stubbornness and resistance to change'
-    };
-    return challenges[element as keyof typeof challenges] || 'elemental excess';
-  }
-
-  private static getZodiacChallenges(zodiac: string): string {
-    const challenges = {
-      'Rat': 'anxiety and overthinking',
-      'Ox': 'stubbornness and inflexibility',
-      'Tiger': 'impulsiveness and aggression',
-      'Rabbit': 'avoidance and indecision',
-      'Dragon': 'arrogance and impatience',
-      'Snake': 'secretiveness and mistrust',
-      'Horse': 'restlessness and inconsistency',
-      'Goat': 'pessimism and dependency',
-      'Monkey': 'superficiality and restlessness',
-      'Rooster': 'criticism and perfectionism',
-      'Dog': 'worry and cynicism',
-      'Pig': 'naivety and overindulgence'
-    };
-    return challenges[zodiac as keyof typeof challenges] || 'typical zodiac challenges';
-  }
-
-  private static getLifeThemes(zodiac: string, element: string): string {
-    return `harmonizing ${element} qualities with ${zodiac} characteristics, building lasting relationships, and finding meaning through service to others`;
-  }
-
-  private static getSpiritualPath(element: string): string {
-    const paths = {
-      'Metal': 'refinement and purification',
-      'Water': 'flow and surrender',
-      'Wood': 'growth and expansion',
-      'Fire': 'illumination and transformation',
-      'Earth': 'grounding and nurturing'
-    };
-    return paths[element as keyof typeof paths] || 'balanced spiritual development';
-  }
-
-  private static getZodiacSpirituality(zodiac: string): string {
-    const spirituality = {
-      'Rat': 'mindful intelligence and adaptable wisdom',
-      'Ox': 'patient cultivation and steady practice',
-      'Tiger': 'courageous truth-seeking and authentic expression',
-      'Rabbit': 'gentle compassion and artistic beauty',
-      'Dragon': 'visionary leadership and divine connection',
-      'Snake': 'deep wisdom and transformative insight',
-      'Horse': 'freedom-seeking and adventurous spirit',
-      'Goat': 'creative expression and heart-centered practice',
-      'Monkey': 'playful wisdom and adaptive learning',
-      'Rooster': 'disciplined practice and moral clarity',
-      'Dog': 'loyal service and protective guidance',
-      'Pig': 'generous heart and joyful abundance'
-    };
-    return spirituality[zodiac as keyof typeof spirituality] || 'balanced spiritual approach';
   }
 }

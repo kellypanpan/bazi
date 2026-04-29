@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { Link, useParams, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star, Calendar, Heart, Briefcase, DollarSign, Activity, Share2, Download } from 'lucide-react';
 import { ZodiacService, ZodiacSign, DailyHoroscope, WeeklyHoroscope, MonthlyHoroscope } from '../services/zodiacService';
@@ -82,7 +82,7 @@ const ZodiacPage: React.FC = () => {
 
   if (!zodiacSign) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 flex items-center justify-center">
+      <div className="px-4 pb-16 pt-28 flex items-center justify-center">
         <div className="text-white text-center">
           <h1 className="text-2xl font-bold mb-4">Zodiac Sign Not Found</h1>
           <p>Please check the URL and try again.</p>
@@ -92,8 +92,8 @@ const ZodiacPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950">
-      <div className="container mx-auto px-4 py-8">
+    <div className="px-4 pb-16 pt-28">
+      <div className="container mx-auto max-w-7xl px-4">
         {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -104,7 +104,7 @@ const ZodiacPage: React.FC = () => {
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">{zodiacSign.name}</h1>
           <p className="text-xl text-indigo-300 mb-4">{zodiacSign.dates}</p>
           <div className="flex items-center justify-center gap-4 mb-6">
-            <span className="px-4 py-2 bg-indigo-800 rounded-full text-white">
+            <span className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-white backdrop-blur-xl">
               Element: {zodiacSign.element}
             </span>
           </div>
@@ -112,7 +112,7 @@ const ZodiacPage: React.FC = () => {
             {zodiacSign.keywords.map((keyword, index) => (
               <span
                 key={index}
-                className="px-3 py-1 bg-purple-800 bg-opacity-50 rounded-full text-sm text-purple-200"
+                className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1 text-sm text-purple-200 backdrop-blur-xl"
               >
                 {keyword}
               </span>
@@ -123,15 +123,15 @@ const ZodiacPage: React.FC = () => {
 
         {/* Tab Navigation */}
         <div className="flex justify-center mb-8">
-          <div className="bg-indigo-900 bg-opacity-50 rounded-lg p-1 flex">
+          <div className="glass-inset flex p-1">
             {(['daily', 'weekly', 'monthly'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => handleTabChange(tab)}
                 className={`px-6 py-3 rounded-lg font-medium transition-all ${
                   activeTab === tab
-                    ? 'bg-indigo-600 text-white shadow-lg'
-                    : 'text-indigo-300 hover:text-white hover:bg-indigo-700'
+                    ? 'bg-amber-500 text-indigo-950 shadow-lg'
+                    : 'text-slate-300 hover:text-white hover:bg-white/10'
                 }`}
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -173,14 +173,14 @@ const ZodiacPage: React.FC = () => {
           className="text-center mt-12"
         >
           <div className="flex justify-center gap-4">
-            <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all">
+            <button className="flex items-center gap-2 px-6 py-3 glass-secondary-button rounded-lg">
               <Share2 className="h-5 w-5" />
               Share Reading
             </button>
-            <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all">
+            <Link to="/subscription?source=simple-zodiac-download&plan=pro#plans" className="flex items-center gap-2 px-6 py-3 glass-primary-button rounded-lg">
               <Download className="h-5 w-5" />
               Download Image
-            </button>
+            </Link>
           </div>
         </motion.div>
       </div>
@@ -204,10 +204,10 @@ const ZodiacPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-indigo-900 bg-opacity-50 backdrop-blur-sm rounded-2xl border border-indigo-800 p-6"
+            className="glass-card p-6"
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-indigo-800 rounded-lg">
+              <div className="glass-inset p-2">
                 <category.icon className="h-5 w-5 text-indigo-300" />
               </div>
               <h3 className="text-lg font-semibold text-white">{category.label}</h3>
@@ -230,7 +230,7 @@ const ZodiacPage: React.FC = () => {
   function WeeklyHoroscopeView({ horoscope }: { horoscope: WeeklyHoroscope }) {
     return (
       <div className="max-w-4xl mx-auto">
-        <div className="bg-indigo-900 bg-opacity-50 backdrop-blur-sm rounded-2xl border border-indigo-800 p-8">
+        <div className="glass-card p-8">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-white mb-2">Weekly Forecast</h2>
             <p className="text-indigo-300">{horoscope.week}</p>
@@ -277,7 +277,7 @@ const ZodiacPage: React.FC = () => {
                     {horoscope.luckyNumbers.map((number, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 bg-purple-800 bg-opacity-50 rounded text-sm text-purple-200"
+                        className="rounded border border-white/10 bg-white/[0.06] px-2 py-1 text-sm text-purple-200"
                       >
                         {number}
                       </span>
@@ -290,7 +290,7 @@ const ZodiacPage: React.FC = () => {
                     {horoscope.luckyColors.map((color, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 bg-indigo-800 bg-opacity-50 rounded text-sm text-indigo-200"
+                        className="rounded border border-white/10 bg-white/[0.06] px-2 py-1 text-sm text-indigo-200"
                       >
                         {color}
                       </span>
@@ -308,7 +308,7 @@ const ZodiacPage: React.FC = () => {
   function MonthlyHoroscopeView({ horoscope }: { horoscope: MonthlyHoroscope }) {
     return (
       <div className="max-w-4xl mx-auto">
-        <div className="bg-indigo-900 bg-opacity-50 backdrop-blur-sm rounded-2xl border border-indigo-800 p-8">
+        <div className="glass-card p-8">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-white mb-2">Monthly Forecast</h2>
             <p className="text-indigo-300">{horoscope.month} {horoscope.year}</p>
@@ -365,14 +365,14 @@ const ZodiacPage: React.FC = () => {
                 </h3>
                 <div className="space-y-2">
                   {horoscope.keyDates.map((date, index) => (
-                    <div key={index} className="text-sm text-slate-300 bg-purple-900 bg-opacity-30 rounded p-2">
+                    <div key={index} className="glass-inset p-2 text-sm text-slate-300">
                       {date}
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-purple-900 to-indigo-900 bg-opacity-50 rounded-lg p-4">
+              <div className="glass-inset p-4">
                 <h4 className="text-white font-medium mb-2">Monthly Advice</h4>
                 <p className="text-slate-300 text-sm">{horoscope.advice}</p>
               </div>

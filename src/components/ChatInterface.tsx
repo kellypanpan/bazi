@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useI18n } from '../i18n';
 
 
 interface Message {
@@ -16,6 +17,34 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialContext }) => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { pick } = useI18n();
+
+  const text = pick({
+    en: {
+      chartAwarePrefix: 'I can use the structured BaZi chart context from your reading above. ',
+      unavailable: 'The live chat service is currently unavailable, but the reading above already includes your Four Pillars, Ten Gods, hidden stems, and Five Elements distribution. Use those sections as the reference point for questions about career, relationships, timing, and element balance.',
+      error: 'I apologize, but the chat service is currently unavailable. Please refer to your detailed analysis above for insights about your reading.',
+      placeholder: 'Type your message...',
+      sending: 'Sending...',
+      send: 'Send',
+    },
+    'zh-CN': {
+      chartAwarePrefix: '我会以上方结构化八字命盘作为上下文。 ',
+      unavailable: '实时聊天服务暂时不可用，但上方解读已经包含四柱、十神、藏干和五行分布。你可以把这些部分作为事业、关系、时间点和五行平衡问题的参考。',
+      error: '抱歉，聊天服务暂时不可用。请先参考上方的详细命盘分析。',
+      placeholder: '输入你的问题...',
+      sending: '发送中...',
+      send: '发送',
+    },
+    'zh-TW': {
+      chartAwarePrefix: '我會以上方結構化八字命盤作為上下文。 ',
+      unavailable: '即時聊天服務暫時不可用，但上方解讀已經包含四柱、十神、藏干和五行分布。你可以把這些部分作為事業、關係、時間點和五行平衡問題的參考。',
+      error: '抱歉，聊天服務暫時不可用。請先參考上方的詳細命盤分析。',
+      placeholder: '輸入你的問題...',
+      sending: '傳送中...',
+      send: '傳送',
+    },
+  });
 
   useEffect(() => {
     if (initialContext) {
@@ -48,16 +77,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialContext }) => {
     try {
       // Mock response since API is not available
       await new Promise(resolve => setTimeout(resolve, 1000));
+      const chartAwarePrefix = initialContext
+        ? text.chartAwarePrefix
+        : '';
       const assistantMessage: Message = {
         role: 'assistant',
-        content: "I'm here to help you understand your fortune reading! While the live chat feature is currently unavailable, I'd be happy to provide general guidance about astrology and fortune telling. Please feel free to explore your detailed analysis above for comprehensive insights about your personality, career, relationships, and life path."
+        content: `${chartAwarePrefix}${text.unavailable}`
       };
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error in chat:', error);
       const errorMessage: Message = {
         role: 'assistant',
-        content: "I apologize, but the chat service is currently unavailable. Please refer to your detailed analysis above for insights about your reading."
+        content: text.error
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -66,9 +98,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialContext }) => {
   };
 
   return (
-    <div className="flex flex-col h-[600px] bg-indigo-950 bg-opacity-70 rounded-xl border border-indigo-800">
+    <div className="glass-panel flex h-[600px] flex-col">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message, index) => (
+        {messages.filter((message) => message.role !== 'system').map((message, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, y: 10 }}
@@ -78,8 +110,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialContext }) => {
             <div
               className={`max-w-[80%] rounded-lg p-3 ${
                 message.role === 'user'
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-indigo-800 text-slate-200'
+                  ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/20'
+                  : 'glass-inset text-slate-200'
               }`}
             >
               {message.content}
@@ -89,22 +121,22 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ initialContext }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 border-t border-indigo-800">
+      <form onSubmit={handleSubmit} className="border-t border-white/10 p-4">
         <div className="flex gap-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
-            className="flex-1 bg-indigo-900 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder={text.placeholder}
+            className="glass-input flex-1 rounded-lg px-4 py-2 focus:outline-none"
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:opacity-50"
+            className="glass-primary-button rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50"
           >
-            {isLoading ? 'Sending...' : 'Send'}
+            {isLoading ? text.sending : text.send}
           </button>
         </div>
       </form>

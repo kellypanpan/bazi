@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calendar, Star } from 'lucide-react';
+import { Calendar, CheckCircle2, Compass, Sparkles, Star } from 'lucide-react';
 import SEO from '../components/SEO';
 
 const About: React.FC = () => {
@@ -31,17 +31,20 @@ const About: React.FC = () => {
         type="article"
         structuredData={aboutStructuredData}
       />
-      <div className="container mx-auto">
+      <div className="container mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="mx-auto mb-12 max-w-4xl text-center"
         >
-          <h1 className="text-3xl md:text-4xl font-serif text-white mb-4">
+          <div className="glass-inset mb-5 inline-flex h-12 w-12 items-center justify-center text-amber-300">
+            <Compass className="h-6 w-6" />
+          </div>
+          <h1 className="text-4xl md:text-5xl font-serif text-white mb-4">
             About Chinese Astrology
           </h1>
-          <p className="text-slate-300 max-w-2xl mx-auto">
+          <p className="text-lg leading-8 text-slate-300 max-w-2xl mx-auto">
             Discover the ancient wisdom traditions that have guided countless lives for millennia.
           </p>
         </motion.div>
@@ -51,12 +54,17 @@ const About: React.FC = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
+            className="glass-panel p-6 md:p-8"
           >
-            <h2 className="text-2xl font-serif text-amber-400 mb-6">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-sm text-amber-300">
+              <Sparkles className="h-4 w-4" />
+              Methodology
+            </div>
+            <h2 className="text-2xl font-serif text-white mb-6">
               The Ancient Art of Chinese Astrology
             </h2>
             
-            <div className="prose prose-invert max-w-none text-slate-200">
+            <div className="prose prose-invert max-w-none text-slate-200 prose-p:leading-8">
               <p>
                 Chinese astrology is one of the oldest astrological systems in the world, dating back thousands of years. 
                 Unlike Western astrology which focuses primarily on the positions of celestial bodies, Chinese astrology 
@@ -88,11 +96,11 @@ const About: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-indigo-900 bg-opacity-30 backdrop-blur-sm rounded-2xl border border-indigo-800 p-6"
+              className="glass-card glass-card-hover p-6"
             >
               <div className="flex items-start mb-4">
-                <div className="bg-amber-500 p-3 rounded-full mr-4">
-                  <Calendar className="h-6 w-6 text-white" />
+                <div className="glass-inset mr-4 flex h-12 w-12 shrink-0 items-center justify-center text-amber-300">
+                  <Calendar className="h-6 w-6" />
                 </div>
                 <div>
                   <h3 className="text-xl font-medium text-white mb-2">BaZi (Four Pillars of Destiny)</h3>
@@ -106,12 +114,19 @@ const About: React.FC = () => {
               
               <div className="pl-16">
                 <h4 className="text-lg text-amber-400 mb-2">BaZi Key Features:</h4>
-                <ul className="text-slate-300 space-y-2 list-disc pl-5">
-                  <li>BaZi analyzes the balance of Five Elements (Wood, Fire, Earth, Metal, Water)</li>
-                  <li>BaZi reveals hidden talents and natural aptitudes through elemental analysis</li>
-                  <li>BaZi identifies favorable periods and potential challenges in your life cycle</li>
-                  <li>BaZi provides insights into relationship dynamics and compatibility</li>
-                  <li>BaZi offers guidance for personal and professional decisions based on your elemental makeup</li>
+                <ul className="text-slate-300 space-y-3">
+                  {[
+                    'BaZi analyzes the balance of Five Elements (Wood, Fire, Earth, Metal, Water)',
+                    'BaZi reveals hidden talents and natural aptitudes through elemental analysis',
+                    'BaZi identifies favorable periods and potential challenges in your life cycle',
+                    'BaZi provides insights into relationship dynamics and compatibility',
+                    'BaZi offers guidance for personal and professional decisions based on your elemental makeup',
+                  ].map((item) => (
+                    <li key={item} className="flex gap-3 text-sm leading-6">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </motion.div>
@@ -120,11 +135,11 @@ const About: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="bg-indigo-900 bg-opacity-30 backdrop-blur-sm rounded-2xl border border-indigo-800 p-6"
+              className="glass-card glass-card-hover p-6"
             >
               <div className="flex items-start mb-4">
-                <div className="bg-purple-600 p-3 rounded-full mr-4">
-                  <Star className="h-6 w-6 text-white" />
+                <div className="glass-inset mr-4 flex h-12 w-12 shrink-0 items-center justify-center text-amber-300">
+                  <Star className="h-6 w-6" />
                 </div>
                 <div>
                   <h3 className="text-xl font-medium text-white mb-2">Zi Wei Dou Shu (Purple Star Astrology)</h3>
@@ -138,12 +153,19 @@ const About: React.FC = () => {
               
               <div className="pl-16">
                 <h4 className="text-lg text-amber-400 mb-2">Key Features:</h4>
-                <ul className="text-slate-300 space-y-2 list-disc pl-5">
-                  <li>Provides detailed analysis of 12 life aspects (career, wealth, relationships, etc.)</li>
-                  <li>Maps the influence of over 100 stars on different areas of life</li>
-                  <li>Offers timing information for significant life events</li>
-                  <li>Reveals deeper insights about destiny and life purpose</li>
-                  <li>Helps identify optimal timing for major decisions and actions</li>
+                <ul className="text-slate-300 space-y-3">
+                  {[
+                    'Provides detailed analysis of 12 life aspects (career, wealth, relationships, etc.)',
+                    'Maps the influence of over 100 stars on different areas of life',
+                    'Offers timing information for significant life events',
+                    'Reveals deeper insights about destiny and life purpose',
+                    'Helps identify optimal timing for major decisions and actions',
+                  ].map((item) => (
+                    <li key={item} className="flex gap-3 text-sm leading-6">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </motion.div>
@@ -159,7 +181,7 @@ const About: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-indigo-900 bg-opacity-30 backdrop-blur-sm rounded-2xl border border-indigo-800 p-6 md:p-8"
+            className="glass-panel p-6 md:p-8"
           >
             <p className="text-slate-300 mb-8 text-center">
               The Five Elements (Wu Xing) are fundamental energies that interact in cycles of creation and control, 
@@ -167,7 +189,7 @@ const About: React.FC = () => {
             </p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-              <div className="bg-indigo-950 bg-opacity-70 p-4 rounded-xl border-l-4 border-green-600">
+              <div className="glass-card p-4 border-l-4 border-green-600">
                 <h3 className="text-lg text-green-500 mb-2">Wood (木)</h3>
                 <p className="text-slate-300 text-sm">
                   Represents growth, vitality, and creativity. Wood types are visionary, innovative, and compassionate.
@@ -179,7 +201,7 @@ const About: React.FC = () => {
                 </div>
               </div>
               
-              <div className="bg-indigo-950 bg-opacity-70 p-4 rounded-xl border-l-4 border-red-600">
+              <div className="glass-card p-4 border-l-4 border-red-600">
                 <h3 className="text-lg text-red-500 mb-2">Fire (火)</h3>
                 <p className="text-slate-300 text-sm">
                   Symbolizes transformation, passion, and expressiveness. Fire types are charismatic, dynamic, and enthusiastic.
@@ -191,7 +213,7 @@ const About: React.FC = () => {
                 </div>
               </div>
               
-              <div className="bg-indigo-950 bg-opacity-70 p-4 rounded-xl border-l-4 border-amber-600">
+              <div className="glass-card p-4 border-l-4 border-amber-600">
                 <h3 className="text-lg text-amber-500 mb-2">Earth (土)</h3>
                 <p className="text-slate-300 text-sm">
                   Embodies stability, nourishment, and centeredness. Earth types are reliable, practical, and nurturing.
@@ -203,7 +225,7 @@ const About: React.FC = () => {
                 </div>
               </div>
               
-              <div className="bg-indigo-950 bg-opacity-70 p-4 rounded-xl border-l-4 border-gray-400">
+              <div className="glass-card p-4 border-l-4 border-gray-400">
                 <h3 className="text-lg text-gray-300 mb-2">Metal (金)</h3>
                 <p className="text-slate-300 text-sm">
                   Represents clarity, precision, and efficiency. Metal types are structured, disciplined, and detail-oriented.
@@ -215,7 +237,7 @@ const About: React.FC = () => {
                 </div>
               </div>
               
-              <div className="bg-indigo-950 bg-opacity-70 p-4 rounded-xl border-l-4 border-blue-600">
+              <div className="glass-card p-4 border-l-4 border-blue-600">
                 <h3 className="text-lg text-blue-500 mb-2">Water (水)</h3>
                 <p className="text-slate-300 text-sm">
                   Symbolizes wisdom, adaptability, and depth. Water types are reflective, perceptive, and resourceful.
@@ -231,7 +253,7 @@ const About: React.FC = () => {
         </div>
         
         <div className="text-center mb-8">
-          <Link to="/readings" className="bg-gradient-to-r from-amber-500 to-red-600 text-white px-8 py-3 rounded-full font-medium text-lg inline-block transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/20">
+          <Link to="/readings" className="glass-primary-button inline-block rounded-lg px-8 py-3 text-lg font-semibold">
             Get Your Free BaZi Reading
           </Link>
         </div>

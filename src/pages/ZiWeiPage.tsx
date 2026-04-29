@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { 
   Star, 
   Calendar, 
@@ -60,6 +61,40 @@ interface Transformation {
   effect: string;
 }
 
+type ZiWeiStarDefinition = ZiWeiStar & {
+  chinese: string;
+  element: string;
+  nature: string;
+};
+
+const premiumZiWeiModules = [
+  'All 12 palace interpretations',
+  'Four transformations impact map',
+  'Career, wealth, spouse, property, and fortune palace detail',
+  'Major star brightness and combination reading',
+  'Annual timing and decision guidance',
+  'Downloadable premium report',
+];
+
+const premiumZiWeiChapters = [
+  {
+    title: '命宫 Core Profile',
+    body: 'Explains the Life Palace, main stars, brightness, personality direction, and the kind of environments where the chart becomes strongest.',
+  },
+  {
+    title: '三方四正 Pattern',
+    body: 'Connects Life, Career, Wealth, and Travel palaces so the report reads the chart as a system rather than isolated palace notes.',
+  },
+  {
+    title: '四化 Timing Signals',
+    body: 'Interprets Lu, Quan, Ke, and Ji as opportunity, authority, reputation, and pressure signals across major life areas.',
+  },
+  {
+    title: '12 Palace Guidance',
+    body: 'Detailed sections for spouse, wealth, career, property, fortune, parents, siblings, children, health, and support networks.',
+  },
+];
+
 const ZiWeiPage: React.FC = () => {
   const [step, setStep] = useState<'input' | 'result'>('input');
   const [birthData, setBirthData] = useState<ZiWeiBirthData>({
@@ -103,7 +138,7 @@ const ZiWeiPage: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     // Enhanced star data with brightness and traditional attributes
-    const allStars = [
+    const allStars: ZiWeiStarDefinition[] = [
       { name: 'Purple Star', chinese: '紫微', type: 'major', brightness: 'bright', element: '土', nature: '帝星' },
       { name: 'Heavenly Machine', chinese: '天机', type: 'major', brightness: 'average', element: '乙木', nature: '善变' },
       { name: 'Sun', chinese: '太阳', type: 'major', brightness: 'bright', element: '丙火', nature: '贵星' },
@@ -125,12 +160,18 @@ const ZiWeiPage: React.FC = () => {
       { name: 'Martial Star', chinese: '文昌', type: 'minor', brightness: 'bright', element: '辛金', nature: '科甲' },
       { name: 'Lucky Star', chinese: '天魁', type: 'minor', brightness: 'average', element: '丙火', nature: '贵人' },
       { name: 'Virtue Star', chinese: '天钺', type: 'minor', brightness: 'average', element: '己土', nature: '贵人' }
-    ];
+    ].map((star) => ({
+      ...star,
+      chineseName: star.chinese,
+      description: `${star.chinese} is a ${star.nature} star associated with ${star.element}.`,
+      type: star.type as ZiWeiStar['type'],
+      brightness: star.brightness as ZiWeiStar['brightness'],
+    }));
 
     const mockChart: ZiWeiChart = {
       palaces: palaceNames.map((palace, index) => {
         // Professional star distribution with realistic patterns
-        const assignedStars = [];
+        const assignedStars: ZiWeiStarDefinition[] = [];
         
         // Life Palace (命宮) - Purple Star system
         if (index === 0) {
@@ -209,7 +250,7 @@ const ZiWeiPage: React.FC = () => {
 
   if (step === 'result' && chart) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 pt-24 pb-8">
+      <div className="px-4 pb-16 pt-28">
         <div className="container mx-auto px-4">
           {/* Header */}
           <motion.div
@@ -225,7 +266,7 @@ const ZiWeiPage: React.FC = () => {
             </p>
             <button
               onClick={resetForm}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              className="glass-secondary-button rounded-lg px-4 py-2 font-semibold"
             >
               Generate New Chart
             </button>
@@ -238,10 +279,10 @@ const ZiWeiPage: React.FC = () => {
             transition={{ delay: 0.2 }}
             className="mb-8"
           >
-            <div className="bg-gradient-to-r from-purple-900 to-pink-900 bg-opacity-50 rounded-2xl border border-purple-600 p-6 text-center">
-              <h2 className="text-2xl font-bold text-white mb-4">Your Destiny Stars</h2>
+            <div className="glass-panel p-6 text-center">
+              <h2 className="text-2xl font-serif text-white mb-4">Your Destiny Stars</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-yellow-900 bg-opacity-30 rounded-xl p-4">
+                <div className="glass-card p-4">
                   <Sparkles className="h-8 w-8 text-yellow-400 mx-auto mb-2" />
                   <h3 className="text-yellow-300 font-semibold mb-2">Life Star (命主)</h3>
                   <p className="text-2xl font-bold text-white">{chart.lifeStars.mingzhu}</p>
@@ -249,7 +290,7 @@ const ZiWeiPage: React.FC = () => {
                     Your core personality and life direction
                   </p>
                 </div>
-                <div className="bg-blue-900 bg-opacity-30 rounded-xl p-4">
+                <div className="glass-card p-4">
                   <CircleDot className="h-8 w-8 text-blue-400 mx-auto mb-2" />
                   <h3 className="text-blue-300 font-semibold mb-2">Body Star (身主)</h3>
                   <p className="text-2xl font-bold text-white">{chart.lifeStars.shenzhu}</p>
@@ -275,7 +316,7 @@ const ZiWeiPage: React.FC = () => {
             </h2>
             <div className="max-w-6xl mx-auto">
               {/* Professional Traditional Square Layout */}
-              <div className="relative bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 rounded-3xl border-4 border-double border-yellow-600 p-6 shadow-2xl">
+              <div className="glass-panel relative p-4 md:p-6">
                 {/* Traditional Corner Decorations */}
                 <div className="absolute top-2 left-2 w-6 h-6 border-l-4 border-t-4 border-yellow-500 rounded-tl-lg"></div>
                 <div className="absolute top-2 right-2 w-6 h-6 border-r-4 border-t-4 border-yellow-500 rounded-tr-lg"></div>
@@ -631,7 +672,7 @@ const ZiWeiPage: React.FC = () => {
                 </div>
                 
                 {/* Professional Legend */}
-                <div className="mt-6 bg-slate-900 bg-opacity-60 rounded-xl p-4 border border-slate-600">
+                <div className="glass-card mt-6 p-4">
                   <h3 className="text-lg font-bold text-white text-center mb-4">排盘说明 Chart Legend</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
                     <div className="flex items-center gap-2">
@@ -691,10 +732,10 @@ const ZiWeiPage: React.FC = () => {
               {chart.palaces.slice(0, 4).map((palace) => (
                 <div
                   key={palace.id}
-                  className={`rounded-xl border p-6 ${
+                  className={`rounded-xl border p-6 backdrop-blur-xl ${
                     palace.isUnlocked
-                      ? 'border-indigo-800 bg-indigo-900 bg-opacity-50'
-                      : 'border-gray-600 bg-gray-900 bg-opacity-50 relative overflow-hidden'
+                      ? 'glass-card'
+                      : 'border-white/10 bg-black/30 relative overflow-hidden'
                   }`}
                 >
                   {!palace.isUnlocked && (
@@ -714,7 +755,7 @@ const ZiWeiPage: React.FC = () => {
                   </div>
                   <p className="text-slate-300 mb-4 text-sm">{palace.description}</p>
                   {palace.isUnlocked && (
-                    <div className="bg-indigo-950 bg-opacity-50 rounded-lg p-4">
+                    <div className="glass-inset p-4">
                       <h4 className="text-indigo-300 font-medium mb-2">AI Analysis</h4>
                       <p className="text-slate-300 text-sm">{palace.aiAnalysis}</p>
                     </div>
@@ -731,20 +772,36 @@ const ZiWeiPage: React.FC = () => {
             transition={{ delay: 0.8 }}
             className="mb-8"
           >
-            <div className="bg-gradient-to-r from-yellow-900 to-orange-900 bg-opacity-50 rounded-2xl border border-yellow-600 p-8 text-center">
+            <div className="glass-panel p-8 text-center">
               <Crown className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-white mb-4">Unlock Your Complete Zi Wei Report</h2>
               <p className="text-slate-300 mb-6 max-w-2xl mx-auto">
                 Get detailed analysis of all 12 palaces, special formations, annual forecasts, and personalized guidance based on your complete chart.
               </p>
+              <div className="mx-auto mb-7 grid max-w-5xl grid-cols-1 gap-4 text-left md:grid-cols-2 lg:grid-cols-4">
+                {premiumZiWeiChapters.map((chapter) => (
+                  <div key={chapter.title} className="glass-card p-4">
+                    <h4 className="mb-2 font-semibold text-white">{chapter.title}</h4>
+                    <p className="text-sm leading-6 text-slate-300">{chapter.body}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mx-auto mb-7 grid max-w-4xl grid-cols-1 gap-3 text-left sm:grid-cols-2 lg:grid-cols-3">
+                {premiumZiWeiModules.map((module) => (
+                  <div key={module} className="glass-inset flex items-center gap-3 p-3">
+                    <Lock className="h-4 w-4 shrink-0 text-amber-300" />
+                    <span className="text-sm text-slate-200">{module}</span>
+                  </div>
+                ))}
+              </div>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="px-6 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 text-white rounded-lg font-semibold hover:from-yellow-700 hover:to-orange-700 transition-all">
-                  Unlock Full Report - $19.99
-                </button>
-                <button className="px-6 py-3 bg-transparent border border-yellow-600 text-yellow-300 rounded-lg font-semibold hover:bg-yellow-600 hover:text-white transition-all">
+                <Link to="/subscription?source=ziwei&plan=pro#plans" className="glass-primary-button rounded-lg px-6 py-3 font-semibold">
+                  Unlock Full Zi Wei Report
+                </Link>
+                <Link to="/subscription?source=ziwei-download&plan=pro#plans" className="glass-secondary-button rounded-lg px-6 py-3 font-semibold">
                   <Download className="h-5 w-5 inline mr-2" />
                   Download Chart Image
-                </button>
+                </Link>
               </div>
             </div>
           </motion.section>
@@ -772,7 +829,7 @@ const ZiWeiPage: React.FC = () => {
                   a: "The Life Star (命主) represents your core personality and primary life direction, while the Body Star (身主) shows how you manifest in the physical world and your career focus."
                 }
               ].map((faq, index) => (
-                <div key={index} className="bg-indigo-900 bg-opacity-50 rounded-xl border border-indigo-800 p-6">
+                <div key={index} className="glass-card glass-card-hover p-6">
                   <h3 className="text-lg font-semibold text-white mb-2">{faq.q}</h3>
                   <p className="text-slate-300">{faq.a}</p>
                 </div>
@@ -786,7 +843,7 @@ const ZiWeiPage: React.FC = () => {
 
   // Input Form
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-pink-950 pt-24 pb-8">
+    <div className="px-4 pb-16 pt-28">
       <div className="container mx-auto px-4">
         {/* Hero Section */}
         <motion.div
@@ -811,7 +868,7 @@ const ZiWeiPage: React.FC = () => {
           transition={{ delay: 0.2 }}
           className="max-w-2xl mx-auto"
         >
-          <div className="bg-indigo-900 bg-opacity-50 backdrop-blur-sm rounded-2xl border border-indigo-800 p-8">
+          <div className="glass-panel p-8">
             <h2 className="text-2xl font-bold text-white mb-6 text-center">
               Generate Your Zi Wei Chart
             </h2>
@@ -828,7 +885,7 @@ const ZiWeiPage: React.FC = () => {
                   value={birthData.name || ''}
                   onChange={(e) => handleInputChange('name', e.target.value)}
                   placeholder="Enter your name"
-                  className="w-full px-4 py-3 bg-indigo-950 border border-indigo-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500"
+                  className="glass-input w-full rounded-lg px-4 py-3"
                 />
               </div>
 
@@ -874,7 +931,7 @@ const ZiWeiPage: React.FC = () => {
                       onChange={(e) => handleInputChange('year', parseInt(e.target.value))}
                       min={1900}
                       max={2030}
-                      className="w-full px-3 py-2 bg-indigo-950 border border-indigo-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                      className="glass-input w-full rounded-lg px-3 py-2"
                     />
                   </div>
                   <div>
@@ -882,7 +939,7 @@ const ZiWeiPage: React.FC = () => {
                     <select
                       value={birthData.month}
                       onChange={(e) => handleInputChange('month', parseInt(e.target.value))}
-                      className="w-full px-3 py-2 bg-indigo-950 border border-indigo-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                      className="glass-input w-full rounded-lg px-3 py-2"
                     >
                       {Array.from({ length: 12 }, (_, i) => (
                         <option key={i + 1} value={i + 1}>
@@ -896,7 +953,7 @@ const ZiWeiPage: React.FC = () => {
                     <select
                       value={birthData.day}
                       onChange={(e) => handleInputChange('day', parseInt(e.target.value))}
-                      className="w-full px-3 py-2 bg-indigo-950 border border-indigo-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                      className="glass-input w-full rounded-lg px-3 py-2"
                     >
                       {Array.from({ length: 31 }, (_, i) => (
                         <option key={i + 1} value={i + 1}>
@@ -916,7 +973,7 @@ const ZiWeiPage: React.FC = () => {
                 <select
                   value={birthData.hour}
                   onChange={(e) => handleInputChange('hour', parseInt(e.target.value))}
-                  className="w-full px-4 py-3 bg-indigo-950 border border-indigo-700 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                  className="glass-input w-full rounded-lg px-4 py-3"
                 >
                   {Array.from({ length: 24 }, (_, i) => (
                     <option key={i} value={i}>
@@ -937,7 +994,7 @@ const ZiWeiPage: React.FC = () => {
                   value={birthData.birthplace}
                   onChange={(e) => handleInputChange('birthplace', e.target.value)}
                   placeholder="City, Country"
-                  className="w-full px-4 py-3 bg-indigo-950 border border-indigo-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500"
+                  className="glass-input w-full rounded-lg px-4 py-3"
                   required
                 />
               </div>
@@ -946,7 +1003,7 @@ const ZiWeiPage: React.FC = () => {
               <button
                 onClick={generateChart}
                 disabled={loading || !birthData.birthplace}
-                className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-bold text-lg hover:from-purple-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="glass-primary-button w-full rounded-lg py-4 text-lg font-bold disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? (
                   <div className="flex items-center justify-center">
@@ -992,7 +1049,7 @@ const ZiWeiPage: React.FC = () => {
                 description: "Rare patterns and structures that shape your unique life path"
               }
             ].map((feature, index) => (
-              <div key={index} className="bg-indigo-900 bg-opacity-30 rounded-xl border border-indigo-800 p-6 text-center">
+              <div key={index} className="glass-card glass-card-hover p-6 text-center">
                 <div className="mb-4">{feature.icon}</div>
                 <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
                 <p className="text-slate-300 text-sm">{feature.description}</p>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Star, ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { languageOptions, useI18n } from '../i18n';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,6 +11,49 @@ const Header: React.FC = () => {
   const [isMobileZodiacOpen, setIsMobileZodiacOpen] = useState(false);
   // Services dropdown removed for cleaner nav
   const location = useLocation();
+  const { language, setLanguage, pick } = useI18n();
+
+  const text = pick({
+    en: {
+      home: 'Home',
+      baziReadings: 'BaZi Readings',
+      bazi: 'BaZi',
+      ziWei: 'Zi Wei',
+      compatibility: 'Compatibility',
+      palmFace: 'Palm & Face',
+      zodiacSigns: 'Zodiac Signs',
+      about: 'About',
+      premium: 'Premium',
+      openMenu: 'Open menu',
+      closeMenu: 'Close menu',
+    },
+    'zh-CN': {
+      home: '首页',
+      baziReadings: '八字排盘',
+      bazi: '八字',
+      ziWei: '紫微',
+      compatibility: '合盘',
+      palmFace: '手相面相',
+      zodiacSigns: '星座',
+      about: '关于',
+      premium: '高级版',
+      openMenu: '打开菜单',
+      closeMenu: '关闭菜单',
+    },
+    'zh-TW': {
+      home: '首頁',
+      baziReadings: '八字排盤',
+      bazi: '八字',
+      ziWei: '紫微',
+      compatibility: '合盤',
+      palmFace: '手相面相',
+      zodiacSigns: '星座',
+      about: '關於',
+      premium: '高級版',
+      openMenu: '打開選單',
+      closeMenu: '關閉選單',
+    },
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,11 +78,11 @@ const Header: React.FC = () => {
   };
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'BaZi Readings', path: '/readings' },
-    { name: 'Compatibility', path: '/compatibility' },
-    { name: 'About', path: '/about' },
-    { name: 'Premium', path: '/subscription' }
+    { name: text.home, path: '/' },
+    { name: text.baziReadings, path: '/readings' },
+    { name: text.compatibility, path: '/compatibility' },
+    { name: text.about, path: '/about' },
+    { name: text.premium, path: '/subscription' }
   ];
 
   const zodiacSigns = [
@@ -56,13 +100,33 @@ const Header: React.FC = () => {
     { name: 'Pisces', symbol: '♓', path: '/pisces', dates: 'Feb 19 - Mar 20' }
   ];
 
-  const externalPalmFace = { name: 'Palm & Face', url: 'https://facepalmai.com/' };
+  const externalPalmFace = { name: text.palmFace, url: 'https://facepalmai.com/' };
+
+  const languageSwitcher = (
+    <div className="flex items-center rounded-full border border-white/10 bg-white/[0.06] p-1 shadow-lg shadow-black/20 backdrop-blur-xl">
+      {languageOptions.map((option) => (
+        <button
+          key={option.code}
+          type="button"
+          onClick={() => setLanguage(option.code)}
+          className={`rounded-full px-2.5 py-1 text-xs font-semibold transition ${
+            language === option.code
+              ? 'bg-amber-500 text-indigo-950'
+              : 'text-slate-300 hover:text-amber-300'
+          }`}
+          aria-label={option.label}
+        >
+          {option.shortLabel}
+        </button>
+      ))}
+    </div>
+  );
 
   return (
     <header
       className={`fixed w-full z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-indigo-950 bg-opacity-90 backdrop-blur-sm shadow-lg'
+          ? 'glass-nav'
           : 'bg-transparent'
       }`}
     >
@@ -81,13 +145,13 @@ const Header: React.FC = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex gap-8 items-center">
             {/* Home */}
-            <Link to="/" className={`text-lg transition-all duration-300 ${location.pathname==='/'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>Home</Link>
+            <Link to="/" className={`text-lg transition-all duration-300 ${location.pathname==='/'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>{text.home}</Link>
             {/* BaZi */}
-            <Link to="/readings" className={`text-lg transition-all duration-300 ${location.pathname==='/readings'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>BaZi</Link>
+            <Link to="/readings" className={`text-lg transition-all duration-300 ${location.pathname==='/readings'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>{text.bazi}</Link>
             {/* Zi Wei */}
-            <Link to="/zi-wei" className={`text-lg transition-all duration-300 ${location.pathname==='/zi-wei'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>Zi Wei</Link>
+            <Link to="/zi-wei" className={`text-lg transition-all duration-300 ${location.pathname==='/zi-wei'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>{text.ziWei}</Link>
             {/* Compatibility */}
-            <Link to="/compatibility" className={`text-lg transition-all duration-300 ${location.pathname==='/compatibility'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>Compatibility</Link>
+            <Link to="/compatibility" className={`text-lg transition-all duration-300 ${location.pathname==='/compatibility'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>{text.compatibility}</Link>
             {/* Palm & Face external */}
             <a href={externalPalmFace.url} target="_blank" rel="noopener noreferrer" className="text-lg text-slate-200 hover:text-amber-400 transition-all duration-300">{externalPalmFace.name}</a>
             {/* Zodiac Dropdown (kept) */}
@@ -103,7 +167,7 @@ const Header: React.FC = () => {
                     : 'text-slate-200 hover:text-amber-400'
                 }`}
               >
-                Zodiac Signs
+                {text.zodiacSigns}
                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isZodiacOpen ? 'rotate-180' : ''}`} />
               </button>
               
@@ -112,7 +176,7 @@ const Header: React.FC = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full left-0 mt-2 w-80 bg-indigo-950 bg-opacity-95 backdrop-blur-sm rounded-xl border border-indigo-800 shadow-xl"
+                  className="glass-panel absolute top-full left-0 mt-2 w-80"
                 >
                   <div className="grid grid-cols-2 gap-2 p-4">
                     {zodiacSigns.map((sign) => (
@@ -122,7 +186,7 @@ const Header: React.FC = () => {
                         className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ${
                           location.pathname === sign.path
                             ? 'bg-amber-500 bg-opacity-20 text-amber-400'
-                            : 'hover:bg-indigo-800 hover:bg-opacity-50 text-slate-200 hover:text-amber-400'
+                            : 'hover:bg-white/[0.08] text-slate-200 hover:text-amber-400'
                         }`}
                       >
                         <span className="text-2xl">{sign.symbol}</span>
@@ -138,16 +202,17 @@ const Header: React.FC = () => {
             </div>
             
             {/* About */}
-            <Link to="/about" className={`text-lg transition-all duration-300 ${location.pathname==='/about'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>About</Link>
+            <Link to="/about" className={`text-lg transition-all duration-300 ${location.pathname==='/about'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>{text.about}</Link>
             {/* Premium button */}
-            <Link to="/subscription" className="bg-gradient-to-r from-amber-500 to-red-600 text-white px-4 py-2 rounded-full font-medium transition-all duration-300 hover:shadow-lg hover:shadow-amber-500/20">Premium</Link>
+            <Link to="/subscription" className="glass-primary-button rounded-full px-4 py-2 font-medium">{text.premium}</Link>
+            {languageSwitcher}
           </nav>
 
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
             className="text-white md:hidden focus:outline-none"
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-label={isMenuOpen ? text.closeMenu : text.openMenu}
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -162,7 +227,7 @@ const Header: React.FC = () => {
           opacity: isMenuOpen ? 1 : 0
         }}
         transition={{ duration: 0.3 }}
-        className="md:hidden overflow-hidden bg-indigo-950 bg-opacity-95 backdrop-blur-sm"
+        className="glass-nav md:hidden overflow-hidden"
       >
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col gap-4">
@@ -191,7 +256,7 @@ const Header: React.FC = () => {
                     : 'text-slate-200'
                 }`}
               >
-                Zodiac Signs
+                {text.zodiacSigns}
                 <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isMobileZodiacOpen ? 'rotate-180' : ''}`} />
               </button>
               
@@ -211,7 +276,7 @@ const Header: React.FC = () => {
                         className={`flex items-center gap-2 p-2 rounded-lg transition-all duration-200 ${
                           location.pathname === sign.path
                             ? 'bg-amber-500 bg-opacity-20 text-amber-400'
-                            : 'hover:bg-indigo-800 hover:bg-opacity-50 text-slate-300'
+                            : 'hover:bg-white/[0.08] text-slate-300'
                         }`}
                       >
                         <span className="text-lg">{sign.symbol}</span>
@@ -226,9 +291,9 @@ const Header: React.FC = () => {
             </div>
             
             {/* Direct links */}
-            <Link to="/readings" onClick={closeMenu} className={`text-lg py-2 transition-all duration-300 ${location.pathname==='/readings'?'text-amber-400 font-medium':'text-slate-200'}`}>BaZi</Link>
-            <Link to="/zi-wei" onClick={closeMenu} className={`text-lg py-2 transition-all duration-300 ${location.pathname==='/zi-wei'?'text-amber-400 font-medium':'text-slate-200'}`}>Zi Wei</Link>
-            <Link to="/compatibility" onClick={closeMenu} className={`text-lg py-2 transition-all duration-300 ${location.pathname==='/compatibility'?'text-amber-400 font-medium':'text-slate-200'}`}>Compatibility</Link>
+            <Link to="/readings" onClick={closeMenu} className={`text-lg py-2 transition-all duration-300 ${location.pathname==='/readings'?'text-amber-400 font-medium':'text-slate-200'}`}>{text.bazi}</Link>
+            <Link to="/zi-wei" onClick={closeMenu} className={`text-lg py-2 transition-all duration-300 ${location.pathname==='/zi-wei'?'text-amber-400 font-medium':'text-slate-200'}`}>{text.ziWei}</Link>
+            <Link to="/compatibility" onClick={closeMenu} className={`text-lg py-2 transition-all duration-300 ${location.pathname==='/compatibility'?'text-amber-400 font-medium':'text-slate-200'}`}>{text.compatibility}</Link>
             <a href={externalPalmFace.url} target="_blank" rel="noopener noreferrer" className="text-lg py-2 text-slate-200 transition-all duration-300 hover:text-amber-400" onClick={closeMenu}>{externalPalmFace.name}</a>
 
             {/* About link in mobile */}
@@ -239,15 +304,16 @@ const Header: React.FC = () => {
                 location.pathname === '/about' ? 'text-amber-400 font-medium' : 'text-slate-200'
               }`}
             >
-              About
+              {text.about}
             </Link>
             <Link
               to="/subscription"
               onClick={closeMenu}
-              className="bg-gradient-to-r from-amber-500 to-red-600 text-white px-4 py-2 rounded-full text-center font-medium transition-all duration-300"
+              className="glass-primary-button rounded-full px-4 py-2 text-center font-medium"
             >
-              Premium
+              {text.premium}
             </Link>
+            {languageSwitcher}
           </div>
         </div>
       </motion.div>
