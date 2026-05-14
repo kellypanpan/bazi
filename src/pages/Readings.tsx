@@ -5,6 +5,7 @@ import BasicResultsDisplay from '../components/BasicResultsDisplay';
 import PremiumFeatures from '../components/PremiumFeatures';
 import ChatInterface from '../components/ChatInterface';
 import DetailedResultsSection from '../components/DetailedResultsSection';
+import SEO from '../components/SEO';
 import { calculateBaziChart } from '../services/baziCore';
 import { useI18n } from '../i18n';
 
@@ -92,6 +93,33 @@ const Readings: React.FC = () => {
   };
 
   const chart = formData ? calculateBaziChart(formData) : null;
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Free BaZi Reading",
+      "url": "https://fortunetelling.it.com/readings",
+      "description": "Generate a free BaZi Four Pillars reading from birth date, birth time, gender, and birth location.",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Chinese Astrology & Fortune Telling",
+        "url": "https://fortunetelling.it.com/"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Free BaZi Reading Tool",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Web",
+      "url": "https://fortunetelling.it.com/readings",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  ];
   const chatContext = chart
     ? `You are a knowledgeable BaZi expert. Answer questions using this structured chart data and avoid inventing pillars or element scores. Chart data: ${JSON.stringify({
         zodiac: chart.zodiac,
@@ -115,6 +143,16 @@ const Readings: React.FC = () => {
 
   return (
     <div className="pt-24 pb-16 px-4">
+      <SEO
+        title="Free BaZi Reading | Four Pillars Birth Chart Analysis"
+        description="Generate a free BaZi reading with Four Pillars, Five Elements balance, Day Master insights, and Chinese astrology chart guidance based on your birth information."
+        keywords={[
+          "free bazi reading", "bazi calculator", "four pillars birth chart", "day master",
+          "five elements analysis", "chinese astrology reading", "八字排盘", "四柱命盘"
+        ]}
+        url="https://fortunetelling.it.com/readings"
+        structuredData={structuredData}
+      />
       <div className="container mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

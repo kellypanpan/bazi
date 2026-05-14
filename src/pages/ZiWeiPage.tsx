@@ -14,6 +14,7 @@ import {
   Compass,
   Zap
 } from 'lucide-react';
+import SEO from '../components/SEO';
 import { useI18n } from '../i18n';
 
 interface ZiWeiBirthData {
@@ -350,9 +351,42 @@ const ZiWeiPage: React.FC = () => {
     });
   };
 
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Zi Wei Dou Shu Chart Generator",
+      "url": "https://fortunetelling.it.com/zi-wei",
+      "description": "Generate a Zi Wei Dou Shu chart with 12 palace analysis, star positions, transformations, and Chinese astrology guidance."
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Zi Wei Dou Shu Chart Generator",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Web",
+      "url": "https://fortunetelling.it.com/zi-wei",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  ];
+
   if (step === 'result' && chart) {
     return (
       <div className="px-4 pb-16 pt-28">
+        <SEO
+          title="Zi Wei Dou Shu Chart Generator | 12 Palace Chinese Astrology"
+          description="Generate your Zi Wei Dou Shu chart with 12 palace analysis, major stars, transformations, destiny stars, and Chinese astrology insights."
+          keywords={[
+            "zi wei dou shu", "purple star astrology", "zi wei chart", "12 palaces",
+            "chinese astrology chart", "紫微斗数", "命宫", "十二宫"
+          ]}
+          url="https://fortunetelling.it.com/zi-wei"
+          structuredData={structuredData}
+        />
         <div className="container mx-auto px-4">
           {/* Header */}
           <motion.div
@@ -946,6 +980,16 @@ const ZiWeiPage: React.FC = () => {
   // Input Form
   return (
     <div className="px-4 pb-16 pt-28">
+      <SEO
+        title="Zi Wei Dou Shu Chart Generator | 12 Palace Chinese Astrology"
+        description="Generate your Zi Wei Dou Shu chart with 12 palace analysis, major stars, transformations, destiny stars, and Chinese astrology insights."
+        keywords={[
+          "zi wei dou shu", "purple star astrology", "zi wei chart", "12 palaces",
+          "chinese astrology chart", "紫微斗数", "命宫", "十二宫"
+        ]}
+        url="https://fortunetelling.it.com/zi-wei"
+        structuredData={structuredData}
+      />
       <div className="container mx-auto px-4">
         {/* Hero Section */}
         <motion.div

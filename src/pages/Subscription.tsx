@@ -16,6 +16,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import PremiumFeatures from '../components/PremiumFeatures';
+import SEO from '../components/SEO';
 import { useI18n } from '../i18n';
 
 const Subscription: React.FC = () => {
@@ -229,8 +230,40 @@ const Subscription: React.FC = () => {
     },
   ];
 
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Premium BaZi Report",
+      "url": "https://fortunetelling.it.com/subscription",
+      "description": "Premium BaZi report options for Four Pillars chart interpretation, Five Elements balance, Ten Gods, luck cycles, and timing guidance."
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faqs.map((faq) => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer
+        }
+      }))
+    }
+  ];
+
   return (
     <div className="pt-24 pb-16 px-4">
+      <SEO
+        title="Premium BaZi Report | Four Pillars, Ten Gods & Luck Cycles"
+        description="Unlock a premium BaZi report with Four Pillars interpretation, Five Elements balance, Ten Gods, luck cycles, relationship, wealth, career, and PDF modules."
+        keywords={[
+          "premium bazi report", "bazi report", "four pillars report", "ten gods",
+          "luck pillars", "bazi pdf", "八字报告", "十神", "大运"
+        ]}
+        url="https://fortunetelling.it.com/subscription"
+        structuredData={structuredData}
+      />
       <div className="container mx-auto max-w-7xl">
         <motion.section
           initial={{ opacity: 0, y: 20 }}

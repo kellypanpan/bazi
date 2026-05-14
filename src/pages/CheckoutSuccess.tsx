@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, FileText, MessageCircle, Sparkles } from 'lucide-react';
+import SEO from '../components/SEO';
 import { useI18n } from '../i18n';
 
 const CheckoutSuccess: React.FC = () => {
@@ -52,6 +53,12 @@ const CheckoutSuccess: React.FC = () => {
 
   return (
     <div className="px-4 pb-16 pt-28">
+      <SEO
+        title="Checkout Success"
+        description="Payment confirmation page for premium BaZi report access."
+        url="https://fortunetelling.it.com/checkout/success"
+        noIndex
+      />
       <div className="mx-auto max-w-4xl">
         <section className="glass-panel p-6 text-center md:p-10">
           <div className="glass-inset mx-auto mb-5 flex h-14 w-14 items-center justify-center text-emerald-300">

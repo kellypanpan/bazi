@@ -2,39 +2,110 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://fortunetelling.it.com/</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://fortunetelling.it.com/readings</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://fortunetelling.it.com/zi-wei</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
     <loc>https://fortunetelling.it.com/about</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://fortunetelling.it.com/subscription</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://fortunetelling.it.com/compatibility</loc>
+    <lastmod>2026-05-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url><loc>https://fortunetelling.it.com/aries</loc></url>
-  <url><loc>https://fortunetelling.it.com/taurus</loc></url>
-  <url><loc>https://fortunetelling.it.com/gemini</loc></url>
-  <url><loc>https://fortunetelling.it.com/cancer</loc></url>
-  <url><loc>https://fortunetelling.it.com/leo</loc></url>
-  <url><loc>https://fortunetelling.it.com/virgo</loc></url>
-  <url><loc>https://fortunetelling.it.com/libra</loc></url>
-  <url><loc>https://fortunetelling.it.com/scorpio</loc></url>
-  <url><loc>https://fortunetelling.it.com/sagittarius</loc></url>
-  <url><loc>https://fortunetelling.it.com/capricorn</loc></url>
-  <url><loc>https://fortunetelling.it.com/aquarius</loc></url>
-  <url><loc>https://fortunetelling.it.com/pisces</loc></url>
-</urlset> 
+  <url>
+    <loc>https://fortunetelling.it.com/aries</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://fortunetelling.it.com/taurus</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://fortunetelling.it.com/gemini</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://fortunetelling.it.com/cancer</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://fortunetelling.it.com/leo</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://fortunetelling.it.com/virgo</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://fortunetelling.it.com/libra</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://fortunetelling.it.com/scorpio</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://fortunetelling.it.com/sagittarius</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://fortunetelling.it.com/capricorn</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://fortunetelling.it.com/aquarius</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://fortunetelling.it.com/pisces</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.75</priority>
+  </url>
+</urlset>

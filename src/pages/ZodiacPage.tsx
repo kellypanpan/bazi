@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Star, Calendar, Heart, Briefcase, DollarSign, Activity, Share2, Download } from 'lucide-react';
+import SEO from '../components/SEO';
 import { ZodiacService, ZodiacSign, DailyHoroscope, WeeklyHoroscope, MonthlyHoroscope } from '../services/zodiacService';
 import { useI18n } from '../i18n';
 
@@ -192,6 +193,16 @@ const ZodiacPage: React.FC = () => {
 
   return (
     <div className="px-4 pb-16 pt-28">
+      <SEO
+        title={`${zodiacSign.name} Horoscope | Daily, Weekly & Monthly Forecast`}
+        description={`Read ${zodiacSign.name} daily, weekly, and monthly horoscope insights for love, career, wealth, health, lucky numbers, and lucky colors.`}
+        keywords={[
+          `${zodiacSign.name.toLowerCase()} horoscope`, `${zodiacSign.name.toLowerCase()} daily horoscope`,
+          `${zodiacSign.name.toLowerCase()} weekly horoscope`, `${zodiacSign.name.toLowerCase()} monthly horoscope`,
+          "zodiac forecast", "astrology forecast"
+        ]}
+        url={`https://fortunetelling.it.com/${zodiacSign.name.toLowerCase()}`}
+      />
       <div className="container mx-auto max-w-7xl px-4">
         {/* Header Section */}
         <motion.div

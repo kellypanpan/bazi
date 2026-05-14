@@ -14,6 +14,7 @@ import {
   Star,
   Users,
 } from 'lucide-react';
+import SEO from '../components/SEO';
 import { ZodiacService, CompatibilityResult } from '../services/zodiacService';
 import { useI18n } from '../i18n';
 
@@ -208,8 +209,41 @@ const CompatibilityPage: React.FC = () => {
     return copy.effort;
   };
 
+  const structuredData = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Zodiac Compatibility Calculator",
+      "url": "https://fortunetelling.it.com/compatibility",
+      "description": "Compare two zodiac signs across love, friendship, and business compatibility."
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Zodiac Compatibility Calculator",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Web",
+      "url": "https://fortunetelling.it.com/compatibility",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  ];
+
   return (
     <div className="px-4 pb-16 pt-28">
+      <SEO
+        title="Zodiac Compatibility Calculator | Love, Friendship & Business"
+        description="Compare zodiac compatibility for two signs across love, friendship, and business with relationship strengths, challenges, and practical guidance."
+        keywords={[
+          "zodiac compatibility", "compatibility calculator", "love compatibility",
+          "relationship compatibility", "zodiac match", "astrology compatibility", "星座合盘"
+        ]}
+        url="https://fortunetelling.it.com/compatibility"
+        structuredData={structuredData}
+      />
       <div className="container mx-auto max-w-7xl">
         <motion.section
           initial={{ opacity: 0, y: 20 }}
