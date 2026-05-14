@@ -83,12 +83,11 @@ const Home: React.FC = () => {
   return (
     <div className="w-full">
       <SEO 
-        title="Free Chinese Fortune Telling & Astrology | BaZi Analysis & Daily Horoscopes"
-        description="Discover your destiny with authentic Chinese astrology. Get free BaZi Four Pillars analysis, daily horoscopes, Zi Wei Dou Shu readings, and zodiac compatibility insights."
+        title="Free BaZi Reading & Chinese Astrology"
+        description="Get free BaZi Four Pillars analysis, Zi Wei Dou Shu readings, daily horoscopes, and zodiac compatibility insights."
         keywords={[
-          "chinese astrology", "bazi analysis", "four pillars destiny", "zi wei dou shu",
-          "fortune telling", "daily horoscope", "zodiac compatibility", "birth chart analysis",
-          "chinese fortune", "destiny reading", "五行", "八字", "紫微斗数", "free astrology"
+          "bazi reading", "chinese astrology", "four pillars", "zi wei dou shu",
+          "daily horoscope", "zodiac compatibility"
         ]}
         url="https://fortunetelling.it.com/"
         structuredData={structuredData}

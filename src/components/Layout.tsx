@@ -11,10 +11,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-900 to-indigo-950">
       <SEO 
-        title="BaZi Chinese Astrology | Free BaZi Readings & Compatibility"
-        description="Explore BaZi Chinese astrology with free BaZi readings, BaZi compatibility insights, Four Pillars (BaZi) analysis, Zi Wei Dou Shu, and daily horoscope guidance."
+        title="Free BaZi Reading & Chinese Astrology"
+        description="Get free BaZi Four Pillars analysis, Zi Wei Dou Shu readings, daily horoscopes, and zodiac compatibility insights."
         keywords={[
-          'bazi', 'bazi readings', 'bazi analysis', 'bazi compatibility', 'four pillars', 'zi wei dou shu', 'chinese astrology', '八字'
+          'bazi reading', 'chinese astrology', 'four pillars', 'zi wei dou shu', 'daily horoscope'
         ]}
         url="https://fortunetelling.it.com/"
       />

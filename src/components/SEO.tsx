@@ -15,13 +15,11 @@ interface SEOProps {
 }
 
 const Seo: React.FC<SEOProps> = ({
-  title = "BaZi Chinese Astrology | Free BaZi Readings, BaZi Compatibility & Zi Wei",
-  description = "Free BaZi readings and BaZi analysis for Chinese astrology. Explore BaZi compatibility, Four Pillars (BaZi) destiny insights, Zi Wei Dou Shu, daily horoscope and personalized Chinese fortune guidance.",
+  title = "Free BaZi Reading & Chinese Astrology",
+  description = "Get free BaZi Four Pillars analysis, Zi Wei Dou Shu readings, daily horoscopes, and zodiac compatibility insights.",
   keywords = [
-    "bazi", "bazi analysis", "bazi reading", "bazi readings", "bazi compatibility",
-    "four pillars", "four pillars of destiny", "zi wei dou shu", "chinese astrology",
-    "fortune telling", "horoscope", "zodiac compatibility", "birth chart",
-    "chinese fortune", "destiny analysis", "五行", "八字", "紫微斗数"
+    "bazi reading", "chinese astrology", "four pillars", "zi wei dou shu",
+    "daily horoscope", "zodiac compatibility"
   ],
   image = "https://fortunetelling.it.com/og-image.jpg",
   imageAlt = "Chinese astrology and BaZi fortune telling chart",
