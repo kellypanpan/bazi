@@ -16,6 +16,7 @@ import {
   MapPin,
   Mountain,
   Settings2,
+  Sparkles,
   Star,
   Waves,
 } from 'lucide-react';
