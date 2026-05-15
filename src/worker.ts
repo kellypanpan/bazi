@@ -25,6 +25,13 @@ type DodoCheckoutResponse = {
   message?: string;
 };
 
+type SeoMetadata = {
+  title: string;
+  description: string;
+  canonical: string;
+  noIndex?: boolean;
+};
+
 const planProductEnvKeys: Record<PlanId, keyof Env> = {
   essential: 'DODO_PRODUCT_ESSENTIAL',
   pro: 'DODO_PRODUCT_PRO',
@@ -32,6 +39,60 @@ const planProductEnvKeys: Record<PlanId, keyof Env> = {
 };
 
 const allowedPlans = new Set<PlanId>(['essential', 'pro', 'annual']);
+const siteUrl = 'https://fortunetelling.it.com';
+const zodiacSigns = new Set([
+  'aries',
+  'taurus',
+  'gemini',
+  'cancer',
+  'leo',
+  'virgo',
+  'libra',
+  'scorpio',
+  'sagittarius',
+  'capricorn',
+  'aquarius',
+  'pisces',
+]);
+
+const staticSeoByPath: Record<string, SeoMetadata> = {
+  '/': {
+    title: 'Free BaZi Reading & Chinese Astrology',
+    description: 'Get free BaZi Four Pillars analysis, Zi Wei Dou Shu readings, daily horoscopes, and zodiac compatibility insights.',
+    canonical: `${siteUrl}/`,
+  },
+  '/readings': {
+    title: 'Free BaZi Reading | Four Pillars Birth Chart Analysis',
+    description: 'Generate a free BaZi reading with Four Pillars, Five Elements balance, Day Master insights, and Chinese astrology chart guidance.',
+    canonical: `${siteUrl}/readings`,
+  },
+  '/zi-wei': {
+    title: 'Zi Wei Dou Shu Chart Generator | Chinese Astrology',
+    description: 'Generate your Zi Wei Dou Shu chart with 12 palace analysis, major stars, transformations, destiny stars, and Chinese astrology insights.',
+    canonical: `${siteUrl}/zi-wei`,
+  },
+  '/compatibility': {
+    title: 'Zodiac Compatibility Calculator | Love & Relationship',
+    description: 'Compare zodiac compatibility for two signs across love, friendship, and business with relationship strengths and practical guidance.',
+    canonical: `${siteUrl}/compatibility`,
+  },
+  '/about': {
+    title: 'About Chinese Astrology | BaZi & Zi Wei Dou Shu',
+    description: 'Learn about BaZi Four Pillars, Zi Wei Dou Shu, Five Elements, and the Chinese astrology systems used for modern life guidance.',
+    canonical: `${siteUrl}/about`,
+  },
+  '/subscription': {
+    title: 'Premium BaZi Report | Four Pillars & Luck Cycles',
+    description: 'Unlock a premium BaZi report with Four Pillars interpretation, Five Elements balance, Ten Gods, luck cycles, and PDF modules.',
+    canonical: `${siteUrl}/subscription`,
+  },
+  '/checkout/success': {
+    title: 'Checkout Success',
+    description: 'Payment confirmation page for premium BaZi report access.',
+    canonical: `${siteUrl}/checkout/success`,
+    noIndex: true,
+  },
+};
 
 const json = (body: unknown, init?: ResponseInit) =>
   new Response(JSON.stringify(body), {
@@ -41,6 +102,75 @@ const json = (body: unknown, init?: ResponseInit) =>
       ...init?.headers,
     },
   });
+
+const getSeoMetadata = (pathname: string): SeoMetadata | null => {
+  const normalizedPath = pathname !== '/' ? pathname.replace(/\/$/, '') : pathname;
+  const staticMetadata = staticSeoByPath[normalizedPath];
+  if (staticMetadata) return staticMetadata;
+
+  const zodiacSlug = normalizedPath.slice(1);
+  if (zodiacSigns.has(zodiacSlug)) {
+    const signName = zodiacSlug.charAt(0).toUpperCase() + zodiacSlug.slice(1);
+    return {
+      title: `${signName} Horoscope Today | Daily Predictions`,
+      description: `Get your ${signName} horoscope today with personality traits, daily predictions, love compatibility, career insights, and more.`,
+      canonical: `${siteUrl}/${zodiacSlug}`,
+    };
+  }
+
+  return null;
+};
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
+const replaceHeadTag = (html: string, pattern: RegExp, replacement: string) => {
+  if (pattern.test(html)) return html.replace(pattern, replacement);
+  return html.replace('</head>', `    ${replacement}\n  </head>`);
+};
+
+const injectSeoMetadata = (html: string, metadata: SeoMetadata) => {
+  const title = escapeHtml(metadata.title);
+  const description = escapeHtml(metadata.description);
+  const canonical = escapeHtml(metadata.canonical);
+  const robots = metadata.noIndex ? 'noindex, nofollow, noarchive' : 'index, follow, max-image-preview:large';
+
+  let nextHtml = html.replace(/<title>.*?<\/title>/s, `<title>${title}</title>`);
+  nextHtml = replaceHeadTag(nextHtml, /<meta\s+name=["']description["'][^>]*>/i, `<meta name="description" content="${description}" />`);
+  nextHtml = replaceHeadTag(nextHtml, /<meta\s+name=["']robots["'][^>]*>/i, `<meta name="robots" content="${robots}" />`);
+  nextHtml = replaceHeadTag(nextHtml, /<link\s+rel=["']canonical["'][^>]*>/i, `<link rel="canonical" href="${canonical}" />`);
+  nextHtml = replaceHeadTag(nextHtml, /<meta\s+property=["']og:title["'][^>]*>/i, `<meta property="og:title" content="${title}" />`);
+  nextHtml = replaceHeadTag(nextHtml, /<meta\s+property=["']og:description["'][^>]*>/i, `<meta property="og:description" content="${description}" />`);
+  nextHtml = replaceHeadTag(nextHtml, /<meta\s+property=["']og:url["'][^>]*>/i, `<meta property="og:url" content="${canonical}" />`);
+  nextHtml = replaceHeadTag(nextHtml, /<meta\s+name=["']twitter:title["'][^>]*>/i, `<meta name="twitter:title" content="${title}" />`);
+  nextHtml = replaceHeadTag(nextHtml, /<meta\s+name=["']twitter:description["'][^>]*>/i, `<meta name="twitter:description" content="${description}" />`);
+
+  return nextHtml;
+};
+
+const maybeServeHtmlWithSeo = async (request: Request, env: Env, pathname: string) => {
+  const response = await env.ASSETS.fetch(request);
+  const metadata = getSeoMetadata(pathname);
+  const contentType = response.headers.get('Content-Type') || '';
+
+  if (!metadata || !contentType.includes('text/html')) {
+    return response;
+  }
+
+  const html = await response.text();
+  const headers = new Headers(response.headers);
+  headers.set('Content-Type', 'text/html; charset=utf-8');
+
+  return new Response(injectSeoMetadata(html, metadata), {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+};
 
 const getOrigin = (request: Request, env: Env) => {
   if (env.PUBLIC_SITE_URL) return env.PUBLIC_SITE_URL.replace(/\/$/, '');
@@ -136,6 +266,6 @@ export default {
       return handleCheckout(request, env);
     }
 
-    return env.ASSETS.fetch(request);
+    return maybeServeHtmlWithSeo(request, env, url.pathname);
   },
 };
