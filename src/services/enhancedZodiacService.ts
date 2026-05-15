@@ -180,7 +180,7 @@ export class EnhancedZodiacService {
     aries: {
       name: 'Aries',
       chineseName: '白羊座',
-      symbol: '♈',
+      symbol: 'AR',
       element: 'Fire',
       dates: 'March 21 - April 19',
       rulingPlanet: 'Mars',
@@ -243,7 +243,7 @@ export class EnhancedZodiacService {
     leo: {
       name: 'Leo',
       chineseName: '狮子座',
-      symbol: '♌',
+      symbol: 'LE',
       element: 'Fire',
       dates: 'July 23 - August 22',
       rulingPlanet: 'Sun',
@@ -306,7 +306,7 @@ export class EnhancedZodiacService {
     taurus: {
       name: 'Taurus',
       chineseName: '金牛座',
-      symbol: '♉',
+      symbol: 'TA',
       element: 'Earth',
       dates: 'April 20 - May 20',
       rulingPlanet: 'Venus',
@@ -369,7 +369,7 @@ export class EnhancedZodiacService {
     gemini: {
       name: 'Gemini',
       chineseName: '双子座',
-      symbol: '♊',
+      symbol: 'GE',
       element: 'Air',
       dates: 'May 21 - June 20',
       rulingPlanet: 'Mercury',
@@ -432,7 +432,7 @@ export class EnhancedZodiacService {
     cancer: {
       name: 'Cancer',
       chineseName: '巨蟹座',
-      symbol: '♋',
+      symbol: 'CA',
       element: 'Water',
       dates: 'June 21 - July 22',
       rulingPlanet: 'Moon',
@@ -495,7 +495,7 @@ export class EnhancedZodiacService {
     virgo: {
       name: 'Virgo',
       chineseName: '处女座',
-      symbol: '♍',
+      symbol: 'VI',
       element: 'Earth',
       dates: 'August 23 - September 22',
       rulingPlanet: 'Mercury',
@@ -558,7 +558,7 @@ export class EnhancedZodiacService {
     libra: {
       name: 'Libra',
       chineseName: '天秤座',
-      symbol: '♎',
+      symbol: 'LI',
       element: 'Air',
       dates: 'September 23 - October 22',
       rulingPlanet: 'Venus',
@@ -621,7 +621,7 @@ export class EnhancedZodiacService {
     scorpio: {
       name: 'Scorpio',
       chineseName: '天蝎座',
-      symbol: '♏',
+      symbol: 'SC',
       element: 'Water',
       dates: 'October 23 - November 21',
       rulingPlanet: 'Mars/Pluto',
@@ -684,7 +684,7 @@ export class EnhancedZodiacService {
     sagittarius: {
       name: 'Sagittarius',
       chineseName: '射手座',
-      symbol: '♐',
+      symbol: 'SG',
       element: 'Fire',
       dates: 'November 22 - December 21',
       rulingPlanet: 'Jupiter',
@@ -747,7 +747,7 @@ export class EnhancedZodiacService {
     capricorn: {
       name: 'Capricorn',
       chineseName: '摩羯座',
-      symbol: '♑',
+      symbol: 'CP',
       element: 'Earth',
       dates: 'December 22 - January 19',
       rulingPlanet: 'Saturn',
@@ -810,7 +810,7 @@ export class EnhancedZodiacService {
     aquarius: {
       name: 'Aquarius',
       chineseName: '水瓶座',
-      symbol: '♒',
+      symbol: 'AQ',
       element: 'Air',
       dates: 'January 20 - February 18',
       rulingPlanet: 'Uranus/Saturn',
@@ -873,7 +873,7 @@ export class EnhancedZodiacService {
     pisces: {
       name: 'Pisces',
       chineseName: '双鱼座',
-      symbol: '♓',
+      symbol: 'PI',
       element: 'Water',
       dates: 'February 19 - March 20',
       rulingPlanet: 'Neptune/Jupiter',

@@ -94,18 +94,18 @@ const Header: React.FC = () => {
   ];
 
   const zodiacSigns = [
-    { name: 'Aries', symbol: '♈', path: '/aries', dates: 'Mar 21 - Apr 19' },
-    { name: 'Taurus', symbol: '♉', path: '/taurus', dates: 'Apr 20 - May 20' },
-    { name: 'Gemini', symbol: '♊', path: '/gemini', dates: 'May 21 - Jun 20' },
-    { name: 'Cancer', symbol: '♋', path: '/cancer', dates: 'Jun 21 - Jul 22' },
-    { name: 'Leo', symbol: '♌', path: '/leo', dates: 'Jul 23 - Aug 22' },
-    { name: 'Virgo', symbol: '♍', path: '/virgo', dates: 'Aug 23 - Sep 22' },
-    { name: 'Libra', symbol: '♎', path: '/libra', dates: 'Sep 23 - Oct 22' },
-    { name: 'Scorpio', symbol: '♏', path: '/scorpio', dates: 'Oct 23 - Nov 21' },
-    { name: 'Sagittarius', symbol: '♐', path: '/sagittarius', dates: 'Nov 22 - Dec 21' },
-    { name: 'Capricorn', symbol: '♑', path: '/capricorn', dates: 'Dec 22 - Jan 19' },
-    { name: 'Aquarius', symbol: '♒', path: '/aquarius', dates: 'Jan 20 - Feb 18' },
-    { name: 'Pisces', symbol: '♓', path: '/pisces', dates: 'Feb 19 - Mar 20' }
+    { name: 'Aries', symbol: 'AR', path: '/aries', dates: 'Mar 21 - Apr 19' },
+    { name: 'Taurus', symbol: 'TA', path: '/taurus', dates: 'Apr 20 - May 20' },
+    { name: 'Gemini', symbol: 'GE', path: '/gemini', dates: 'May 21 - Jun 20' },
+    { name: 'Cancer', symbol: 'CA', path: '/cancer', dates: 'Jun 21 - Jul 22' },
+    { name: 'Leo', symbol: 'LE', path: '/leo', dates: 'Jul 23 - Aug 22' },
+    { name: 'Virgo', symbol: 'VI', path: '/virgo', dates: 'Aug 23 - Sep 22' },
+    { name: 'Libra', symbol: 'LI', path: '/libra', dates: 'Sep 23 - Oct 22' },
+    { name: 'Scorpio', symbol: 'SC', path: '/scorpio', dates: 'Oct 23 - Nov 21' },
+    { name: 'Sagittarius', symbol: 'SG', path: '/sagittarius', dates: 'Nov 22 - Dec 21' },
+    { name: 'Capricorn', symbol: 'CP', path: '/capricorn', dates: 'Dec 22 - Jan 19' },
+    { name: 'Aquarius', symbol: 'AQ', path: '/aquarius', dates: 'Jan 20 - Feb 18' },
+    { name: 'Pisces', symbol: 'PI', path: '/pisces', dates: 'Feb 19 - Mar 20' }
   ];
 
   const externalPalmFace = { name: text.palmFace, url: 'https://facepalmai.com/' };
@@ -138,30 +138,27 @@ const Header: React.FC = () => {
           : 'bg-transparent'
       }`}
     >
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-2 text-2xl font-serif text-amber-400">
-            <motion.div
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-            >
-              <Star className="h-8 w-8 text-amber-400" />
+          <Link to="/" className="flex items-center gap-3 text-amber-300">
+            <motion.div className="flex h-9 w-9 items-center justify-center rounded-lg border border-amber-300/25 bg-amber-300/10 shadow-lg shadow-black/20">
+              <Star className="h-5 w-5 text-amber-300" />
             </motion.div>
-            <span className="hidden sm:block">Celestial Insights</span>
+            <span className="hidden font-serif text-xl tracking-wide text-white sm:block">Celestial Insights</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex gap-8 items-center">
+          <nav className="hidden md:flex items-center gap-5">
             {/* Home */}
-            <Link to="/" className={`text-lg transition-all duration-300 ${location.pathname==='/'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>{text.home}</Link>
+            <Link to="/" className={`text-sm font-medium transition-all duration-300 ${location.pathname==='/'?'text-amber-300':'text-slate-300 hover:text-amber-300'}`}>{text.home}</Link>
             {/* BaZi */}
-            <Link to="/readings" className={`text-lg transition-all duration-300 ${location.pathname==='/readings'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>{text.bazi}</Link>
+            <Link to="/readings" className={`text-sm font-medium transition-all duration-300 ${location.pathname==='/readings'?'text-amber-300':'text-slate-300 hover:text-amber-300'}`}>{text.bazi}</Link>
             {/* Zi Wei */}
-            <Link to="/zi-wei" className={`text-lg transition-all duration-300 ${location.pathname==='/zi-wei'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>{text.ziWei}</Link>
+            <Link to="/zi-wei" className={`text-sm font-medium transition-all duration-300 ${location.pathname==='/zi-wei'?'text-amber-300':'text-slate-300 hover:text-amber-300'}`}>{text.ziWei}</Link>
             {/* Compatibility */}
-            <Link to="/compatibility" className={`text-lg transition-all duration-300 ${location.pathname==='/compatibility'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>{text.compatibility}</Link>
+            <Link to="/compatibility" className={`text-sm font-medium transition-all duration-300 ${location.pathname==='/compatibility'?'text-amber-300':'text-slate-300 hover:text-amber-300'}`}>{text.compatibility}</Link>
             {/* Palm & Face external */}
-            <a href={externalPalmFace.url} target="_blank" rel="noopener noreferrer" className="text-lg text-slate-200 hover:text-amber-400 transition-all duration-300">{externalPalmFace.name}</a>
+            <a href={externalPalmFace.url} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-slate-300 transition-all duration-300 hover:text-amber-300">{externalPalmFace.name}</a>
             {/* Zodiac Dropdown (kept) */}
             <div 
               className="relative"
@@ -169,10 +166,10 @@ const Header: React.FC = () => {
               onMouseLeave={() => setIsZodiacOpen(false)}
             >
               <button
-                className={`text-lg transition-all duration-300 flex items-center gap-1 ${
+                className={`flex items-center gap-1 text-sm font-medium transition-all duration-300 ${
                   zodiacSigns.some(sign => location.pathname === sign.path)
-                    ? 'text-amber-400 font-medium'
-                    : 'text-slate-200 hover:text-amber-400'
+                    ? 'text-amber-300'
+                    : 'text-slate-300 hover:text-amber-300'
                 }`}
               >
                 {text.zodiacSigns}
@@ -193,11 +190,13 @@ const Header: React.FC = () => {
                         to={sign.path}
                         className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ${
                           location.pathname === sign.path
-                            ? 'bg-amber-500 bg-opacity-20 text-amber-400'
-                            : 'hover:bg-white/[0.08] text-slate-200 hover:text-amber-400'
+                            ? 'bg-amber-500 bg-opacity-15 text-amber-300'
+                            : 'hover:bg-white/[0.08] text-slate-300 hover:text-amber-300'
                         }`}
                       >
-                        <span className="text-2xl">{sign.symbol}</span>
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-amber-300/20 bg-amber-300/10 text-xs font-semibold tracking-wide text-amber-200">
+                          {sign.symbol}
+                        </span>
                         <div>
                           <div className="font-medium">{sign.name}</div>
                           <div className="text-xs text-slate-400">{sign.dates}</div>
@@ -210,9 +209,9 @@ const Header: React.FC = () => {
             </div>
             
             {/* About */}
-            <Link to="/about" className={`text-lg transition-all duration-300 ${location.pathname==='/about'?'text-amber-400 font-medium':'text-slate-200 hover:text-amber-400'}`}>{text.about}</Link>
+            <Link to="/about" className={`text-sm font-medium transition-all duration-300 ${location.pathname==='/about'?'text-amber-300':'text-slate-300 hover:text-amber-300'}`}>{text.about}</Link>
             {/* Premium button */}
-            <Link to="/subscription" className="glass-primary-button rounded-full px-4 py-2 font-medium">{text.premium}</Link>
+            <Link to="/subscription" className="glass-primary-button rounded-md px-4 py-2 text-sm font-semibold">{text.premium}</Link>
             {languageSwitcher}
             {user ? (
               <button
@@ -306,7 +305,9 @@ const Header: React.FC = () => {
                             : 'hover:bg-white/[0.08] text-slate-300'
                         }`}
                       >
-                        <span className="text-lg">{sign.symbol}</span>
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-amber-300/20 bg-amber-300/10 text-[10px] font-semibold tracking-wide text-amber-200">
+                          {sign.symbol}
+                        </span>
                         <div>
                           <div className="text-sm font-medium">{sign.name}</div>
                         </div>

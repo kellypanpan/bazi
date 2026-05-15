@@ -219,7 +219,7 @@ export class ZodiacService {
   private static readonly zodiacSigns: ZodiacSign[] = [
     {
       name: 'Aries',
-      symbol: '♈',
+      symbol: 'AR',
       element: 'Fire',
       dates: 'March 21 - April 19',
       keywords: ['Energetic', 'Pioneering', 'Competitive', 'Confident'],
@@ -228,7 +228,7 @@ export class ZodiacService {
     },
     {
       name: 'Taurus',
-      symbol: '♉',
+      symbol: 'TA',
       element: 'Earth',
       dates: 'April 20 - May 20',
       keywords: ['Reliable', 'Patient', 'Practical', 'Devoted'],
@@ -237,7 +237,7 @@ export class ZodiacService {
     },
     {
       name: 'Gemini',
-      symbol: '♊',
+      symbol: 'GE',
       element: 'Air',
       dates: 'May 21 - June 20',
       keywords: ['Versatile', 'Curious', 'Social', 'Witty'],
@@ -246,7 +246,7 @@ export class ZodiacService {
     },
     {
       name: 'Cancer',
-      symbol: '♋',
+      symbol: 'CA',
       element: 'Water',
       dates: 'June 21 - July 22',
       keywords: ['Nurturing', 'Emotional', 'Protective', 'Intuitive'],
@@ -255,7 +255,7 @@ export class ZodiacService {
     },
     {
       name: 'Leo',
-      symbol: '♌',
+      symbol: 'LE',
       element: 'Fire',
       dates: 'July 23 - August 22',
       keywords: ['Dramatic', 'Creative', 'Generous', 'Confident'],
@@ -264,7 +264,7 @@ export class ZodiacService {
     },
     {
       name: 'Virgo',
-      symbol: '♍',
+      symbol: 'VI',
       element: 'Earth',
       dates: 'August 23 - September 22',
       keywords: ['Analytical', 'Practical', 'Helpful', 'Perfectionist'],
@@ -273,7 +273,7 @@ export class ZodiacService {
     },
     {
       name: 'Libra',
-      symbol: '♎',
+      symbol: 'LI',
       element: 'Air',
       dates: 'September 23 - October 22',
       keywords: ['Diplomatic', 'Harmonious', 'Social', 'Artistic'],
@@ -282,7 +282,7 @@ export class ZodiacService {
     },
     {
       name: 'Scorpio',
-      symbol: '♏',
+      symbol: 'SC',
       element: 'Water',
       dates: 'October 23 - November 21',
       keywords: ['Intense', 'Passionate', 'Mysterious', 'Transformative'],
@@ -291,7 +291,7 @@ export class ZodiacService {
     },
     {
       name: 'Sagittarius',
-      symbol: '♐',
+      symbol: 'SG',
       element: 'Fire',
       dates: 'November 22 - December 21',
       keywords: ['Adventurous', 'Optimistic', 'Philosophical', 'Independent'],
@@ -300,7 +300,7 @@ export class ZodiacService {
     },
     {
       name: 'Capricorn',
-      symbol: '♑',
+      symbol: 'CP',
       element: 'Earth',
       dates: 'December 22 - January 19',
       keywords: ['Ambitious', 'Disciplined', 'Responsible', 'Traditional'],
@@ -309,7 +309,7 @@ export class ZodiacService {
     },
     {
       name: 'Aquarius',
-      symbol: '♒',
+      symbol: 'AQ',
       element: 'Air',
       dates: 'January 20 - February 18',
       keywords: ['Independent', 'Innovative', 'Humanitarian', 'Eccentric'],
@@ -318,7 +318,7 @@ export class ZodiacService {
     },
     {
       name: 'Pisces',
-      symbol: '♓',
+      symbol: 'PI',
       element: 'Water',
       dates: 'February 19 - March 20',
       keywords: ['Compassionate', 'Intuitive', 'Artistic', 'Dreamy'],

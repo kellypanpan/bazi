@@ -997,7 +997,9 @@ const ZiWeiPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <div className="text-6xl mb-6">🪐</div>
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-lg border border-amber-300/20 bg-amber-300/10 text-sm font-semibold tracking-wide text-amber-200">
+            ZW
+          </div>
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
             Zi Wei Dou Shu
           </h1>

@@ -9,7 +9,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-900 to-indigo-950">
+    <div className="min-h-screen flex flex-col bg-transparent">
       <SEO 
         title="Free BaZi Reading & Chinese Astrology"
         description="Get free BaZi Four Pillars analysis, Zi Wei Dou Shu readings, daily horoscopes, and zodiac compatibility insights."

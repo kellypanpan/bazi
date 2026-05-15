@@ -616,7 +616,7 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
                   <div key={index} className="glass-inset p-4">
                     <div className="flex justify-between items-start mb-2">
                       <span className="font-medium text-purple-300">{month.month}</span>
-                      <span className="text-sm text-yellow-400">★ {month.score}/100</span>
+                      <span className="rounded-md border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-xs font-semibold text-amber-200">{month.score}/100</span>
                     </div>
                     <p className="text-slate-300 text-sm">{month.prediction}</p>
                   </div>
@@ -631,7 +631,7 @@ function renderModuleContent(activeTab: string, analysis: DetailedBaziAnalysis, 
                   <div key={index} className="glass-inset p-4">
                     <div className="flex justify-between items-start mb-2">
                       <span className="font-medium text-indigo-300">{month.month}</span>
-                      <span className="text-sm text-yellow-400">★ {month.score}/100</span>
+                      <span className="rounded-md border border-amber-300/20 bg-amber-300/10 px-2 py-1 text-xs font-semibold text-amber-200">{month.score}/100</span>
                     </div>
                     <p className="text-slate-300 text-sm">{month.prediction}</p>
                   </div>

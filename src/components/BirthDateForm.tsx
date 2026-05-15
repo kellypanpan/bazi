@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Settings2, User } from 'lucide-react';
+import { Calendar, ChevronDown, Clock, MapPin, Settings2, User } from 'lucide-react';
 import { useI18n } from '../i18n';
 
 export type BirthData = {
@@ -40,6 +40,7 @@ const defaultFormData: BirthData = {
 const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
   const [formData, setFormData] = useState<BirthData>(defaultFormData);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const { pick } = useI18n();
 
   const text = pick({
@@ -60,6 +61,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
       locationPlaceholder: 'e.g., Shanghai, New York, London',
       advanced: 'Advanced Chart Settings',
       advancedHint: 'These rules improve transparency for BaZi calculations.',
+      advancedSummary: 'Solar calendar, true solar time, Zi hour, Li Chun',
       calendarType: 'Calendar Type',
       solar: 'Solar',
       lunar: 'Lunar',
@@ -104,6 +106,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
       locationPlaceholder: '例如：上海、纽约、伦敦',
       advanced: '高级排盘设置',
       advancedHint: '这些规则用于提升八字计算的透明度。',
+      advancedSummary: '阳历、真太阳时、子时换日、立春换年',
       calendarType: '历法类型',
       solar: '阳历',
       lunar: '农历',
@@ -148,6 +151,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
       locationPlaceholder: '例如：上海、紐約、倫敦',
       advanced: '進階排盤設定',
       advancedHint: '這些規則用於提升八字計算的透明度。',
+      advancedSummary: '陽曆、真太陽時、子時換日、立春換年',
       calendarType: '曆法類型',
       solar: '陽曆',
       lunar: '農曆',
@@ -283,19 +287,19 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       onSubmit={handleSubmit}
-      className="glass-panel space-y-6 p-5 md:p-8"
+      className="glass-panel space-y-6 border-amber-300/10 p-5 md:p-6"
     >
-      <div className="border-b border-white/10 pb-5">
+      <div className="border-b border-white/10 pb-4">
         <p className="mb-2 text-sm font-semibold uppercase tracking-[0.16em] text-amber-300">
           {text.eyebrow}
         </p>
-        <h3 className="text-2xl font-bold text-white">{text.title}</h3>
-        <p className="mt-2 text-sm leading-6 text-indigo-200">
+        <h3 className="text-2xl font-semibold text-white">{text.title}</h3>
+        <p className="mt-2 text-sm leading-6 text-slate-400">
           {text.intro}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
           <label className="mb-3 block text-sm font-medium text-white">
             <User className="mr-2 inline-block h-4 w-4" />
@@ -306,7 +310,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             name="name"
             value={formData.name}
             onChange={handleTextInputChange}
-            className={`w-full rounded-lg border px-4 py-3 text-white placeholder-indigo-300 transition-all focus:outline-none focus:ring-2 ${
+            className={`w-full rounded-md border px-4 py-3 text-white placeholder-slate-500 transition-all focus:outline-none focus:ring-2 ${
               errors.name
                 ? 'border-red-500 bg-red-950/25 focus:ring-red-500'
                 : 'glass-input'
@@ -324,7 +328,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
                 key={gender}
                 type="button"
                 onClick={() => updateField('gender', gender)}
-                className={`rounded-lg px-4 py-3 font-medium capitalize transition-all ${
+                className={`rounded-md px-4 py-3 font-medium capitalize transition-all ${
                   formData.gender === gender
                     ? 'glass-primary-button'
                     : 'glass-secondary-button'
@@ -346,7 +350,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             name="birthDate"
             value={formData.birthDate}
             onChange={handleTextInputChange}
-            className={`w-full rounded-lg border px-4 py-3 text-white placeholder-indigo-300 transition-all focus:outline-none focus:ring-2 ${
+            className={`w-full rounded-md border px-4 py-3 text-white placeholder-slate-500 transition-all focus:outline-none focus:ring-2 ${
               errors.birthDate
                 ? 'border-red-500 bg-red-950/25 focus:ring-red-500'
                 : 'glass-input'
@@ -355,7 +359,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             maxLength={10}
           />
           {errors.birthDate && <p className="mt-2 text-sm text-red-400">{errors.birthDate}</p>}
-          <p className="mt-2 text-xs text-indigo-300">
+          <p className="mt-2 text-xs text-slate-500">
             {text.dateHint}
           </p>
         </div>
@@ -371,7 +375,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             value={formData.birthTime}
             onChange={handleTextInputChange}
             disabled={formData.timeAccuracy === 'unknown'}
-            className={`w-full rounded-lg border px-4 py-3 text-white transition-all focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-55 ${
+            className={`w-full rounded-md border px-4 py-3 text-white transition-all focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-55 ${
               errors.birthTime
                 ? 'border-red-500 bg-red-950/25 focus:ring-red-500'
                 : 'glass-input'
@@ -379,7 +383,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             style={{ colorScheme: 'dark' }}
           />
           {errors.birthTime && <p className="mt-2 text-sm text-red-400">{errors.birthTime}</p>}
-          <p className="mt-2 text-xs text-indigo-300">
+          <p className="mt-2 text-xs text-slate-500">
             {text.timeHint}
           </p>
         </div>
@@ -394,7 +398,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             name="location"
             value={formData.location}
             onChange={handleTextInputChange}
-            className={`w-full rounded-lg border px-4 py-3 text-white placeholder-indigo-300 transition-all focus:outline-none focus:ring-2 ${
+            className={`w-full rounded-md border px-4 py-3 text-white placeholder-slate-500 transition-all focus:outline-none focus:ring-2 ${
               errors.location
                 ? 'border-red-500 bg-red-950/25 focus:ring-red-500'
                 : 'glass-input'
@@ -405,18 +409,32 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
         </div>
       </div>
 
-      <div className="glass-card p-4 md:p-5">
-        <div className="mb-5 flex items-center gap-3">
+      <div className="rounded-lg border border-white/15 bg-white/[0.06] p-4 shadow-xl shadow-black/15 backdrop-blur-2xl md:p-5">
+        <button
+          type="button"
+          onClick={() => setShowAdvanced((current) => !current)}
+          className="flex w-full items-center gap-3 text-left"
+          aria-expanded={showAdvanced}
+        >
             <div className="glass-inset flex h-10 w-10 items-center justify-center text-amber-300">
             <Settings2 className="h-5 w-5" />
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <h4 className="font-semibold text-white">{text.advanced}</h4>
-            <p className="text-sm text-slate-400">{text.advancedHint}</p>
+            <p className="truncate text-sm text-slate-500">
+              {showAdvanced ? text.advancedHint : text.advancedSummary}
+            </p>
           </div>
-        </div>
+          <ChevronDown className={`h-5 w-5 shrink-0 text-slate-400 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+        </button>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {showAdvanced && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          transition={{ duration: 0.25 }}
+          className="mt-5 grid grid-cols-1 gap-4 overflow-hidden border-t border-white/10 pt-5 md:grid-cols-2"
+        >
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-200">{text.calendarType}</label>
             <div className="grid grid-cols-2 gap-2">
@@ -428,7 +446,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
                   key={option.value}
                   type="button"
                   onClick={() => updateField('calendarType', option.value as BirthData['calendarType'])}
-                  className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
+                  className={`rounded-md px-3 py-2 text-sm font-medium transition ${
                     formData.calendarType === option.value
                       ? 'glass-primary-button'
                       : 'glass-secondary-button'
@@ -445,7 +463,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             <select
               value={formData.timeAccuracy}
               onChange={(event) => updateField('timeAccuracy', event.target.value as BirthData['timeAccuracy'])}
-              className="glass-input w-full rounded-lg px-4 py-3 focus:outline-none"
+              className="glass-input w-full rounded-md px-4 py-3 focus:outline-none"
             >
               <option value="exact">{text.exact}</option>
               <option value="approximate">{text.approximate}</option>
@@ -485,7 +503,7 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             <select
               value={formData.dayBoundaryRule}
               onChange={(event) => updateField('dayBoundaryRule', event.target.value as BirthData['dayBoundaryRule'])}
-              className="glass-input w-full rounded-lg px-4 py-3 focus:outline-none"
+              className="glass-input w-full rounded-md px-4 py-3 focus:outline-none"
             >
               <option value="zi-hour">{text.ziHour}</option>
               <option value="midnight">{text.midnight}</option>
@@ -497,25 +515,26 @@ const BirthDateForm: React.FC<BirthDateFormProps> = ({ onSubmit }) => {
             <select
               value={formData.yearBoundaryRule}
               onChange={(event) => updateField('yearBoundaryRule', event.target.value as BirthData['yearBoundaryRule'])}
-              className="glass-input w-full rounded-lg px-4 py-3 focus:outline-none"
+              className="glass-input w-full rounded-md px-4 py-3 focus:outline-none"
             >
               <option value="lichun">{text.liChun}</option>
               <option value="lunar-new-year">{text.lunarNewYear}</option>
             </select>
           </div>
-        </div>
+        </motion.div>
+        )}
       </div>
 
       <motion.button
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.99 }}
         type="submit"
-        className="glass-primary-button w-full rounded-lg px-6 py-4 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-indigo-900"
+        className="glass-primary-button w-full rounded-md px-6 py-4 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-slate-950"
       >
         {text.submit}
       </motion.button>
 
-      <p className="text-center text-xs leading-5 text-indigo-300">
+      <p className="text-center text-xs leading-5 text-slate-500">
         {text.privacy}
       </p>
     </motion.form>

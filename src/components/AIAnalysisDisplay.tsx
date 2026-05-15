@@ -219,20 +219,20 @@ const AIAnalysisDisplay: React.FC<AIAnalysisDisplayProps> = ({ baziData }) => {
               <span className="text-xs text-gray-400">Dual Analysis</span>
             </div>
             
-            {/* Rotating symbols */}
+            {/* Rotating method marks */}
             <div className="absolute inset-0 animate-spin" style={{ animationDuration: '30s' }}>
               <div className="relative w-full h-full">
-                {['☀️', '🌙', '⭐', '🔮', '☯️', '💫'].map((symbol, index) => (
+                {[Sun, Moon, Stars, BookOpen, RefreshCw, AlertCircle].map((Icon, index) => (
                   <div
                     key={index}
-                    className="absolute text-2xl"
+                    className="absolute flex h-8 w-8 items-center justify-center rounded-md border border-white/10 bg-slate-950/70 text-amber-300"
                     style={{
                       top: '50%',
                       left: '50%',
                       transform: `translate(-50%, -50%) rotate(${index * 60}deg) translateY(-90px)`
                     }}
                   >
-                    {symbol}
+                    <Icon className="h-4 w-4" />
                   </div>
                 ))}
               </div>
@@ -282,7 +282,7 @@ const AIAnalysisDisplay: React.FC<AIAnalysisDisplayProps> = ({ baziData }) => {
           {/* Advanced Analysis Explanation */}
           <div className="bg-gray-800 bg-opacity-50 rounded-lg p-6 border border-gray-600">
             <p className="text-gray-300 text-sm leading-relaxed">
-              🔬 <strong>Advanced Dual-Method Analysis</strong><br/>
+              <strong>Advanced Dual-Method Analysis</strong><br/>
               Our system combines two powerful ancient Chinese fortune-telling methods: 
               BaZi (Four Pillars) and Zi Wei Dou Shu (Purple Star Astrology). This comprehensive 
               approach provides deeper insights by cross-validating predictions from both systems, 
@@ -469,4 +469,4 @@ const AIAnalysisDisplay: React.FC<AIAnalysisDisplayProps> = ({ baziData }) => {
   );
 };
 
-export default AIAnalysisDisplay; 
+export default AIAnalysisDisplay;

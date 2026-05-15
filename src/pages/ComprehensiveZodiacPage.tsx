@@ -272,10 +272,7 @@ const ComprehensiveZodiacPage: React.FC = () => {
     loadZodiacData();
   }, [sign, location.pathname, language]);
 
-  const getScoreStars = (score: number) => {
-    const stars = Math.round(score / 20);
-    return '★'.repeat(stars) + '☆'.repeat(5 - stars);
-  };
+  const getScoreLabel = (score: number) => `${score}/100`;
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-400';
@@ -363,7 +360,9 @@ const ComprehensiveZodiacPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8 sm:mb-12"
         >
-          <div className="text-6xl sm:text-8xl mb-4 sm:mb-6">{zodiacData.symbol}</div>
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg border border-amber-300/20 bg-amber-300/10 text-sm font-semibold tracking-wide text-amber-200 sm:mb-6 sm:h-20 sm:w-20 sm:text-base">
+            {zodiacData.symbol}
+          </div>
           <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-3 sm:mb-4 px-2">
             {zodiacData.name} 
             <span className="block sm:inline text-lg sm:text-2xl text-purple-300 mt-1 sm:mt-0 sm:ml-2">
@@ -425,7 +424,7 @@ const ComprehensiveZodiacPage: React.FC = () => {
                 <p className="text-slate-300 mb-3 sm:mb-4 text-sm sm:text-base">{dailyHoroscope.overall.prediction}</p>
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
                   <span className={`text-base sm:text-lg ${getScoreColor(dailyHoroscope.overall.score)}`}>
-                    {getScoreStars(dailyHoroscope.overall.score)}
+                    {getScoreLabel(dailyHoroscope.overall.score)}
                   </span>
                   <span className={`text-xs sm:text-sm ${getScoreColor(dailyHoroscope.overall.score)}`}>
                     {dailyHoroscope.overall.score}/100
@@ -446,7 +445,7 @@ const ComprehensiveZodiacPage: React.FC = () => {
                 <p className="text-slate-300 mb-3 sm:mb-4 text-sm sm:text-base">{dailyHoroscope.love.prediction}</p>
                 <div className="flex items-center justify-between">
                   <span className={`text-base sm:text-lg ${getScoreColor(dailyHoroscope.love.score)}`}>
-                    {getScoreStars(dailyHoroscope.love.score)}
+                    {getScoreLabel(dailyHoroscope.love.score)}
                   </span>
                   <span className={`text-xs sm:text-sm ${getScoreColor(dailyHoroscope.love.score)}`}>
                     {dailyHoroscope.love.score}/100
@@ -463,7 +462,7 @@ const ComprehensiveZodiacPage: React.FC = () => {
                 <p className="text-slate-300 mb-3 sm:mb-4 text-sm sm:text-base">{dailyHoroscope.career.prediction}</p>
                 <div className="flex items-center justify-between">
                   <span className={`text-base sm:text-lg ${getScoreColor(dailyHoroscope.career.score)}`}>
-                    {getScoreStars(dailyHoroscope.career.score)}
+                    {getScoreLabel(dailyHoroscope.career.score)}
                   </span>
                   <span className={`text-xs sm:text-sm ${getScoreColor(dailyHoroscope.career.score)}`}>
                     {dailyHoroscope.career.score}/100
@@ -480,7 +479,7 @@ const ComprehensiveZodiacPage: React.FC = () => {
                 <p className="text-slate-300 mb-3 sm:mb-4 text-sm sm:text-base">{dailyHoroscope.wealth.prediction}</p>
                 <div className="flex items-center justify-between">
                   <span className={`text-base sm:text-lg ${getScoreColor(dailyHoroscope.wealth.score)}`}>
-                    {getScoreStars(dailyHoroscope.wealth.score)}
+                    {getScoreLabel(dailyHoroscope.wealth.score)}
                   </span>
                   <span className={`text-xs sm:text-sm ${getScoreColor(dailyHoroscope.wealth.score)}`}>
                     {dailyHoroscope.wealth.score}/100
@@ -497,7 +496,7 @@ const ComprehensiveZodiacPage: React.FC = () => {
                 <p className="text-slate-300 mb-3 sm:mb-4 text-sm sm:text-base">{dailyHoroscope.health.prediction}</p>
                 <div className="flex items-center justify-between">
                   <span className={`text-base sm:text-lg ${getScoreColor(dailyHoroscope.health.score)}`}>
-                    {getScoreStars(dailyHoroscope.health.score)}
+                    {getScoreLabel(dailyHoroscope.health.score)}
                   </span>
                   <span className={`text-xs sm:text-sm ${getScoreColor(dailyHoroscope.health.score)}`}>
                     {dailyHoroscope.health.score}/100
@@ -856,7 +855,9 @@ const ComprehensiveZodiacPage: React.FC = () => {
             <p className="text-slate-300 mb-4 sm:mb-6 text-sm sm:text-base px-2">{copy.shareBody}</p>
             
             <div className="glass-inset p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6 max-w-sm sm:max-w-md mx-auto">
-              <div className="text-3xl sm:text-4xl mb-2 sm:mb-3">{zodiacData.symbol}</div>
+              <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-md border border-amber-300/20 bg-amber-300/10 text-xs font-semibold tracking-wide text-amber-200 sm:mb-3">
+                {zodiacData.symbol}
+              </div>
               <div className="text-base sm:text-lg font-semibold text-white">{zodiacData.name}</div>
               <div className="text-xs sm:text-sm text-indigo-300 mb-2 sm:mb-4">{new Date().toLocaleDateString()}</div>
               <div className="text-xs text-slate-400">{copy.sharePreview}</div>

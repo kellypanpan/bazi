@@ -175,10 +175,7 @@ const ZodiacPage: React.FC = () => {
     return 'text-red-400';
   };
 
-  const getScoreStars = (score: number) => {
-    const stars = Math.round(score / 20);
-    return '★'.repeat(stars) + '☆'.repeat(5 - stars);
-  };
+  const getScoreLabel = (score: number) => `${score}/100`;
 
   if (!zodiacSign) {
     return (
@@ -210,7 +207,9 @@ const ZodiacPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <div className="text-6xl mb-4">{zodiacSign.symbol}</div>
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-lg border border-amber-300/20 bg-amber-300/10 text-sm font-semibold tracking-wide text-amber-200">
+            {zodiacSign.symbol}
+          </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">{zodiacSign.name}</h1>
           <p className="text-xl text-indigo-300 mb-4">{zodiacSign.dates}</p>
           <div className="flex items-center justify-center gap-4 mb-6">
@@ -325,7 +324,7 @@ const ZodiacPage: React.FC = () => {
             <p className="text-slate-300 mb-4">{category.data.prediction}</p>
             <div className="flex items-center justify-between">
               <span className={`text-lg font-bold ${getScoreColor(category.data.score)}`}>
-                {getScoreStars(category.data.score)}
+                {getScoreLabel(category.data.score)}
               </span>
               <span className={`text-sm ${getScoreColor(category.data.score)}`}>
                 {category.data.score}/100

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { BirthData } from './BirthDateForm';
 import {
   BarChart3,
@@ -11,6 +12,7 @@ import {
   Gem,
   Heart,
   Leaf,
+  MessageCircle,
   MapPin,
   Mountain,
   Settings2,
@@ -63,6 +65,11 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
       strongest: 'Strongest signal',
       weakest: 'Weakest signal',
       engineNote: 'This overview now comes from the shared chart engine, including stems, branches, hidden stems, Ten Gods, and weighted element scores.',
+      summaryTitle: 'Chart Summary',
+      strongestElement: 'Dominant element',
+      weakestElement: 'Element to support',
+      dayMasterLabel: 'Day Master element',
+      timeConfidence: 'Time confidence',
       notes: 'Calculation Notes',
       strengths: 'Core Strengths',
       challenges: 'Growth Challenges',
@@ -78,6 +85,14 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
       ctaLine1: 'This analysis provides a comprehensive view of your celestial blueprint.',
       ctaLine2: 'Looking for even deeper insights such as precise timing for major life events and year-by-year forecasts? Tap into our advanced engine.',
       cta: 'Explore More on FacePalm AI',
+      followUpTitle: 'Useful follow-up questions',
+      followUpHint: 'Use these prompts to move from a general chart into practical timing and decisions.',
+      followUps: [
+        'What should I focus on this year?',
+        'When is a better window for career change?',
+        'What relationship pattern should I watch?',
+        'How can I balance my weakest element?',
+      ],
       ruleLabels: {},
     },
     'zh-CN': {
@@ -110,6 +125,11 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
       strongest: '最强信号',
       weakest: '最弱信号',
       engineNote: '此概览来自统一命盘引擎，包含天干、地支、藏干、十神和加权五行分数。',
+      summaryTitle: '命盘摘要',
+      strongestElement: '主导五行',
+      weakestElement: '需要补足',
+      dayMasterLabel: '日主五行',
+      timeConfidence: '时间可信度',
       notes: '计算说明',
       strengths: '核心优势',
       challenges: '成长挑战',
@@ -125,6 +145,14 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
       ctaLine1: '这份分析提供了你的命盘结构概览。',
       ctaLine2: '如果你需要更深入的重大事件时间点和逐年预测，可以继续解锁高级解读。',
       cta: '查看更多 FacePalm AI 解读',
+      followUpTitle: '可以继续追问的问题',
+      followUpHint: '从总览报告进入更具体的时机、选择和行动建议。',
+      followUps: [
+        '今年最应该把重心放在哪里？',
+        '什么时候更适合换工作？',
+        '感情里最需要注意什么模式？',
+        '如何补足命盘里较弱的五行？',
+      ],
       ruleLabels: {
         'Solar calendar input': '阳历输入',
         'Lunar calendar input': '农历输入',
@@ -171,6 +199,11 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
       strongest: '最強訊號',
       weakest: '最弱訊號',
       engineNote: '此概覽來自統一命盤引擎，包含天干、地支、藏干、十神和加權五行分數。',
+      summaryTitle: '命盤摘要',
+      strongestElement: '主導五行',
+      weakestElement: '需要補足',
+      dayMasterLabel: '日主五行',
+      timeConfidence: '時間可信度',
       notes: '計算說明',
       strengths: '核心優勢',
       challenges: '成長挑戰',
@@ -186,6 +219,14 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
       ctaLine1: '這份分析提供了你的命盤結構概覽。',
       ctaLine2: '如果你需要更深入的重大事件時間點和逐年預測，可以繼續解鎖高級解讀。',
       cta: '查看更多 FacePalm AI 解讀',
+      followUpTitle: '可以繼續追問的問題',
+      followUpHint: '從總覽報告進入更具體的時機、選擇和行動建議。',
+      followUps: [
+        '今年最應該把重心放在哪裡？',
+        '什麼時候更適合換工作？',
+        '感情裡最需要注意什麼模式？',
+        '如何補足命盤裡較弱的五行？',
+      ],
       ruleLabels: {
         'Solar calendar input': '陽曆輸入',
         'Lunar calendar input': '農曆輸入',
@@ -242,14 +283,14 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
           }, steps[currentStep].duration / 50);
         } else {
           try {
-            console.log('🔮 Starting real API analysis...');
+            console.log('Starting real API analysis...');
             const result = await analyzeBazi(formData);
-            console.log('✅ API analysis completed:', result);
+            console.log('API analysis completed:', result);
             setAnalysis(result);
             setProgress(100);
             setTimeout(() => setLoading(false), 500);
           } catch (error) {
-            console.error('❌ API analysis failed:', error);
+            console.error('API analysis failed:', error);
             // Show error or fallback to mock data
             setLoading(false);
           }
@@ -312,20 +353,20 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
             <div className="absolute inset-0 flex items-center justify-center">
               <span className="text-2xl font-bold text-indigo-300">{Math.round(progress)}%</span>
             </div>
-            {/* Mystical symbols around the circle */}
+            {/* Rotating chart marks */}
             <div className="absolute inset-0 animate-spin" style={{ animationDuration: '20s' }}>
               <div className="relative w-full h-full">
-                {['☯', '🔮', '⭐', '🌙'].map((symbol, index) => (
+                {[Compass, BarChart3, Star, Clock].map((Icon, index) => (
                   <div
                     key={index}
-                    className="absolute text-amber-400 text-xl"
+                    className="absolute flex h-7 w-7 items-center justify-center rounded-md border border-amber-300/20 bg-slate-950/60 text-amber-300"
                     style={{
                       top: '50%',
                       left: '50%',
                       transform: `translate(-50%, -50%) rotate(${index * 90}deg) translateY(-70px)`
                     }}
                   >
-                    {symbol}
+                    <Icon className="h-3.5 w-3.5" />
                   </div>
                 ))}
               </div>
@@ -378,6 +419,32 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
 
   const chart = calculateBaziChart(formData);
   const maxElementCount = Math.max(...Object.values(chart.elementScores), 1);
+  const summaryItems = [
+    {
+      label: text.strongestElement,
+      value: chart.strongestElement,
+      icon: <BarChart3 className="h-5 w-5" />,
+      tone: 'text-emerald-300',
+    },
+    {
+      label: text.weakestElement,
+      value: chart.weakestElement,
+      icon: <Sparkles className="h-5 w-5" />,
+      tone: 'text-amber-300',
+    },
+    {
+      label: text.dayMasterLabel,
+      value: chart.dayMasterElement,
+      icon: <Compass className="h-5 w-5" />,
+      tone: 'text-sky-300',
+    },
+    {
+      label: text.timeConfidence,
+      value: formData.timeAccuracy,
+      icon: <Clock className="h-5 w-5" />,
+      tone: 'text-violet-300',
+    },
+  ];
 
   const getElementIcon = (element: string) => {
     switch (element) {
@@ -468,6 +535,21 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
             {chart.rules.map((rule) => (
               <div key={rule} className="glass-inset px-3 py-2 text-sm text-slate-300">
                 {text.ruleLabels[rule as keyof typeof text.ruleLabels] ?? rule}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="glass-card mb-8 p-4">
+          <h3 className="mb-4 text-lg text-amber-400">{text.summaryTitle}</h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {summaryItems.map((item) => (
+              <div key={item.label} className="glass-inset p-4">
+                <div className={`mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-white/[0.06] ${item.tone}`}>
+                  {item.icon}
+                </div>
+                <div className="text-xs uppercase tracking-[0.12em] text-slate-500">{item.label}</div>
+                <div className="mt-1 text-lg font-semibold capitalize text-white">{item.value}</div>
               </div>
             ))}
           </div>
@@ -617,6 +699,29 @@ const BasicResultsDisplay: React.FC<BasicResultsDisplayProps> = ({ formData }) =
                 <h4 className="mb-3 font-semibold text-white">{section.title}</h4>
                 <p className="text-sm leading-7 text-slate-300">{section.body}</p>
               </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="glass-card mb-8 p-5">
+          <div className="mb-5 flex items-start gap-3">
+            <div className="glass-inset flex h-10 w-10 shrink-0 items-center justify-center text-amber-300">
+              <MessageCircle className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-lg text-amber-400">{text.followUpTitle}</h3>
+              <p className="mt-1 text-sm leading-6 text-slate-400">{text.followUpHint}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            {text.followUps.map((question) => (
+              <Link
+                key={question}
+                to="/readings"
+                className="glass-inset text-left px-4 py-3 text-sm leading-6 text-slate-200 transition hover:border-amber-300/40 hover:text-amber-200"
+              >
+                {question}
+              </Link>
             ))}
           </div>
         </section>

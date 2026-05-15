@@ -329,14 +329,18 @@ const CompatibilityPage: React.FC = () => {
           >
             <div className="glass-panel mb-8 p-6 text-center md:p-8">
               <div className="mb-5 flex items-center justify-center gap-5">
-                <span className="text-5xl">{firstSign?.symbol}</span>
+                <span className="flex h-14 w-14 items-center justify-center rounded-lg border border-amber-300/20 bg-amber-300/10 text-sm font-semibold tracking-wide text-amber-200">
+                  {firstSign?.symbol}
+                </span>
                 <div className="text-center">
                   <div className={`bg-gradient-to-r ${getCompatibilityColor(compatibility.overallCompatibility)} bg-clip-text text-5xl font-bold text-transparent`}>
                     {compatibility.overallCompatibility}%
                   </div>
                   <p className="mt-2 font-semibold text-white">{getCompatibilityText(compatibility.overallCompatibility)}</p>
                 </div>
-                <span className="text-5xl">{secondSign?.symbol}</span>
+                <span className="flex h-14 w-14 items-center justify-center rounded-lg border border-amber-300/20 bg-amber-300/10 text-sm font-semibold tracking-wide text-amber-200">
+                  {secondSign?.symbol}
+                </span>
               </div>
               <p className="mx-auto max-w-3xl text-slate-300">{compatibility.analysis}</p>
             </div>
@@ -439,9 +443,13 @@ const CompatibilityPage: React.FC = () => {
                 >
                   <div className="mb-3 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <span className="text-3xl">{zodiacSigns.find((sign) => sign.name === match.sign1)?.symbol}</span>
+                      <span className="flex h-9 w-9 items-center justify-center rounded-md border border-amber-300/20 bg-amber-300/10 text-xs font-semibold tracking-wide text-amber-200">
+                        {zodiacSigns.find((sign) => sign.name === match.sign1)?.symbol}
+                      </span>
                       <Heart className="h-4 w-4 text-rose-300" />
-                      <span className="text-3xl">{zodiacSigns.find((sign) => sign.name === match.sign2)?.symbol}</span>
+                      <span className="flex h-9 w-9 items-center justify-center rounded-md border border-amber-300/20 bg-amber-300/10 text-xs font-semibold tracking-wide text-amber-200">
+                        {zodiacSigns.find((sign) => sign.name === match.sign2)?.symbol}
+                      </span>
                     </div>
                     <ArrowRight className="h-4 w-4 text-amber-300" />
                   </div>

@@ -86,7 +86,7 @@ export const analyzeBaziWithAI = async (baziData: BaziData): Promise<AIAnalysisR
         if (response.data && response.data.length > 0) {
           const aiText = response.data[0].generated_text || response.data[0].response || '';
           if (aiText.length > 20) {
-            console.log('✓ AI API working, got response:', aiText.substring(0, 100));
+            console.log('AI API working, got response:', aiText.substring(0, 100));
             return parseAIResponseFromText(aiText, baziData);
           }
         }
@@ -98,7 +98,7 @@ export const analyzeBaziWithAI = async (baziData: BaziData): Promise<AIAnalysisR
 
     throw new Error('All AI APIs failed');
   } catch {
-    console.log('🔄 All AI APIs unavailable, using enhanced mock data');
+    console.log('All AI APIs unavailable, using enhanced mock data');
     // Enhanced mock data with more realistic delay
     await new Promise(resolve => setTimeout(resolve, 2000));
     return generateMockAnalysis(baziData);
@@ -172,4 +172,4 @@ const generateMockAnalysis = (baziData: BaziData): AIAnalysisResponse => {
     },
     comparison: `Both BaZi and Zi Wei Dou Shu analyses reveal consistent themes in your destiny profile. Both systems highlight your natural leadership abilities, though BaZi emphasizes your practical and strategic approach while Zi Wei focuses on your intuitive and spiritual gifts. In career matters, both point to success in helping others, with BaZi suggesting more conventional leadership roles and Zi Wei indicating spiritual or healing professions. Your relationship patterns show remarkable consistency between both systems - deep connections, family importance, and the need for intellectual compatibility. The wealth indicators align in suggesting steady accumulation through service rather than speculation. Both analyses confirm your balanced nature and potential for significant achievements through combining practical wisdom with spiritual insight. The timing of your major life developments shows similar patterns in both systems, with significant progress expected in your middle years.`
   };
-}; 
+};
