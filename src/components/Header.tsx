@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Star, ChevronDown } from 'lucide-react';
+import { Menu, X, Star, ChevronDown, UserCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { languageOptions, useI18n } from '../i18n';
+import { useAuth } from '../auth/AuthProvider';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,6 +13,7 @@ const Header: React.FC = () => {
   // Services dropdown removed for cleaner nav
   const location = useLocation();
   const { language, setLanguage, pick } = useI18n();
+  const { user, openAuthModal, signOut } = useAuth();
 
   const text = pick({
     en: {
@@ -24,6 +26,8 @@ const Header: React.FC = () => {
       zodiacSigns: 'Zodiac Signs',
       about: 'About',
       premium: 'Premium',
+      signIn: 'Sign in',
+      signOut: 'Sign out',
       openMenu: 'Open menu',
       closeMenu: 'Close menu',
     },
@@ -37,6 +41,8 @@ const Header: React.FC = () => {
       zodiacSigns: '星座',
       about: '关于',
       premium: '高级版',
+      signIn: '登录',
+      signOut: '退出',
       openMenu: '打开菜单',
       closeMenu: '关闭菜单',
     },
@@ -50,6 +56,8 @@ const Header: React.FC = () => {
       zodiacSigns: '星座',
       about: '關於',
       premium: '高級版',
+      signIn: '登入',
+      signOut: '退出',
       openMenu: '打開選單',
       closeMenu: '關閉選單',
     },
@@ -206,6 +214,25 @@ const Header: React.FC = () => {
             {/* Premium button */}
             <Link to="/subscription" className="glass-primary-button rounded-full px-4 py-2 font-medium">{text.premium}</Link>
             {languageSwitcher}
+            {user ? (
+              <button
+                type="button"
+                onClick={signOut}
+                className="flex max-w-[170px] items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 text-sm text-slate-200 transition hover:text-amber-300"
+                title={user.email || text.signOut}
+              >
+                <UserCircle className="h-4 w-4 shrink-0" />
+                <span className="truncate">{user.email}</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={openAuthModal}
+                className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-medium text-slate-200 transition hover:text-amber-300"
+              >
+                {text.signIn}
+              </button>
+            )}
           </nav>
 
           {/* Mobile Menu Button */}
@@ -314,6 +341,29 @@ const Header: React.FC = () => {
               {text.premium}
             </Link>
             {languageSwitcher}
+            {user ? (
+              <button
+                type="button"
+                onClick={() => {
+                  signOut();
+                  closeMenu();
+                }}
+                className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-left text-sm text-slate-200"
+              >
+                {text.signOut}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  openAuthModal();
+                  closeMenu();
+                }}
+                className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-left text-sm text-slate-200"
+              >
+                {text.signIn}
+              </button>
+            )}
           </div>
         </div>
       </motion.div>

@@ -4,6 +4,7 @@ type CreateCheckoutInput = {
   planId: CheckoutPlanId;
   source: string;
   language: string;
+  accessToken: string;
 };
 
 type CheckoutResponse = {
@@ -16,10 +17,14 @@ export const createCheckoutSession = async ({
   planId,
   source,
   language,
+  accessToken,
 }: CreateCheckoutInput): Promise<{ checkoutUrl: string; sessionId?: string }> => {
   const response = await fetch('/api/checkout', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
     body: JSON.stringify({
       planId,
       source,

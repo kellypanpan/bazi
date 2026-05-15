@@ -9,6 +9,8 @@ type Env = {
   DODO_PRODUCT_PRO?: string;
   DODO_PRODUCT_ANNUAL?: string;
   PUBLIC_SITE_URL?: string;
+  SUPABASE_URL?: string;
+  SUPABASE_ANON_KEY?: string;
 };
 
 type CheckoutRequest = {
@@ -23,6 +25,12 @@ type DodoCheckoutResponse = {
   checkout_url?: string | null;
   error?: unknown;
   message?: string;
+};
+
+type SupabaseUserResponse = {
+  id?: string;
+  email?: string;
+  user_metadata?: Record<string, unknown>;
 };
 
 type SeoMetadata = {
@@ -190,6 +198,42 @@ const normalizeCheckoutLanguage = (language?: string) => {
   return undefined;
 };
 
+const getBearerToken = (request: Request) => {
+  const authorization = request.headers.get('Authorization') || '';
+  const [scheme, token] = authorization.split(' ');
+  if (scheme.toLowerCase() !== 'bearer' || !token) return null;
+  return token;
+};
+
+const verifySupabaseUser = async (request: Request, env: Env) => {
+  const accessToken = getBearerToken(request);
+  if (!accessToken) {
+    return { error: json({ error: 'Authentication is required.' }, { status: 401 }) };
+  }
+
+  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) {
+    return { error: json({ error: 'Supabase authentication is not configured.' }, { status: 500 }) };
+  }
+
+  const response = await fetch(`${env.SUPABASE_URL.replace(/\/$/, '')}/auth/v1/user`, {
+    headers: {
+      apikey: env.SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    return { error: json({ error: 'Invalid or expired login session.' }, { status: 401 }) };
+  }
+
+  const user = (await response.json()) as SupabaseUserResponse;
+  if (!user.id || !user.email) {
+    return { error: json({ error: 'A verified email account is required for checkout.' }, { status: 401 }) };
+  }
+
+  return { user };
+};
+
 const handleCheckout = async (request: Request, env: Env) => {
   if (request.method !== 'POST') {
     return json({ error: 'Method not allowed.' }, { status: 405 });
@@ -198,6 +242,9 @@ const handleCheckout = async (request: Request, env: Env) => {
   if (!env.DODO_PAYMENTS_API_KEY) {
     return json({ error: 'Dodo Payments API key is not configured.' }, { status: 500 });
   }
+
+  const auth = await verifySupabaseUser(request, env);
+  if (auth.error) return auth.error;
 
   let payload: CheckoutRequest;
   try {
@@ -220,9 +267,14 @@ const handleCheckout = async (request: Request, env: Env) => {
   const forceLanguage = normalizeCheckoutLanguage(payload.language);
   const checkoutPayload = {
     product_cart: [{ product_id: productId, quantity: 1 }],
+    customer: {
+      email: auth.user.email,
+    },
     return_url: `${origin}/checkout/success?plan=${encodeURIComponent(planId)}`,
     cancel_url: `${origin}/subscription?source=checkout-cancelled&plan=${encodeURIComponent(planId)}#plans`,
     metadata: {
+      user_id: auth.user.id,
+      email: auth.user.email,
       plan_id: planId,
       source: payload.source || 'subscription',
       language: payload.language || 'unknown',

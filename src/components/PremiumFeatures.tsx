@@ -11,10 +11,12 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useI18n } from '../i18n';
+import { useAuth } from '../auth/AuthProvider';
 import { CheckoutPlanId, createCheckoutSession } from '../services/checkoutService';
 
 const PremiumFeatures: React.FC = () => {
   const { language, pick } = useI18n();
+  const { session, openAuthModal, getAccessToken } = useAuth();
   const [loadingPlan, setLoadingPlan] = useState<CheckoutPlanId | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const text = pick({
@@ -56,6 +58,7 @@ const PremiumFeatures: React.FC = () => {
       nextStep: 'Continue to plan details',
       loading: 'Starting checkout...',
       checkoutError: 'Checkout could not start. Please try again.',
+      loginRequired: 'Please sign in before checkout.',
     },
     'zh-CN': {
       eyebrow: '高级解读',
@@ -95,6 +98,7 @@ const PremiumFeatures: React.FC = () => {
       nextStep: '继续查看套餐详情',
       loading: '正在进入结账...',
       checkoutError: '暂时无法进入结账，请稍后重试。',
+      loginRequired: '请先登录再进入结账。',
     },
     'zh-TW': {
       eyebrow: '高級解讀',
@@ -134,20 +138,36 @@ const PremiumFeatures: React.FC = () => {
       nextStep: '繼續查看套餐詳情',
       loading: '正在進入結帳...',
       checkoutError: '暫時無法進入結帳，請稍後重試。',
+      loginRequired: '請先登入再進入結帳。',
     },
   });
 
   const handleCheckout = async (planId: CheckoutPlanId) => {
+    if (!session) {
+      setCheckoutError(text.loginRequired);
+      openAuthModal();
+      return;
+    }
+
     setLoadingPlan(planId);
     setCheckoutError(null);
 
     try {
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        setCheckoutError(text.loginRequired);
+        openAuthModal();
+        setLoadingPlan(null);
+        return;
+      }
+
       const params = new URLSearchParams(window.location.search);
       const source = params.get('source') || 'pricing';
       const session = await createCheckoutSession({
         planId,
         source,
         language,
+        accessToken,
       });
 
       window.location.href = session.checkoutUrl;
