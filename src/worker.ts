@@ -11,6 +11,8 @@ type Env = {
   PUBLIC_SITE_URL?: string;
   SUPABASE_URL?: string;
   SUPABASE_ANON_KEY?: string;
+  SUPABASE_SERVICE_ROLE_KEY?: string;
+  DODO_PAYMENTS_WEBHOOK_SECRET?: string;
 };
 
 type CheckoutRequest = {
@@ -31,6 +33,44 @@ type SupabaseUserResponse = {
   id?: string;
   email?: string;
   user_metadata?: Record<string, unknown>;
+};
+
+type DodoWebhookEvent = {
+  business_id?: string;
+  type?: string;
+  timestamp?: string;
+  data?: {
+    payload_type?: string;
+    payment_id?: string;
+    subscription_id?: string;
+    product_id?: string;
+    customer_id?: string;
+    customer?: {
+      customer_id?: string;
+      email?: string;
+      name?: string;
+    };
+    metadata?: Record<string, unknown>;
+    next_billing_date?: string;
+    current_period_end?: string;
+    status?: string;
+    total_amount?: number;
+    currency?: string;
+  };
+};
+
+type PremiumEntitlement = {
+  user_id: string;
+  email: string;
+  plan_id: PlanId;
+  status: 'active' | 'cancelled' | 'expired' | 'failed';
+  source?: string;
+  dodo_customer_id?: string;
+  dodo_payment_id?: string;
+  dodo_subscription_id?: string;
+  product_id?: string;
+  current_period_end?: string;
+  updated_at: string;
 };
 
 type SeoMetadata = {
@@ -110,6 +150,17 @@ const json = (body: unknown, init?: ResponseInit) =>
       ...init?.headers,
     },
   });
+
+const getSupabaseUrl = (env: Env) => env.SUPABASE_URL?.replace(/\/$/, '');
+
+const getSupabaseServiceHeaders = (env: Env) => {
+  if (!env.SUPABASE_SERVICE_ROLE_KEY) return null;
+  return {
+    apikey: env.SUPABASE_SERVICE_ROLE_KEY,
+    Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+    'Content-Type': 'application/json',
+  };
+};
 
 const getSeoMetadata = (pathname: string): SeoMetadata | null => {
   const normalizedPath = pathname !== '/' ? pathname.replace(/\/$/, '') : pathname;
@@ -234,6 +285,219 @@ const verifySupabaseUser = async (request: Request, env: Env) => {
   return { user };
 };
 
+const queryUserEntitlements = async (userId: string, env: Env) => {
+  const supabaseUrl = getSupabaseUrl(env);
+  const headers = getSupabaseServiceHeaders(env);
+  if (!supabaseUrl || !headers) return [];
+
+  const response = await fetch(
+    `${supabaseUrl}/rest/v1/premium_entitlements?user_id=eq.${encodeURIComponent(userId)}&select=*&order=updated_at.desc`,
+    { headers }
+  );
+
+  if (!response.ok) return [];
+  return (await response.json()) as PremiumEntitlement[];
+};
+
+const handleMe = async (request: Request, env: Env) => {
+  if (request.method !== 'GET') {
+    return json({ error: 'Method not allowed.' }, { status: 405 });
+  }
+
+  const auth = await verifySupabaseUser(request, env);
+  if (auth.error) return auth.error;
+  if (!auth.user?.id || !auth.user.email) {
+    return json({ error: 'Authentication is required.' }, { status: 401 });
+  }
+
+  const entitlements = await queryUserEntitlements(auth.user.id, env);
+  const activeEntitlements = entitlements.filter((entitlement) => entitlement.status === 'active');
+
+  return json({
+    user: {
+      id: auth.user.id,
+      email: auth.user.email,
+    },
+    entitlements,
+    premium: activeEntitlements.length > 0,
+    activePlan: activeEntitlements[0]?.plan_id || null,
+  });
+};
+
+const encodeUtf8 = (value: string) => new TextEncoder().encode(value);
+
+const toBase64 = (buffer: ArrayBuffer) => {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary);
+};
+
+const toHex = (buffer: ArrayBuffer) =>
+  Array.from(new Uint8Array(buffer))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+
+const normalizeSignatures = (signatureHeader: string) =>
+  signatureHeader
+    .split(' ')
+    .flatMap((part) => part.split(','))
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => part.replace(/^v\d+=/, '').replace(/^v\d+:/, ''));
+
+const constantTimeEqual = (left: string, right: string) => {
+  if (left.length !== right.length) return false;
+  let result = 0;
+  for (let index = 0; index < left.length; index += 1) {
+    result |= left.charCodeAt(index) ^ right.charCodeAt(index);
+  }
+  return result === 0;
+};
+
+const verifyDodoWebhookSignature = async (request: Request, body: string, env: Env) => {
+  if (!env.DODO_PAYMENTS_WEBHOOK_SECRET) return false;
+
+  const webhookId = request.headers.get('webhook-id') || '';
+  const webhookTimestamp = request.headers.get('webhook-timestamp') || '';
+  const webhookSignature = request.headers.get('webhook-signature') || '';
+  if (!webhookId || !webhookTimestamp || !webhookSignature) return false;
+
+  const timestamp = Number(webhookTimestamp);
+  if (!Number.isFinite(timestamp) || Math.abs(Date.now() - timestamp * 1000) > 5 * 60 * 1000) {
+    return false;
+  }
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encodeUtf8(env.DODO_PAYMENTS_WEBHOOK_SECRET),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const signedPayload = `${webhookId}.${webhookTimestamp}.${body}`;
+  const digest = await crypto.subtle.sign('HMAC', key, encodeUtf8(signedPayload));
+  const expectedBase64 = toBase64(digest);
+  const expectedHex = toHex(digest);
+  const providedSignatures = normalizeSignatures(webhookSignature);
+
+  return providedSignatures.some(
+    (signature) => constantTimeEqual(signature, expectedBase64) || constantTimeEqual(signature, expectedHex)
+  );
+};
+
+const getMetadataValue = (metadata: Record<string, unknown> | undefined, key: string) => {
+  const value = metadata?.[key];
+  return typeof value === 'string' ? value : undefined;
+};
+
+const planFromProduct = (productId: string | undefined, env: Env): PlanId | undefined => {
+  if (!productId) return undefined;
+  return (Object.keys(planProductEnvKeys) as PlanId[]).find((planId) => env[planProductEnvKeys[planId]] === productId);
+};
+
+const writeSupabaseRow = async (env: Env, table: string, body: unknown, onConflict?: string) => {
+  const supabaseUrl = getSupabaseUrl(env);
+  const headers = getSupabaseServiceHeaders(env);
+  if (!supabaseUrl || !headers) {
+    throw new Error('Supabase service role is not configured.');
+  }
+
+  const response = await fetch(`${supabaseUrl}/rest/v1/${table}${onConflict ? `?on_conflict=${onConflict}` : ''}`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      Prefer: onConflict ? 'resolution=merge-duplicates,return=representation' : 'return=minimal',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok && response.status !== 409) {
+    throw new Error(`Supabase ${table} write failed: ${response.status} ${await response.text()}`);
+  }
+
+  return response;
+};
+
+const handleDodoWebhook = async (request: Request, env: Env) => {
+  if (request.method !== 'POST') {
+    return json({ error: 'Method not allowed.' }, { status: 405 });
+  }
+
+  const body = await request.text();
+  const isValidSignature = await verifyDodoWebhookSignature(request, body, env);
+  if (!isValidSignature) {
+    return json({ error: 'Invalid webhook signature.' }, { status: 401 });
+  }
+
+  let event: DodoWebhookEvent;
+  try {
+    event = JSON.parse(body) as DodoWebhookEvent;
+  } catch {
+    return json({ error: 'Invalid webhook payload.' }, { status: 400 });
+  }
+
+  const webhookId = request.headers.get('webhook-id') || `${event.type || 'unknown'}-${event.timestamp || Date.now()}`;
+  await writeSupabaseRow(
+    env,
+    'dodo_webhook_events',
+    {
+      id: webhookId,
+      event_type: event.type || 'unknown',
+      payload: event,
+      received_at: new Date().toISOString(),
+    },
+    'id'
+  );
+
+  const metadata = event.data?.metadata;
+  const userId = getMetadataValue(metadata, 'user_id');
+  const email = getMetadataValue(metadata, 'email') || event.data?.customer?.email;
+  const productId = event.data?.product_id;
+  const planId = getMetadataValue(metadata, 'plan_id') || planFromProduct(productId, env);
+  const source = getMetadataValue(metadata, 'source');
+
+  if (!userId || !email || !planId || !allowedPlans.has(planId as PlanId)) {
+    return json({ received: true, fulfilled: false, reason: 'Missing user or plan metadata.' });
+  }
+
+  const activeEvents = new Set(['payment.succeeded', 'subscription.active', 'subscription.renewed', 'subscription.updated']);
+  const cancelledEvents = new Set(['subscription.cancelled']);
+  const failedEvents = new Set(['payment.failed', 'subscription.failed', 'subscription.expired']);
+  const status = activeEvents.has(event.type || '')
+    ? 'active'
+    : cancelledEvents.has(event.type || '')
+      ? 'cancelled'
+      : failedEvents.has(event.type || '')
+        ? 'failed'
+        : undefined;
+
+  if (!status) {
+    return json({ received: true, fulfilled: false, reason: 'Event type does not change access.' });
+  }
+
+  await writeSupabaseRow(
+    env,
+    'premium_entitlements',
+    {
+      user_id: userId,
+      email,
+      plan_id: planId,
+      status,
+      source,
+      dodo_customer_id: event.data?.customer?.customer_id || event.data?.customer_id,
+      dodo_payment_id: event.data?.payment_id,
+      dodo_subscription_id: event.data?.subscription_id,
+      product_id: productId,
+      current_period_end: event.data?.next_billing_date || event.data?.current_period_end,
+      updated_at: new Date().toISOString(),
+    },
+    'user_id,plan_id'
+  );
+
+  return json({ received: true, fulfilled: true });
+};
+
 const handleCheckout = async (request: Request, env: Env) => {
   if (request.method !== 'POST') {
     return json({ error: 'Method not allowed.' }, { status: 405 });
@@ -316,6 +580,14 @@ export default {
 
     if (url.pathname === '/api/checkout') {
       return handleCheckout(request, env);
+    }
+
+    if (url.pathname === '/api/me') {
+      return handleMe(request, env);
+    }
+
+    if (url.pathname === '/api/webhooks/dodo') {
+      return handleDodoWebhook(request, env);
     }
 
     return maybeServeHtmlWithSeo(request, env, url.pathname);
