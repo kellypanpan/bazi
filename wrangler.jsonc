@@ -10,7 +10,7 @@
   "vars": {
     "VITE_OPENROUTER_API_KEY": "",
     "VITE_GA_ID": "",
-    "DODO_PAYMENTS_ENVIRONMENT": "test",
+    "DODO_PAYMENTS_ENVIRONMENT": "live",
     "VITE_SUPABASE_URL": "https://zwvofmdjuemejswxwtua.supabase.co",
     "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3dm9mbWRqdWVtZWpzd3h3dHVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg4NTQxMTMsImV4cCI6MjA5NDQzMDExM30.YoPOzmrd6Mcdy_VhkljJHsGp3cdL9Mp9sLFfFvD0Obs",
     "SUPABASE_URL": "https://zwvofmdjuemejswxwtua.supabase.co",
@@ -18,8 +18,8 @@
     "SUPABASE_SERVICE_ROLE_KEY": "",
     "DODO_PAYMENTS_WEBHOOK_SECRET": "",
     "PUBLIC_SITE_URL": "",
-    "DODO_PRODUCT_ESSENTIAL": "",
-    "DODO_PRODUCT_PRO": "",
-    "DODO_PRODUCT_ANNUAL": ""
+    "DODO_PRODUCT_ESSENTIAL": "pdt_0Neth3LWic3LFlPe8jyoY",
+    "DODO_PRODUCT_PRO": "pdt_0Neth3Ws4j38LOMkEzI3X",
+    "DODO_PRODUCT_ANNUAL": "pdt_0Neth3chvx9OeXm18lxUH"
   }
 }
